@@ -148,6 +148,10 @@ TDDps_Warrior_Fury = function()
 		return _RagingBlow;
 	end
 
+	if rage >= 45 and ph > 0.2 and enrage then
+		return _WildStrike;
+	end
+
 	return _Bloodthirst;
 end
 

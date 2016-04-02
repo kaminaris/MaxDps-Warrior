@@ -27,6 +27,7 @@ local _RagingBlowAura = 131116;
 local _SwordandBoard = 46953;
 local _Ultimatum = 122510;
 local _UnyieldingStrikes = 169685;
+local _ShieldCharge = 156321;
 
 -- talents
 local _isSuddenDeath = false;
@@ -37,6 +38,7 @@ local _isUnquenchableThirst = false;
 local _isRavager = false;
 local _isUnyieldingStrikes = false;
 local _isShockwave = false;
+local _isGladiator = false;
 local _rageMax = 100;
 
 --flags
@@ -53,6 +55,7 @@ TDDps_Warrior_CheckTalents = function()
 	_isDragonRoar = TD_TalentEnabled('Dragon Roar');
 	_isUnyieldingStrikes = TD_TalentEnabled('Unyielding Strikes');
 	_isShockwave = TD_TalentEnabled('Shockwave');
+	_isGladiator = TD_TalentEnabled('Gladiator\'s Resolve');
 
 	_rageMax = UnitPowerMax('player', SPELL_POWER_RAGE);
 end
@@ -176,10 +179,12 @@ TDDps_Warrior_Protection = function()
 	local tc = TD_SpellAvailable(_ThunderClap, timeShift);
 	local bs = TD_SpellAvailable(_BladeStorm, timeShift);
 	local sw = TD_SpellAvailable(_Shockwave, timeShift);
+	local sc = TD_SpellAvailable(_ShieldCharge, timeShift);
 
 	local sab = TD_Aura(_SwordandBoard, timeShift);
 	local sd = TD_Aura(_SuddenDeath, timeShift);
 	local ulti = TD_Aura(_Ultimatum, timeShift);
+	local charge = TD_Aura(_ShieldCharge, timeShift);
 	local _, usCharges = TD_Aura(_UnyieldingStrikes, timeShift);
 
 	local ph = TD_TargetPercentHealth();
@@ -187,6 +192,49 @@ TDDps_Warrior_Protection = function()
 	TDButton_GlowCooldown(_Ravager, _isRavager and ravager);
 	TDButton_GlowCooldown(_ThunderClap, tc);
 	TDButton_GlowCooldown(_BladeStorm, bs);
+	TDButton_GlowCooldown(_HeroicStrike, false);
+
+	if _isGladiator then
+		TDButton_GlowCooldown(_ShieldCharge, sc and not charge);
+
+		if charge then
+			if ss then
+				return _ShieldSlam;
+			end
+
+			if revenge then
+				return _Revenge;
+			end
+
+			if sd or (rage >= 30 and ph < 0.2) then
+				return _Execute;
+			end
+
+			TDButton_GlowCooldown(_HeroicStrike, true);
+		else
+			if (_isUnyieldingStrikes and usCharges >= 4) or rage >= rageMax - 10 or ulti then
+				return _HeroicStrike;
+			end
+
+			if ss then
+				return _ShieldSlam;
+			end
+
+			if revenge then
+				return _Revenge;
+			end
+
+			if _isDragonRoar and dr then
+				return _DragonRoar;
+			end
+
+			if sd or (rage >= 30 and ph < 0.2) then
+				return _Execute;
+			end
+		end
+
+		return _Devastate;
+	end
 
 	if _isDragonRoar and dr then
 		return _DragonRoar;

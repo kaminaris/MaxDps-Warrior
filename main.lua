@@ -1,7 +1,4 @@
-﻿-- Author      : Kaminari
--- Create Date : 13:03 2015-04-20
-
--- Multispec
+﻿-- Multispec
 local _Charge = 100;
 local _BattleCry = 1719;
 local _Ravager = 152277;
@@ -116,68 +113,60 @@ local _rageMax = 100;
 --flags
 local _RecklessnessHigh = false;
 
-----------------------------------------------
--- Pre enable, checking talents
-----------------------------------------------
-TDDps_Warrior_CheckTalents = function()
-	_isSuddenDeath = TD_TalentEnabled('Sudden Death');
-	_isUnquenchableThirst = TD_TalentEnabled('Unquenchable Thirst');
-	_isRavager = TD_TalentEnabled('Ravager');
-	_isStormBolt = TD_TalentEnabled('Storm Bolt');
-	_isOverpower = TD_TalentEnabled('Overpower');
-	_isFocusedRage = TD_TalentEnabled('Focused Rage');
-	_isDragonRoar = TD_TalentEnabled('Dragon Roar');
-	_isUnyieldingStrikes = TD_TalentEnabled('Unyielding Strikes');
-	_isShockwave = TD_TalentEnabled('Shockwave');
+MaxDps.Warrior = {};
+
+function MaxDps.Warrior.CheckTalents()
+	_isSuddenDeath = MaxDps:TalentEnabled('Sudden Death');
+	_isUnquenchableThirst = MaxDps:TalentEnabled('Unquenchable Thirst');
+	_isRavager = MaxDps:TalentEnabled('Ravager');
+	_isStormBolt = MaxDps:TalentEnabled('Storm Bolt');
+	_isOverpower = MaxDps:TalentEnabled('Overpower');
+	_isFocusedRage = MaxDps:TalentEnabled('Focused Rage');
+	_isDragonRoar = MaxDps:TalentEnabled('Dragon Roar');
+	_isUnyieldingStrikes = MaxDps:TalentEnabled('Unyielding Strikes');
+	_isShockwave = MaxDps:TalentEnabled('Shockwave');
 
 	_rageMax = UnitPowerMax('player', SPELL_POWER_RAGE);
 end
 
-----------------------------------------------
--- Enabling Addon
-----------------------------------------------
-function TDDps_Warrior_EnableAddon(mode)
+function MaxDps:EnableRotationModule(mode)
 	mode = mode or 1;
-	TDDps.Description = 'TD Warrior DPS supports: Fury, Arms, Protection';
-	TDDps.ModuleOnEnable = TDDps_Warrior_CheckTalents;
+	MaxDps.Description = 'Warrior Module [Fury, Arms, Protection]';
+	MaxDps.ModuleOnEnable = MaxDps.Warrior.CheckTalents;
 	if mode == 1 then
-		TDDps.NextSpell = TDDps_Warrior_Arms;
+		MaxDps.NextSpell = MaxDps.Warrior.Arms;
 	end;
 	if mode == 2 then
-		TDDps.NextSpell = TDDps_Warrior_Fury;
+		MaxDps.NextSpell = MaxDps.Warrior.Fury;
 	end;
 	if mode == 3 then
-		TDDps.NextSpell = TDDps_Warrior_Protection;
+		MaxDps.NextSpell = MaxDps.Warrior.Protection;
 	end;
 end
 
-
-----------------------------------------------
--- Main rotation: Arms
-----------------------------------------------
-TDDps_Warrior_Arms = function()
-	local timeShift, currentSpell, gcd = TD_EndCast();
+function MaxDps.Warrior.Arms()
+	local timeShift, currentSpell, gcd = MaxDps:EndCast();
 
 	local rage = UnitPower('player', SPELL_POWER_RAGE);
 	local rageMax = UnitPowerMax('player', SPELL_POWER_RAGE);
 
-	local cs = TD_SpellAvailable(_ColossusSmash, timeShift);
-	local wb = TD_SpellAvailable(_Warbreaker, timeShift);
-	local op = TD_SpellAvailable(_Overpower, timeShift);
-	local ms = TD_SpellAvailable(_MortalStrike, timeShift);
+	local cs = MaxDps:SpellAvailable(_ColossusSmash, timeShift);
+	local wb = MaxDps:SpellAvailable(_Warbreaker, timeShift);
+	local op = MaxDps:SpellAvailable(_Overpower, timeShift);
+	local ms = MaxDps:SpellAvailable(_MortalStrike, timeShift);
 
-	local bc = TD_SpellAvailable(_BattleCry, timeShift);
-	local bs = TD_SpellAvailable(_BladestormArms, timeShift);
-	local fr = TD_SpellAvailable(_FocusedRageArms, timeShift);
+	local bc = MaxDps:SpellAvailable(_BattleCry, timeShift);
+	local bs = MaxDps:SpellAvailable(_BladestormArms, timeShift);
+	local fr = MaxDps:SpellAvailable(_FocusedRageArms, timeShift);
 
-	local csAura = TD_TargetAura(_ColossusSmash, timeShift);
-	local sd = TD_Aura(_ShatteredDefenses, timeShift);
-	local bcAura = TD_Aura(_BattleCry, timeShift);
+	local csAura = MaxDps:TargetAura(_ColossusSmash, timeShift);
+	local sd = MaxDps:Aura(_ShatteredDefenses, timeShift);
+	local bcAura = MaxDps:Aura(_BattleCry, timeShift);
 
-	local ph = TD_TargetPercentHealth();
+	local ph = MaxDps:TargetPercentHealth();
 
-	TDButton_GlowCooldown(_BattleCry, bc);
-	TDButton_GlowCooldown(_BladestormArms, bs);
+	MaxDps:GlowCooldown(_BattleCry, bc);
+	MaxDps:GlowCooldown(_BladestormArms, bs);
 
 	if cs and (not _isFocusedRage or not sd) then
 		return _ColossusSmash;
@@ -218,37 +207,33 @@ TDDps_Warrior_Arms = function()
 	end
 end
 
-----------------------------------------------
--- Main rotation: Fury
-----------------------------------------------
-TDDps_Warrior_Fury = function()
-	local timeShift, currentSpell, gcd = TD_EndCast();
+function MaxDps.Warrior.Fury()
+	local timeShift, currentSpell, gcd = MaxDps:EndCast();
 
 	local rage = UnitPower('player', SPELL_POWER_RAGE);
 	local rageMax = UnitPowerMax('player', SPELL_POWER_RAGE);
 
-	local bt = TD_SpellAvailable(_Bloodthirst, timeShift);
-	local of = TD_SpellAvailable(_OdynsFury, timeShift);
-	local rb = TD_SpellAvailable(_RagingBlow, timeShift + 0.3);
+	local bt = MaxDps:SpellAvailable(_Bloodthirst, timeShift);
+	local of = MaxDps:SpellAvailable(_OdynsFury, timeShift);
+	local rb = MaxDps:SpellAvailable(_RagingBlow, timeShift + 0.3);
 
-	local berserRage = TD_SpellAvailable(_BerserkerRage, timeShift);
-	local dr = TD_SpellAvailable(_DragonRoar, timeShift);
-	local bc = TD_SpellAvailable(_BattleCry, timeShift);
-	local sb = TD_SpellAvailable(_StormBolt, timeShift);
-	local ava = TD_SpellAvailable(_Avatar, timeShift);
-	local bb = TD_SpellAvailable(_Bloodbath, timeShift);
+	local berserRage = MaxDps:SpellAvailable(_BerserkerRage, timeShift);
+	local dr = MaxDps:SpellAvailable(_DragonRoar, timeShift);
+	local bc = MaxDps:SpellAvailable(_BattleCry, timeShift);
+	local sb = MaxDps:SpellAvailable(_StormBolt, timeShift);
+	local ava = MaxDps:SpellAvailable(_Avatar, timeShift);
+	local bb = MaxDps:SpellAvailable(_Bloodbath, timeShift);
 
-	local enrage = TD_Aura(_Enrage, timeShift);
-	local wb = TD_Aura(_WreckingBall, timeShift);
+	local enrage = MaxDps:Aura(_Enrage, timeShift);
+	local wb = MaxDps:Aura(_WreckingBall, timeShift);
 
+	local ph = MaxDps:TargetPercentHealth();
 
-	local ph = TD_TargetPercentHealth();
-
-	TDButton_GlowCooldown(_DragonRoar, dr);
-	TDButton_GlowCooldown(_BattleCry, bc);
-	TDButton_GlowCooldown(_Avatar, ava);
-	TDButton_GlowCooldown(_Bloodbath, bb);
-	TDButton_GlowCooldown(_BerserkerRage, berserRage);
+	MaxDps:GlowCooldown(_DragonRoar, dr);
+	MaxDps:GlowCooldown(_BattleCry, bc);
+	MaxDps:GlowCooldown(_Avatar, ava);
+	MaxDps:GlowCooldown(_Bloodbath, bb);
+	MaxDps:GlowCooldown(_BerserkerRage, berserRage);
 
 	if rage == rageMax and not enrage then
 		return _Rampage;
@@ -285,29 +270,25 @@ TDDps_Warrior_Fury = function()
 	return _FuriousSlash;
 end
 
-
-----------------------------------------------
--- Main rotation: Protection
-----------------------------------------------
-TDDps_Warrior_Protection = function()
-	local timeShift, currentSpell, gcd = TD_EndCast();
+function MaxDps.Warrior.Protection()
+	local timeShift, currentSpell, gcd = MaxDps:EndCast();
 
 	local rage = UnitPower('player', SPELL_POWER_RAGE);
 	local rageMax = UnitPowerMax('player', SPELL_POWER_RAGE);
 
-	local revenge = TD_SpellAvailable(_Revenge, timeShift);
-	local sb = TD_SpellAvailable(_StormBolt, timeShift);
-	local ss = TD_SpellAvailable(_ShieldSlam, timeShift);
-	local ravager = TD_SpellAvailable(_Ravager, timeShift);
-	local tc = TD_SpellAvailable(_ThunderClap, timeShift);
-	local sw = TD_SpellAvailable(_Shockwave, timeShift);
+	local revenge = MaxDps:SpellAvailable(_Revenge, timeShift);
+	local sb = MaxDps:SpellAvailable(_StormBolt, timeShift);
+	local ss = MaxDps:SpellAvailable(_ShieldSlam, timeShift);
+	local ravager = MaxDps:SpellAvailable(_Ravager, timeShift);
+	local tc = MaxDps:SpellAvailable(_ThunderClap, timeShift);
+	local sw = MaxDps:SpellAvailable(_Shockwave, timeShift);
 
-	local ulti = TD_Aura(_Ultimatum, timeShift);
+	local ulti = MaxDps:Aura(_Ultimatum, timeShift);
 
-	local ph = TD_TargetPercentHealth();
+	local ph = MaxDps:TargetPercentHealth();
 
-	TDButton_GlowCooldown(_Ravager, _isRavager and ravager);
-	TDButton_GlowCooldown(_ThunderClap, tc);
+	MaxDps:GlowCooldown(_Ravager, _isRavager and ravager);
+	MaxDps:GlowCooldown(_ThunderClap, tc);
 
 	if ss then
 		return _ShieldSlam;

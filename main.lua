@@ -42,6 +42,7 @@ local _Shockwave = 46968;
 local _StormBolt = 107570;
 local _Warbringer = 103828;
 local _Bloodlust = 2825;
+local _Devastator = 236279;
 
 -- Fury
 local _Rampage = 184367;
@@ -109,9 +110,11 @@ local _isCarnage = false;
 local _isMassacre = false;
 
 MaxDps.Warrior = {};
+local talents = {};
 
 function MaxDps.Warrior.CheckTalents()
 	MaxDps:CheckTalents();
+	talents = MaxDps.PlayerTalents;
 	_isRavager = MaxDps:HasTalent(_Ravager);
 	_isStormBolt = MaxDps:HasTalent(_StormBolt);
 	_isCarnage = MaxDps:HasTalent(_Carnage);
@@ -259,19 +262,20 @@ function MaxDps.Warrior.Protection()
 
 	local revenge = MaxDps:SpellAvailable(_Revenge, timeShift);
 	local sb = MaxDps:SpellAvailable(_StormBolt, timeShift);
-	local ss = MaxDps:SpellAvailable(_ShieldSlam, timeShift);
 	local ravager = MaxDps:SpellAvailable(_Ravager, timeShift);
-	local tc = MaxDps:SpellAvailable(_ThunderClap, timeShift);
-	local sw = MaxDps:SpellAvailable(_Shockwave, timeShift);
-
-	local ulti = MaxDps:Aura(_Ultimatum, timeShift);
 
 	local ph = MaxDps:TargetPercentHealth();
 
 	MaxDps:GlowCooldown(_Ravager, _isRavager and ravager);
-	MaxDps:GlowCooldown(_ThunderClap, tc);
+	MaxDps:GlowCooldown(_ThunderClap, MaxDps:SpellAvailable(_ThunderClap, timeShift));
+	MaxDps:GlowCooldown(_Shockwave, MaxDps:SpellAvailable(_Shockwave, timeShift));
+	MaxDps:GlowCooldown(_NeltharionsFury, MaxDps:SpellAvailable(_NeltharionsFury, timeShift));
+	MaxDps:GlowCooldown(_IgnorePain, MaxDps:SpellAvailable(_IgnorePain, timeShift) and rage >= 20 and
+			not MaxDps:Aura(_IgnorePain, timeShift));
+	MaxDps:GlowCooldown(_ShieldBlock, MaxDps:SpellAvailable(_ShieldBlock, timeShift) and rage >= 15 and
+			not MaxDps:Aura(_ShieldBlock, timeShift));
 
-	if ss then
+	if MaxDps:SpellAvailable(_ShieldSlam, timeShift) then
 		return _ShieldSlam;
 	end
 
@@ -283,5 +287,9 @@ function MaxDps.Warrior.Protection()
 		return _StormBolt;
 	end
 
-	return _Devastate;
+	if not talents[_Devastator] then
+		return _Devastate;
+	else
+		return nil;
+	end
 end

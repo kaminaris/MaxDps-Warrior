@@ -1,7 +1,7 @@
 ## Title: MaxDps_Warrior
-## Version: 7.1.5
+## Version: 7.2
 ## Author: Kaminaris
-## Interface: 70100
+## Interface: 70200
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 

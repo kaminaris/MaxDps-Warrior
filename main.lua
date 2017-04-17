@@ -73,6 +73,7 @@ local _BoundingStride = 202163;
 local _EnragedRegeneration = 184364;
 local _CommandingShout = 97462;
 local _Carnage = 202922;
+local _FrothingBerserker = 215571; -- taqito
 
 -- Arms
 local _ColossusSmash = 167105;
@@ -207,17 +208,54 @@ function MaxDps.Warrior.Fury()
 
 	local enrage = MaxDps:Aura(_Enrage, timeShift);
 	local rampCost = 85;
-	if _isCarnage then
+	if talents[_Carnage] then
 		rampCost = 70;
+	elseif talents[_FrothingBerserker] then -- taqito
+		rampCost = 100; -- taqito 100 since we want Forth up before using Ramp
 	end
 
 	local ph = MaxDps:TargetPercentHealth();
 
-	MaxDps:GlowCooldown(_DragonRoar, MaxDps:SpellAvailable(_DragonRoar, timeShift));
 	MaxDps:GlowCooldown(_BattleCry, MaxDps:SpellAvailable(_BattleCry, timeShift));
-	MaxDps:GlowCooldown(_Avatar, MaxDps:SpellAvailable(_Avatar, timeShift));
-	MaxDps:GlowCooldown(_Bloodbath, MaxDps:SpellAvailable(_Bloodbath, timeShift));
-	MaxDps:GlowCooldown(_BerserkerRage, MaxDps:SpellAvailable(_BerserkerRage, timeShift));
+	-- taqito Added ifs talents below to keep from constantaly running even if you dont have the talent
+	if talents[_DragonRoar] then
+		MaxDps:GlowCooldown(_DragonRoar, MaxDps:SpellAvailable(_DragonRoar, timeShift));
+	end
+
+	if talents[_Bloodbath] then
+		MaxDps:GlowCooldown(_Bloodbath, MaxDps:SpellAvailable(_Bloodbath, timeShift));
+	end
+
+	if talents[_Outburst] then
+		MaxDps:GlowCooldown(_BerserkerRage, MaxDps:SpellAvailable(_BerserkerRage, timeShift));
+	elseif talents[_Avatar] then
+		MaxDps:GlowCooldown(_Avatar, MaxDps:SpellAvailable(_Avatar, timeShift));
+	end
+
+	-- rotation during battlecry
+	if MaxDps:Aura(_BattleCry) then
+		if talents[_Avatar] and MaxDps:SpellAvailable(_Avatar, timeShift) then
+			return _Avatar;
+		end
+
+		if MaxDps:SpellAvailable(_RagingBlow, timeShift) then
+			return _RagingBlow;
+		end
+
+		if MaxDps:SpellAvailable(_OdynsFury, timeShift) then
+			return _OdynsFury;
+		end
+
+		if bt then
+			return _Bloodthirst;
+		end
+	end
+
+	local canExecute = (rage >= 25 and ph < 0.2) or MaxDps:Aura(_StoneHeart, timeShift);
+	if talents[_Massacre] and not MaxDps:Aura(_Massacre, timeShift) and not MaxDps:Aura(_Enrage, timeShift) and
+		canExecute then
+		return _Execute;
+	end
 
 	if (rage >= rampCost and not enrage) or rage >= 100 or MaxDps:Aura(_Massacre, timeShift) then
 		return _Rampage;
@@ -231,7 +269,7 @@ function MaxDps.Warrior.Fury()
 		return _OdynsFury;
 	end
 
-	if _isStormBolt and MaxDps:SpellAvailable(_StormBolt, timeShift) then
+	if talents[_StormBolt] and MaxDps:SpellAvailable(_StormBolt, timeShift) then
 		return _StormBolt;
 	end
 

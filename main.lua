@@ -166,7 +166,7 @@ function Warrior:Fury(timeShift, currentSpell, gcd, talents)
 
 	local execute = _Execute;
 	local execPct = 0.2;
-	if talents[_Massacre] then
+	if talents[_Massacre] or IsEquippedItem(151650) then --soul of the battlelord
 		execPct = 0.35;
 		execute = _ExecuteMassacre;
 	end
@@ -178,10 +178,6 @@ function Warrior:Fury(timeShift, currentSpell, gcd, talents)
 	MaxDps:GlowCooldown(_Recklessness, MaxDps:SpellAvailable(_Recklessness, timeShift));
 
 	-- Rotation
-	if talents[_Siegebreaker] and MaxDps:SpellAvailable(_Siegebreaker, timeShift) then
-		return _Siegebreaker;
-	end
-
 	if talents[_FuriousSlash] then
 		local fs, fsCount, fsTime = MaxDps:Aura(_FuriousSlashAura, timeShift);
 		if MaxDps:SpellAvailable(_FuriousSlash, timeShift) and
@@ -190,14 +186,17 @@ function Warrior:Fury(timeShift, currentSpell, gcd, talents)
 		end
 	end
 
+	if talents[_Siegebreaker] and MaxDps:SpellAvailable(_Siegebreaker, timeShift) then
+		return _Siegebreaker;
+	end
+
 	if MaxDps:SpellAvailable(_Rampage, timeShift) and (rage >= 95 or (rage >= rampCost and not enrage)) then
 		return _Rampage;
 	end
 
 	if enrage and (
-		(tgtPctHp < execPct and MaxDps:SpellAvailable(execute, timeShift)) or
-			MaxDps:Aura(_SuddenDeathAura, timeShift)
-	)
+		(tgtPctHp < execPct and MaxDps:SpellAvailable(execute, timeShift)) or MaxDps:Aura(_SuddenDeathAura, timeShift)
+		)
 	then
 		return execute;
 	end

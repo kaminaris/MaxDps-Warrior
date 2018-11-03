@@ -33,6 +33,8 @@ local WA = {
 	SweepingStrikes     = 260708,
 	Cleave              = 845,
 	DeadlyCalm          = 262228,
+	ColossusSmashAura   = 208086,
+	SuddenDeathAuraArms = 52437
 };
 
 
@@ -58,11 +60,6 @@ local WF = {
 	FuriousSlashAura  = 202539,
 };
 
--- Auras
--- Arms
-local _ColossusSmashAura = 208086;
-local _SuddenDeathAuraArms = 52437;
-local _DeepWounds = 262304;
 
 
 function Warrior:Enable()
@@ -111,8 +108,7 @@ function Warrior:Arms()
 
 	--Rotation
 
-	if talents[WA.Rend] and rage >= 30 and debuff[WA.Rend].remains < 4 and not MaxDps:TargetAura(WA.ColossusSmashAura,
-	timeShift) then
+	if talents[WA.Rend] and rage >= 30 and debuff[WA.Rend].remains < 4 and not debuff[WA.ColossusSmashAura].up then
 		return WA.Rend;
 	end
 
@@ -128,7 +124,7 @@ function Warrior:Arms()
 		return WA.ColossusSmash;
 	end
 
-	if MaxDps:Aura(WA.SuddenDeathAuraArms, timeShift) then
+	if buff[WA.SuddenDeathAuraArms].up then
 		return execute;
 	end
 
@@ -195,9 +191,8 @@ function Warrior:Fury()
 
 	-- Rotation
 	if talents[WF.FuriousSlash] then
-		local fs, fsCount, fsTime = MaxDps:Aura(WF.FuriousSlashAura, timeShift);
 		if cooldown[WF.FuriousSlash].ready and
-			(fsTime <= 2 or fsCount < 3) then
+			(buff[WF.FuriousSlashAura].remains <= 2 or buff[WF.FuriousSlashAura].count < 3) then
 			return WF.FuriousSlash;
 		end
 	end

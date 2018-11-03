@@ -3,6 +3,9 @@ if not MaxDps then
 	return ;
 end
 
+local MaxDps = MaxDps;
+local UnitPower = UnitPower;
+
 local Warrior = MaxDps:NewModule('Warrior');
 
 -- Spells
@@ -10,42 +13,50 @@ local Warrior = MaxDps:NewModule('Warrior');
 local _Charge = 100;
 
 -- Arms
-local _MassacreArms = 281001;
-local _ExecuteArms = 163201;
-local _ExecuteMassacreArms = 281000;
-local _Rend = 772;
-local _ColossusSmash = 167105;
-local _Skullsplitter = 260643;
-local _Avatar = 107574;
-local _Warbreaker = 262161;
-local _MortalStrike = 12294;
-local _Ravager = 152277;
-local _BladestormArms = 227847;
-local _Overpower = 7384;
-local _WhirlwindArms = 1680;
-local _Slam = 1464;
-local _FervorofBattle = 202316;
-local _Dreadnaught = 262150;
-local _SweepingStrikes = 260708;
-local _Cleave = 845;
-local _DeadlyCalm = 262228;
+local WA = {
+	MassacreArms        = 281001,
+	ExecuteArms         = 163201,
+	ExecuteMassacreArms = 281000,
+	Rend                = 772,
+	ColossusSmash       = 167105,
+	Skullsplitter       = 260643,
+	Avatar              = 107574,
+	Warbreaker          = 262161,
+	MortalStrike        = 12294,
+	Ravager             = 152277,
+	BladestormArms      = 227847,
+	Overpower           = 7384,
+	WhirlwindArms       = 1680,
+	Slam                = 1464,
+	FervorOfBattle      = 202316,
+	Dreadnaught         = 262150,
+	SweepingStrikes     = 260708,
+	Cleave              = 845,
+	DeadlyCalm          = 262228,
+};
+
 
 -- Fury
-local _FuriousSlash = 100130;
-local _Recklessness = 1719;
-local _Siegebreaker = 280772;
-local _Rampage = 184367;
-local _ExecuteMassacre = 280735;
-local _Execute = 5308;
-local _Bloodthirst = 23881;
-local _RagingBlow = 85288;
-local _DragonRoar = 118000;
-local _Bladestorm = 46924;
-local _Whirlwind = 190411;
-local _Carnage = 202922;
-local _VictoryRush = 34428;
-local _FrothingBerserker = 215571;
-local _Massacre = 206315;
+local WF = {
+	FuriousSlash      = 100130,
+	Recklessness      = 1719,
+	Siegebreaker      = 280772,
+	Rampage           = 184367,
+	ExecuteMassacre   = 280735,
+	Execute           = 5308,
+	Bloodthirst       = 23881,
+	RagingBlow        = 85288,
+	DragonRoar        = 118000,
+	Bladestorm        = 46924,
+	Whirlwind         = 190411,
+	Carnage           = 202922,
+	VictoryRush       = 34428,
+	FrothingBerserker = 215571,
+	Massacre          = 206315,
+	SuddenDeathAura   = 280776,
+	Enrage            = 184362,
+	FuriousSlashAura  = 202539,
+};
 
 -- Auras
 -- Arms
@@ -53,10 +64,6 @@ local _ColossusSmashAura = 208086;
 local _SuddenDeathAuraArms = 52437;
 local _DeepWounds = 262304;
 
--- Fury
-local _Enrage = 184362;
-local _FuriousSlashAura = 202539;
-local _SuddenDeathAura = 280776;
 
 function Warrior:Enable()
 	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior [Arms, Fury, Protection]');
@@ -77,156 +84,161 @@ function Warrior:Protection(timeShift, currentSpell, gcd, talents)
 	return nil;
 end
 
-function Warrior:Arms(timeShift, currentSpell, gcd, talents)
-	local rage = UnitPower('player', Enum.PowerType.Rage);
+function Warrior:Arms()
+	local fd = MaxDps.FrameData;
+	local cooldown, buff, debuff, timeShift, talents, azerite, currentSpell =
+		fd.cooldown, fd.buff, fd.debuff, fd.timeShift, fd.talents, fd.azerite, fd.currentSpell;
 
+	local rage = UnitPower('player', Enum.PowerType.Rage);
 	local tgtPctHp = MaxDps:TargetPercentHealth();
 
 	local execPct = 0.2;
-	local execute = _ExecuteArms;
-	if talents[_MassacreArms] then
+	local execute = WA.ExecuteArms;
+	if talents[WA.MassacreArms] then
 		execPct = 0.35;
-		execute = _ExecuteMassacreArms;
+		execute = WA.ExecuteMassacreArms;
 	end
 
 	--CoolDowns
 
-	if talents[_DeadlyCalm] then
-		MaxDps:GlowCooldown(_DeadlyCalm, MaxDps:SpellAvailable(_DeadlyCalm, timeShift));
+	if talents[WA.DeadlyCalm] then
+		MaxDps:GlowCooldown(WA.DeadlyCalm, cooldown[WA.DeadlyCalm].ready);
 	end
 
-	if talents[_Avatar] then
-		MaxDps:GlowCooldown(_Avatar, MaxDps:SpellAvailable(_Avatar, timeShift));
+	if talents[WA.Avatar] then
+		MaxDps:GlowCooldown(WA.Avatar, cooldown[WA.Avatar].ready);
 	end
 
 	--Rotation
 
-	local _, _, rendT = MaxDps:TargetAura(_Rend, timeShift);
-	if talents[_Rend] and rage >= 30 and rendT < 4 and not MaxDps:TargetAura(_ColossusSmashAura, timeShift) then
-		return _Rend;
+	if talents[WA.Rend] and rage >= 30 and debuff[WA.Rend].remains < 4 and not MaxDps:TargetAura(WA.ColossusSmashAura,
+	timeShift) then
+		return WA.Rend;
 	end
 
-	if talents[_Skullsplitter] and MaxDps:SpellAvailable(_Skullsplitter, timeShift) and rage < 70 then
-		return _Skullsplitter;
+	if talents[WA.Skullsplitter] and cooldown[WA.Skullsplitter].ready and rage < 70 then
+		return WA.Skullsplitter;
 	end
 
-	if talents[_Warbreaker] then
-		if MaxDps:SpellAvailable(_Warbreaker, timeShift) then
-			return _Warbreaker;
+	if talents[WA.Warbreaker] then
+		if cooldown[WA.Warbreaker].ready then
+			return WA.Warbreaker;
 		end
-	elseif MaxDps:SpellAvailable(_ColossusSmash, timeShift) then
-		return _ColossusSmash;
+	elseif cooldown[WA.ColossusSmash].ready then
+		return WA.ColossusSmash;
 	end
 
-	if MaxDps:Aura(_SuddenDeathAuraArms, timeShift) then
+	if MaxDps:Aura(WA.SuddenDeathAuraArms, timeShift) then
 		return execute;
 	end
 
-	if MaxDps:SpellAvailable(_MortalStrike, timeShift) and rage >= 30 then
-		return _MortalStrike;
+	if cooldown[WA.MortalStrike].ready and rage >= 30 then
+		return WA.MortalStrike;
 	end
 
-	if talents[_Ravager] then
-		if MaxDps:SpellAvailable(_Ravager, timeShift) then
-			return _Ravager;
+	if talents[WA.Ravager] then
+		if cooldown[WA.Ravager].ready then
+			return WA.Ravager;
 		end
 	else
-		if MaxDps:SpellAvailable(_BladestormArms, timeShift) then
-			return _BladestormArms;
+		if cooldown[WA.BladestormArms].ready then
+			return WA.BladestormArms;
 		end
 	end
 
-	if MaxDps:SpellAvailable(_Overpower, timeShift) then
-		return _Overpower;
+	if cooldown[WA.Overpower].ready then
+		return WA.Overpower;
 	end
 
 	if tgtPctHp < execPct then
-		if MaxDps:SpellAvailable(execute, timeShift) and rage >= 40 then
+		if cooldown[execute].ready and rage >= 40 then
 			return execute;
 		end
 	else
-		if talents[_FervorofBattle] and rage >= 30 then
-			return _WhirlwindArms;
+		if talents[WA.FervorOfBattle] and rage >= 30 then
+			return WA.WhirlwindArms;
 		elseif rage >= 20 then
-			return _Slam;
+			return WA.Slam;
 		end
 	end
 end
 
-function Warrior:Fury(timeShift, currentSpell, gcd, talents)
+function Warrior:Fury()
+	local fd = MaxDps.FrameData;
+	local cooldown, buff, debuff, timeShift, talents, azerite, currentSpell =
+		fd.cooldown, fd.buff, fd.debuff, fd.timeShift, fd.talents, fd.azerite, fd.currentSpell;
+
 	local rage = UnitPower('player', Enum.PowerType.Rage);
 	local tgtPctHp = MaxDps:TargetPercentHealth();
 
 	local rampCost = 85;
-	if talents[_Carnage] then
+	if talents[WF.Carnage] then
 		rampCost = 75;
-	elseif talents[_FrothingBerserker] then
+	elseif talents[WF.FrothingBerserker] then
 		rampCost = 95;
 	end
 
-	local execute = _Execute;
+	local execute = WF.Execute;
 	local execPct = 0.2;
-	if talents[_Massacre] or IsEquippedItem(151650) then --soul of the battlelord
+	if talents[WF.Massacre] then --soul of the battlelord
 		execPct = 0.35;
-		execute = _ExecuteMassacre;
+		execute = WF.ExecuteMassacre;
 	end
 
-	local enrage = MaxDps:Aura(_Enrage, timeShift);
+	local enrage = buff[WF.Enrage].up;
+	--local targets = MaxDps:SmartAoe();
+	----print(targets);
 
 	-- CoolDowns
 
-	MaxDps:GlowCooldown(_Recklessness, MaxDps:SpellAvailable(_Recklessness, timeShift));
+	MaxDps:GlowCooldown(WF.Recklessness, cooldown[WF.Recklessness].ready);
 
 	-- Rotation
-	if talents[_FuriousSlash] then
-		local fs, fsCount, fsTime = MaxDps:Aura(_FuriousSlashAura, timeShift);
-		if MaxDps:SpellAvailable(_FuriousSlash, timeShift) and
+	if talents[WF.FuriousSlash] then
+		local fs, fsCount, fsTime = MaxDps:Aura(WF.FuriousSlashAura, timeShift);
+		if cooldown[WF.FuriousSlash].ready and
 			(fsTime <= 2 or fsCount < 3) then
-			return _FuriousSlash;
+			return WF.FuriousSlash;
 		end
 	end
 
-	if talents[_Siegebreaker] and MaxDps:SpellAvailable(_Siegebreaker, timeShift) then
-		return _Siegebreaker;
+	if talents[WF.Siegebreaker] and cooldown[WF.Siegebreaker].ready then
+		return WF.Siegebreaker;
 	end
 
-	if MaxDps:SpellAvailable(_Rampage, timeShift) and (rage >= 95 or (rage >= rampCost and not enrage)) then
-		return _Rampage;
+	if cooldown[WF.Rampage].ready and (rage >= 95 or (rage >= rampCost and not enrage)) then
+		return WF.Rampage;
 	end
 
-	if enrage and (
-		(tgtPctHp < execPct and MaxDps:SpellAvailable(execute, timeShift)) or MaxDps:Aura(_SuddenDeathAura, timeShift)
-		)
-	then
+	if enrage and ((tgtPctHp < execPct and cooldown[execute].ready) or buff[WF.SuddenDeathAura].up) then
 		return execute;
 	end
 
-	if MaxDps:SpellAvailable(_Bloodthirst, timeShift) and not enrage then
-		return _Bloodthirst;
+	if cooldown[WF.Bloodthirst].ready and not enrage then
+		return WF.Bloodthirst;
 	end
 
-	local _, rbCharges = MaxDps:SpellCharges(_RagingBlow, timeShift);
-	if MaxDps:SpellAvailable(_RagingBlow, timeShift) and rbCharges >= 2 then
-		return _RagingBlow;
+	if cooldown[WF.RagingBlow].charges >= 1.8 then
+		return WF.RagingBlow;
 	end
 
-	if MaxDps:SpellAvailable(_Bloodthirst, timeShift) then
-		return _Bloodthirst;
+	if cooldown[WF.Bloodthirst].ready then
+		return WF.Bloodthirst;
 	end
 
-	if talents[_DragonRoar] and enrage and MaxDps:SpellAvailable(_DragonRoar, timeShift) then
-		return _DragonRoar;
-	elseif talents[_Bladestorm] and enrage and MaxDps:SpellAvailable(_Bladestorm, timeShift) then
-		return _Bladestorm;
+	if talents[WF.DragonRoar] and enrage and cooldown[WF.DragonRoar].ready then
+		return WF.DragonRoar;
+	elseif talents[WF.Bladestorm] and enrage and cooldown[WF.Bladestorm].ready then
+		return WF.Bladestorm;
 	end
 
-	if MaxDps:SpellAvailable(_RagingBlow, timeShift) and rage <= rampCost then
-		return _RagingBlow;
+	if cooldown[WF.RagingBlow].ready and rage <= rampCost then
+		return WF.RagingBlow;
 	end
 
-	if talents[_FuriousSlash] and MaxDps:SpellAvailable(_FuriousSlash, timeShift) then
-		return _FuriousSlash;
+	if talents[WF.FuriousSlash] and cooldown[WF.FuriousSlash].ready then
+		return WF.FuriousSlash;
 	end
 
-	return _Whirlwind;
+	return WF.Whirlwind;
 end

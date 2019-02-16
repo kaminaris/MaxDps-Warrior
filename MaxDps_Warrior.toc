@@ -1,5 +1,5 @@
 ## Title: MaxDps_Warrior
-## Version: 8.0.2
+## Version: 8.1.0
 ## Author: Kaminaris
 ## Interface: 80100
 ## Dependencies: MaxDps
@@ -7,4 +7,7 @@
 ## X-Curse-Project-ID: 92062
 ## X-WoWI-ID: 24645
 
-main.lua
+Main.lua
+Specialization\Arms.lua
+Specialization\Fury.lua
+Specialization\Protection.lua

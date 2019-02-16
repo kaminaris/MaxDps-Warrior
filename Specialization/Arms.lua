@@ -1,34 +1,12 @@
-﻿--- @type MaxDps
-if not MaxDps then
-	return ;
-end
+local _, addonTable = ...;
 
+--- @type MaxDps
+if not MaxDps then return end
+
+local Warrior = addonTable.Warrior;
 local MaxDps = MaxDps;
 local UnitPower = UnitPower;
-
-local Warrior = MaxDps:NewModule('Warrior');
-
--- Fury
-local WF = {
-	FuriousSlash      = 100130,
-	Recklessness      = 1719,
-	Siegebreaker      = 280772,
-	Rampage           = 184367,
-	ExecuteMassacre   = 280735,
-	Execute           = 5308,
-	Bloodthirst       = 23881,
-	RagingBlow        = 85288,
-	DragonRoar        = 118000,
-	Bladestorm        = 46924,
-	Whirlwind         = 190411,
-	Carnage           = 202922,
-	VictoryRush       = 34428,
-	FrothingBerserker = 215571,
-	Massacre          = 206315,
-	SuddenDeathAura   = 280776,
-	Enrage            = 184362,
-	FuriousSlashAura  = 202539,
-};
+local PowerTypeRage = Enum.PowerType.Rage;
 
 -- Arms
 local AR = {
@@ -67,34 +45,9 @@ local A = {
 	CrushingAssault       = 278751,
 }
 
-local spellMeta = {
-	__index = function(t, k)
-		print('Spell Key ' .. k .. ' not found!');
-	end
-}
+setmetatable(AR, Warrior.spellMeta);
+setmetatable(A, Warrior.spellMeta);
 
-setmetatable(AR, spellMeta);
-setmetatable(WF, spellMeta);
-setmetatable(A, spellMeta);
-
-function Warrior:Enable()
-	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior [Arms, Fury, Protection]');
-
-	if MaxDps.Spec == 1 then
-		MaxDps.NextSpell = Warrior.Arms;
-	elseif MaxDps.Spec == 2 then
-		MaxDps.NextSpell = Warrior.Fury;
-	elseif MaxDps.Spec == 3 then
-		MaxDps.NextSpell = Warrior.Protection;
-	end
-
-	return true;
-end
-
-function Warrior:Protection()
-	-- NYI
-	return nil;
-end
 
 function Warrior:Arms()
 	local fd = MaxDps.FrameData;
@@ -105,8 +58,9 @@ function Warrior:Arms()
 	local targets = MaxDps:SmartAoe();
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local canExecute = targetHp < (talents[AR.Massacre] and 35 or 20);
+	local rage = UnitPower('player', PowerTypeRage);
 
-	fd.targets, fd.canExecute = targets, canExecute;
+	fd.targets, fd.canExecute, fd.rage = targets, canExecute, rage;
 
 	if talents[AR.DeadlyCalm] then
 		MaxDps:GlowCooldown(AR.DeadlyCalm, cooldown[AR.DeadlyCalm].ready);
@@ -171,7 +125,7 @@ function Warrior:ArmsExecute()
 	local debuff = fd.debuff;
 	local talents = fd.talents;
 	local targets = fd.targets;
-	local rage = UnitPower('player', Enum.PowerType.Rage);
+	local rage = fd.rage;
 
 	local execute = talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute;
 
@@ -238,7 +192,7 @@ function Warrior:ArmsFiveTarget()
 	local debuff = fd.debuff;
 	local talents = fd.talents;
 	local canExecute = fd.canExecute;
-	local rage = UnitPower('player', Enum.PowerType.Rage);
+	local rage = fd.rage;
 	local execute = talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute;
 
 	-- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down);
@@ -406,7 +360,7 @@ function Warrior:ArmsSingleTarget()
 	local talents = fd.talents;
 	local targets = fd.targets;
 	local canExecute = fd.canExecute;
-	local rage = UnitPower('player', Enum.PowerType.Rage);
+	local rage = fd.rage;
 	local execute = talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute;
 
 	-- rend,if=remains<=duration*0.3&debuff.colossus_smash.down;
@@ -485,82 +439,4 @@ function Warrior:ArmsSingleTarget()
 	) then
 		return AR.Slam;
 	end
-end
-
-function Warrior:Fury()
-	local fd = MaxDps.FrameData;
-	local cooldown, buff, debuff, timeShift, talents, azerite, currentSpell =
-		fd.cooldown, fd.buff, fd.debuff, fd.timeShift, fd.talents, fd.azerite, fd.currentSpell;
-
-	local rage = UnitPower('player', Enum.PowerType.Rage);
-	local tgtPctHp = MaxDps:TargetPercentHealth();
-
-	local rampCost = 85;
-	if talents[WF.Carnage] then
-		rampCost = 75;
-	elseif talents[WF.FrothingBerserker] then
-		rampCost = 95;
-	end
-
-	local execute = WF.Execute;
-	local execPct = 0.2;
-	if talents[WF.Massacre] then --soul of the battlelord
-		execPct = 0.35;
-		execute = WF.ExecuteMassacre;
-	end
-
-	local enrage = buff[WF.Enrage].up;
-	--local targets = MaxDps:SmartAoe();
-
-	-- CoolDowns
-
-	MaxDps:GlowCooldown(WF.Recklessness, cooldown[WF.Recklessness].ready);
-
-	-- Rotation
-	if talents[WF.FuriousSlash] then
-		if cooldown[WF.FuriousSlash].ready and
-			(buff[WF.FuriousSlashAura].remains <= 2 or buff[WF.FuriousSlashAura].count < 3) then
-			return WF.FuriousSlash;
-		end
-	end
-
-	if talents[WF.Siegebreaker] and cooldown[WF.Siegebreaker].ready then
-		return WF.Siegebreaker;
-	end
-
-	if cooldown[WF.Rampage].ready and (rage >= 95 or (rage >= rampCost and not enrage)) then
-		return WF.Rampage;
-	end
-
-	if enrage and ((tgtPctHp < execPct and cooldown[execute].ready) or buff[WF.SuddenDeathAura].up) then
-		return execute;
-	end
-
-	if cooldown[WF.Bloodthirst].ready and not enrage then
-		return WF.Bloodthirst;
-	end
-
-	if cooldown[WF.RagingBlow].charges >= 1.8 then
-		return WF.RagingBlow;
-	end
-
-	if cooldown[WF.Bloodthirst].ready then
-		return WF.Bloodthirst;
-	end
-
-	if talents[WF.DragonRoar] and enrage and cooldown[WF.DragonRoar].ready then
-		return WF.DragonRoar;
-	elseif talents[WF.Bladestorm] and enrage and cooldown[WF.Bladestorm].ready then
-		return WF.Bladestorm;
-	end
-
-	if cooldown[WF.RagingBlow].ready and rage <= rampCost then
-		return WF.RagingBlow;
-	end
-
-	if talents[WF.FuriousSlash] and cooldown[WF.FuriousSlash].ready then
-		return WF.FuriousSlash;
-	end
-
-	return WF.Whirlwind;
 end

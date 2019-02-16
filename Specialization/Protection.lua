@@ -26,6 +26,7 @@ local PR = {
 	Ravager           = 228920,
 	DragonRoar        = 118000,
 	Revenge           = 6572,
+	RevengeAura       = 5302,
 	Devastate         = 20243,
 };
 
@@ -55,7 +56,7 @@ function Warrior:Protection()
 
 	-- last_stand,if=cooldown.shield_slam.ready&cooldown.shield_block.charges_fractional<1&buff.shield_block.down&talent.bolster.enabled;
 	if cooldown[PR.LastStand].ready and (
-		cooldown[PR.ShieldSlam].ready and cooldown[PR.ShieldBlock].charges < 1 and not buff[PR.ShieldBlock].up and talents[PR.Bolster]
+		cooldown[PR.ShieldSlam].ready and cooldown[PR.ShieldBlock].charges < 1 and not buff[PR.ShieldBlockAura].up and talents[PR.Bolster]
 	) then
 		return PR.LastStand;
 	end
@@ -93,7 +94,7 @@ function Warrior:Protection()
 	end
 
 	-- revenge;
-	if cooldown[PR.Revenge].ready and rage >= 30 then
+	if cooldown[PR.Revenge].ready and (rage >= 30 or buff[PR.RevengeAura].up) then
 		return PR.Revenge;
 	end
 

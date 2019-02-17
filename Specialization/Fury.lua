@@ -17,6 +17,7 @@ local FR = {
 	HeroicLeap        = 6544,
 	Rampage           = 184367,
 	Whirlwind         = 190411,
+	WhirlwindAura     = 85739,
 	MeatCleaver       = 280392,
 	Siegebreaker      = 280772,
 	SiegebreakerAura  = 280773,
@@ -89,7 +90,7 @@ function Warrior:Fury()
 	end
 
 	-- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up;
-	if targets > 1 and not buff[FR.MeatCleaver].up then
+	if targets > 1 and not buff[FR.WhirlwindAura].up then
 		return FR.Whirlwind;
 	end
 

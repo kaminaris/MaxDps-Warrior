@@ -32,6 +32,20 @@ local FR = {
 	Bladestorm        = 46924,
 	DragonRoar        = 118000,
 	SuddenDeathAura   = 280776,
+	VictoryRush       = 34428,
+	VictoryRushAura   = 32216,
+	EnragedRegeneration = 184364,
+	BerserkerRage     = 18499,
+};
+
+local CC = {
+	Sap = 6770,
+	Incapacitate = 1776, -- same as Gouge
+	Repentance = 20066,
+	Fear = 118699,
+	PsychicScream = 8122,
+	IntimidatingShout = 5246,
+	DragonsBreath = 31661
 };
 
 local A = {
@@ -40,6 +54,37 @@ local A = {
 
 setmetatable(FR, Warrior.spellMeta);
 setmetatable(A, Warrior.spellMeta);
+
+local defensiveColor = {r = 1, g = 0, b = 0, a = 1};
+function Warrior:FuryDefensiveCooldowns()
+	local fd = MaxDps.FrameData;
+	local buff = fd.buff;
+	local debuff = fd.debuff;
+	local cooldown = fd.cooldown;
+	local ownHP = MaxDps:TargetPercentHealth('player') * 100;
+
+	MaxDps:GlowCooldown(FR.VictoryRush, ownHP <= 60 and buff[FR.VictoryRushAura].up, defensiveColor);
+	MaxDps:GlowCooldown(
+		FR.EnragedRegeneration,
+		ownHP <= 35 and not buff[FR.VictoryRushAura].up and cooldown[FR.EnragedRegeneration].ready,
+		defensiveColor
+	);
+
+	local CCFlag = false;
+	for i, v in pairs(CC) do
+		if debuff[v].up then
+			CCFlag = true;
+			break;
+		end
+	end
+
+	MaxDps:GlowCooldown(
+		FR.BerserkerRage,
+		CCFlag and cooldown[FR.BerserkerRage].ready,
+		defensiveColor
+	);
+
+end
 
 
 function Warrior:Fury()
@@ -61,6 +106,8 @@ function Warrior:Fury()
 
 	fd.rage = rage;
 	fd.rampageCost = rampageCost;
+
+	Warrior:FuryDefensiveCooldowns();
 
 	-- recklessness;
 	MaxDps:GlowCooldown(FR.Recklessness, cooldown[FR.Recklessness].ready);

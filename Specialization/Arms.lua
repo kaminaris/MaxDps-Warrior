@@ -62,6 +62,8 @@ function Warrior:Arms()
 
 	fd.targets, fd.canExecute, fd.rage = targets, canExecute, rage;
 
+	MaxDps:GlowEssences();
+
 	if talents[AR.DeadlyCalm] then
 		MaxDps:GlowCooldown(AR.DeadlyCalm, cooldown[AR.DeadlyCalm].ready);
 	end

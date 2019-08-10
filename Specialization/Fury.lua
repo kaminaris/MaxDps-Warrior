@@ -62,6 +62,8 @@ function Warrior:Fury()
 	fd.rage = rage;
 	fd.rampageCost = rampageCost;
 
+	MaxDps:GlowEssences();
+
 	-- recklessness;
 	MaxDps:GlowCooldown(FR.Recklessness, cooldown[FR.Recklessness].ready);
 

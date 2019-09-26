@@ -226,7 +226,7 @@ function Warrior:ArmsFiveTarget()
 
 	-- execute,if=(!talent.cleave.enabled&dot.deep_wounds.remains<2)|(buff.sudden_death.react|buff.stone_heart.react)&(buff.sweeping_strikes.up|cooldown.sweeping_strikes.remains>8);
 	if (not talents[AR.Cleave] and debuff[AR.DeepWounds].remains < 2 and canExecute) or
-		(buff[AR.SuddenDeathAura].up or buff[AR.StoneHeart].up) and
+		(buff[AR.SuddenDeathAura].up) and
 		(buff[AR.SweepingStrikes].up or cooldown[AR.SweepingStrikes].remains > 8)
 	then
 		return execute;

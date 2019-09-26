@@ -1,5 +1,5 @@
 ## Title: MaxDps_Warrior
-## Version: 8.2.5
+## Version: 8.2.5.1
 ## Author: Kaminaris
 ## Interface: 80205
 ## Dependencies: MaxDps

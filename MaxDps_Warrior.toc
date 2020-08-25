@@ -1,7 +1,7 @@
 ## Title: MaxDps_Warrior
-## Version: 8.2.5.1
+## Version: 8.3.0
 ## Author: Kaminaris
-## Interface: 80205
+## Interface: 80300
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 ## X-Curse-Project-ID: 92062

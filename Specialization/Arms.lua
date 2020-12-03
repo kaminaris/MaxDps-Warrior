@@ -25,6 +25,7 @@ local AR = {
 	Slam              = 1464,
 	MortalStrike      = 12294,
 	Overpower         = 7384,
+	OverpowerAura	  = 316441,
 	Dreadnaught       = 262150,
 	Execute           = 163201,
 	ExecuteMassacre   = 281000,
@@ -406,33 +407,25 @@ function Warrior:ArmsSingleTarget()
 		return AR.Cleave;
 	end
 
-	-- overpower,if=azerite.seismic_wave.rank=3;
-	if cooldown[AR.Overpower].ready and azerite[A.SeismicWave] == 3 then
+	-- overpower;
+	-- This does not Work with the Aura but why not? can you fix it plz?
+	if cooldown[AR.Overpower].ready and not buff[AR.OverpowerAura].up then
 		return AR.Overpower;
 	end
 
 	-- mortal_strike;
-	if cooldown[AR.MortalStrike].remains < 0.2 then
+	if rage >= 30 and cooldown[AR.MortalStrike].remains < 0.2 then
 		return AR.MortalStrike;
 	end
 
 	-- whirlwind,if=talent.fervor_of_battle.enabled&(buff.deadly_calm.up|rage>=60);
-	if rage >= 60 and (talents[AR.FervorOfBattle] and (buff[AR.DeadlyCalm].up or rage >= 60)) then
+	if (rage >= 60 and (talents[AR.FervorOfBattle] and (buff[AR.DeadlyCalm].up or rage >= 60))) or
+		-- whirlwind,if=talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up);
+		(rage >= 60 and cooldown[AR.MortalStrike].remains > gcd and ( talents[AR.FervorOfBattle] and
+			(not azerite[A.TestOfMight] > 0 or debuff[AR.ColossusSmashAura].up))) then
 		return AR.Whirlwind;
 	end
 
-	-- overpower;
-	if cooldown[AR.Overpower].ready then
-		return AR.Overpower;
-	end
-
-	-- whirlwind,if=talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up);
-	if rage >= 60 and cooldown[AR.MortalStrike].remains > gcd and (
-		talents[AR.FervorOfBattle] and
-		(not azerite[A.TestOfMight] > 0 or debuff[AR.ColossusSmashAura].up)
-	) then
-		return AR.Whirlwind;
-	end
 
 	-- slam,if=!talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up|buff.deadly_calm.up|rage>=60);
 	if rage >= 50 and cooldown[AR.MortalStrike].remains > gcd and (

@@ -28,15 +28,13 @@ local FR = {
 	Execute           = 5308,
 	ExecuteMassacre   = 280735,
 	Bloodthirst       = 23881,
-	Bloodbath		  = 335096,
+	Bloodbath	  = 335096,
 	RagingBlow        = 85288,
 	CrushingBlow	  = 335097,
 	Bladestorm        = 46924,
 	DragonRoar        = 118000,
 	SuddenDeathAura   = 280776,
-	Condemn			  = 317485,
-	VictoryRush		  = 34428,
-	Victorious		  = 32216,
+	Condemn           = 317485,
 };
 
 local A = {
@@ -80,10 +78,6 @@ function Warrior:Fury()
 				spellHistory[1] == FR.Rampage and (debuff[FR.SiegebreakerAura].up or not talents[FR.Siegebreaker])
 			)
 		);
-	end
-
-	if buff[FR.Victorious].up then
-		return FR.VictoryRush
 	end
 
 	-- furious_slash,if=talent.furious_slash.enabled&(buff.furious_slash.stack<3|buff.furious_slash.remains<3|(cooldown.recklessness.remains<3&buff.furious_slash.remains<9));

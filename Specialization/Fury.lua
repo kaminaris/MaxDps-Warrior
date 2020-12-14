@@ -28,10 +28,15 @@ local FR = {
 	Execute           = 5308,
 	ExecuteMassacre   = 280735,
 	Bloodthirst       = 23881,
+	Bloodbath		  = 335096,
 	RagingBlow        = 85288,
+	CrushingBlow	  = 335097,
 	Bladestorm        = 46924,
 	DragonRoar        = 118000,
 	SuddenDeathAura   = 280776,
+	Condemn			  = 317485,
+	VictoryRush		  = 34428,
+	Victorious		  = 32216,
 };
 
 local A = {
@@ -77,6 +82,10 @@ function Warrior:Fury()
 		);
 	end
 
+	if buff[FR.Victorious].up then
+		return FR.VictoryRush
+	end
+
 	-- furious_slash,if=talent.furious_slash.enabled&(buff.furious_slash.stack<3|buff.furious_slash.remains<3|(cooldown.recklessness.remains<3&buff.furious_slash.remains<9));
 	if talents[FR.FuriousSlash] and (
 		buff[FR.FuriousSlashAura].count < 3 or
@@ -110,10 +119,13 @@ function Warrior:FurySingleTarget()
 	local gcd = fd.gcd;
 	local rage = fd.rage;
 	local rampageCost = fd.rampageCost;
+	local hasCondemn = MaxDps:FindSpellInSpellbook(FR.Condemn)
 
 	local tgtPctHp = MaxDps:TargetPercentHealth();
 	local canExecute = tgtPctHp < (talents[FR.Massacre] and 0.35 or 0.2);
+	local canCondemn = (tgtPctHp > 0.8) or (tgtPctHp < (talents[FR.Massacre] and 0.35 or 0.2))
 	local Execute = talents[FR.Massacre] and FR.ExecuteMassacre or FR.Execute;
+	local Condemn = talents[FR.Massacre] and FR.ExecuteMassacre or FR.Condemn;
 
 	-- siegebreaker;
 	if talents[FR.Siegebreaker] and cooldown[FR.Siegebreaker].ready then
@@ -131,25 +143,52 @@ function Warrior:FurySingleTarget()
 		return FR.Rampage;
 	end
 
-	-- execute;
-	if buff[FR.SuddenDeathAura].up or cooldown[FR.Execute].ready and canExecute then
-		return Execute;
+	-- condemn or execute
+	if hasCondemn then 
+		if buff[FR.SuddenDeathAura].up or cooldown[FR.Condemn].ready and canCondemn then
+			return Condemn;
+		end
+	else
+		if buff[FR.SuddenDeathAura].up or cooldown[FR.Execute].ready and canExecute then
+			return Execute;
+		end
 	end
 
 	-- bloodthirst,if=buff.enrage.down|azerite.cold_steel_hot_blood.rank>1;
-	if cooldown[FR.Bloodthirst].ready and (not buff[FR.Enrage].up or azerite[A.ColdSteelHotBlood] > 1) then
-		return FR.Bloodthirst;
+	if (not buff[FR.Enrage].up or azerite[A.ColdSteelHotBlood] > 1) then
+		if buff[FR.Recklessness].up then
+			if cooldown[FR.Bloodbath].ready then
+				return FR.Bloodbath;
+			end
+		else
+			if cooldown[FR.Bloodthirst].ready then
+				return FR.Bloodthirst;
+			end
+		end
 	end
 
 	-- raging_blow,if=charges=2;
-	if cooldown[FR.RagingBlow].charges >= 2 then
-		return FR.RagingBlow;
+	
+	if cooldown[FR.RagingBlow].charges >= 2 or cooldown[FR.CrushingBlow].charges >= 2 then
+		if buff[FR.Recklessness].up then
+			return FR.CrushingBlow;
+		else
+			return FR.RagingBlow;
+		end
 	end
 
 	-- bloodthirst;
-	if cooldown[FR.Bloodthirst].ready then
-		return FR.Bloodthirst;
+	if buff[FR.Recklessness].up then 
+		if cooldown[FR.Bloodbath].ready then
+			return FR.Bloodbath
+		end
+	else
+		if cooldown[FR.Bloodthirst].ready then
+			return FR.Bloodthirst;
+		end
 	end
+
+	
 
 	-- dragon_roar,if=buff.enrage.up;
 	if talents[FR.DragonRoar] and cooldown[FR.DragonRoar].ready and buff[FR.Enrage].up then
@@ -157,10 +196,16 @@ function Warrior:FurySingleTarget()
 	end
 
 	-- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90);
-	if cooldown[FR.RagingBlow].ready and (
-		talents[FR.Carnage] or (talents[FR.Massacre] and rage < 80) or (talents[FR.FrothingBerserker] and rage < 90)
-	) then
-		return FR.RagingBlow;
+	if talents[FR.Carnage] or (talents[FR.Massacre] and rage < 80) or (talents[FR.FrothingBerserker] and rage < 90) then
+		if buff[FR.Recklessness].up then
+			if cooldown[FR.CrushingBlow].ready then
+				return FR.CrushingBlow
+			end
+		else
+			if cooldown[FR.RagingBlow].ready then
+				return FR.RagingBlow
+			end
+		end
 	end
 
 	-- furious_slash,if=talent.furious_slash.enabled;

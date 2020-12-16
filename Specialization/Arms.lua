@@ -25,10 +25,11 @@ local AR = {
 	Slam              = 1464,
 	MortalStrike      = 12294,
 	Overpower         = 7384,
-	OverpowerAura	  = 316441,
 	Dreadnaught       = 262150,
 	Execute           = 163201,
 	ExecuteMassacre   = 281000,
+	Condemn 		  = 317349,
+	CondemnMassacre   = 330334,
 	DeepWounds        = 262304,
 	SuddenDeath       = 29725,
 	SuddenDeathAura   = 52437,
@@ -60,8 +61,12 @@ function Warrior:Arms()
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local canExecute = targetHp < (talents[AR.Massacre] and 35 or 20);
 	local rage = UnitPower('player', PowerTypeRage);
+	local hasCondemn = talents[AR.Massacre] and MaxDps:FindSpell(AR.CondemnMassacre) or MaxDps:FindSpell(AR.Condemn);
+	local canCondemn = (targetHp > 80) or (targetHp < (talents[AR.Massacre] and 35 or 20));
+	local execute = talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute;
+	local condemn = talents[AR.Massacre] and AR.CondemnMassacre or AR.Condemn;
 
-	fd.targets, fd.canExecute, fd.rage = targets, canExecute, rage;
+	fd.targets, fd.canExecute, fd.rage, fd.targetHp, fd.hasCondemn, fd.canCondmen = targets, canExecute, rage, targetHp, hasCondemn, canCondemn;
 
 	MaxDps:GlowEssences();
 
@@ -113,7 +118,7 @@ function Warrior:Arms()
 	end
 
 	-- run_action_list,name=execute,if=(talent.massacre.enabled&target.health.pct<35)|target.health.pct<20;
-	if canExecute then
+	if canExecute or (hasCondemn and canCondemn) then
 		return Warrior:ArmsExecute();
 	end
 
@@ -129,7 +134,11 @@ function Warrior:ArmsExecute()
 	local talents = fd.talents;
 	local targets = fd.targets;
 	local rage = fd.rage;
+	local hasCondemn = fd.hasCondemn;
 
+	local targetHp = MaxDps:TargetPercentHealth() * 100;
+	local canCondemn = (targetHp > 80) or (targetHp < (talents[AR.Massacre] and 35 or 20));
+	local condemn = talents[AR.Massacre] and AR.CondemnMassacre or AR.Condemn;
 	local execute = talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute;
 
 	-- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down);
@@ -172,8 +181,14 @@ function Warrior:ArmsExecute()
 	end
 
 	-- execute,if=buff.deadly_calm.up;
-	if rage >= 20 and buff[AR.DeadlyCalm].up then
-		return execute;
+	if hasCondemn then
+		if buff[AR.DeadlyCalm].up or (cooldown[AR.Condemn].ready and canCondemn) then
+			return condemn;
+		end
+	else
+		if buff[AR.DeadlyCalm].up or (cooldown[AR.Execute].ready and rage >= 20) then
+			return execute;
+		end
 	end
 
 	-- overpower;
@@ -183,7 +198,7 @@ function Warrior:ArmsExecute()
 
 	-- execute;
 	if rage >= 20 then
-		return execute;
+		return hasCondemn and Condemn or execute;
 	end
 end
 
@@ -407,25 +422,33 @@ function Warrior:ArmsSingleTarget()
 		return AR.Cleave;
 	end
 
-	-- overpower;
-	-- This does not Work with the Aura but why not? can you fix it plz?
-	if cooldown[AR.Overpower].ready and not buff[AR.OverpowerAura].up then
+	-- overpower,if=azerite.seismic_wave.rank=3;
+	if cooldown[AR.Overpower].ready and azerite[A.SeismicWave] == 3 then
 		return AR.Overpower;
 	end
 
 	-- mortal_strike;
-	if rage >= 30 and cooldown[AR.MortalStrike].remains < 0.2 then
+	if cooldown[AR.MortalStrike].remains < 0.2 then
 		return AR.MortalStrike;
 	end
 
 	-- whirlwind,if=talent.fervor_of_battle.enabled&(buff.deadly_calm.up|rage>=60);
-	if (rage >= 60 and (talents[AR.FervorOfBattle] and (buff[AR.DeadlyCalm].up or rage >= 60))) or
-		-- whirlwind,if=talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up);
-		(rage >= 60 and cooldown[AR.MortalStrike].remains > gcd and ( talents[AR.FervorOfBattle] and
-			(not azerite[A.TestOfMight] > 0 or debuff[AR.ColossusSmashAura].up))) then
+	if rage >= 60 and (talents[AR.FervorOfBattle] and (buff[AR.DeadlyCalm].up or rage >= 60)) then
 		return AR.Whirlwind;
 	end
 
+	-- overpower;
+	if cooldown[AR.Overpower].ready then
+		return AR.Overpower;
+	end
+
+	-- whirlwind,if=talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up);
+	if rage >= 60 and cooldown[AR.MortalStrike].remains > gcd and (
+		talents[AR.FervorOfBattle] and
+		(not azerite[A.TestOfMight] > 0 or debuff[AR.ColossusSmashAura].up)
+	) then
+		return AR.Whirlwind;
+	end
 
 	-- slam,if=!talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up|buff.deadly_calm.up|rage>=60);
 	if rage >= 50 and cooldown[AR.MortalStrike].remains > gcd and (

@@ -44,16 +44,20 @@ function Warrior:Arms()
 	local rage = UnitPower('player', PowerTypeRage);
 
 	fd.rage, fd.targetHp, fd.targets = rage, targetHp, targets;
-
-	MaxDps:GlowEssences();
-
+	print('Covenant ' .. covenantId);
+	print(cooldown[AR.SweepingStrikes].ready and 'yes' or 'no');
+	print(targets > 1 and 'yes' or 'no');
+	print(cooldown[AR.Bladestorm].remains);
+	print(( cooldown[AR.Bladestorm].remains > 15 or talents[AR.Ravager] ) and 'yes' or 'no');
 	-- sweeping_strikes,if=spell_targets.whirlwind>1&(cooldown.bladestorm.remains>15|talent.ravager.enabled);
-	if cooldown[AR.SweepingStrikes].ready and (targets > 1 and ( cooldown[AR.Bladestorm].remains > 15 or talents[AR.Ravager] )) then
+	if cooldown[AR.SweepingStrikes].ready and (targets > 1 and (cooldown[AR.Bladestorm].remains > 15 or talents[AR.Ravager])) then
 		return AR.SweepingStrikes;
 	end
 
 	-- run_action_list,name=hac,if=raid_event.adds.exists;
-	-- return Warrior:ArmsHac();
+	if targets > 1 then
+		return Warrior:ArmsHac();
+	end
 
 	-- run_action_list,name=execute,if=(talent.massacre.enabled&target.health.pct<35)|target.health.pct<20|(target.health.pct>80&covenant.venthyr);
 	if ( talents[AR.Massacre] and targetHp < 35 ) or targetHp < 20 or ( targetHp > 80 and covenantId == Enum.CovenantType.Venthyr ) then

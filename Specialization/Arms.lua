@@ -44,11 +44,7 @@ function Warrior:Arms()
 	local rage = UnitPower('player', PowerTypeRage);
 
 	fd.rage, fd.targetHp, fd.targets = rage, targetHp, targets;
-	print('Covenant ' .. covenantId);
-	print(cooldown[AR.SweepingStrikes].ready and 'yes' or 'no');
-	print(targets > 1 and 'yes' or 'no');
-	print(cooldown[AR.Bladestorm].remains);
-	print(( cooldown[AR.Bladestorm].remains > 15 or talents[AR.Ravager] ) and 'yes' or 'no');
+
 	-- sweeping_strikes,if=spell_targets.whirlwind>1&(cooldown.bladestorm.remains>15|talent.ravager.enabled);
 	if cooldown[AR.SweepingStrikes].ready and (targets > 1 and (cooldown[AR.Bladestorm].remains > 15 or talents[AR.Ravager])) then
 		return AR.SweepingStrikes;

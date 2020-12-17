@@ -29,6 +29,7 @@ local AR = {
 	Whirlwind = 1680,
 	FervorOfBattle = 202316,
 	Slam = 1464,
+	BloodFury = 20572,
 };
 local A = {
 };
@@ -113,6 +114,10 @@ function Warrior:ArmsExecute()
 	-- colossus_smash;
 	if cooldown[AR.ColossusSmash].ready then
 		return AR.ColossusSmash;
+	end
+
+	if UnitRace("player") == 'Orc' and cooldown[AR.BloodFury].ready then
+		return AR.BloodFury;
 	end
 
 	-- condemn,if=debuff.colossus_smash.up|buff.sudden_death.react|rage>65;

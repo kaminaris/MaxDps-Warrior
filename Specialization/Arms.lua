@@ -30,6 +30,7 @@ local AR = {
 	Whirlwind = 1680,
 	FervorOfBattle = 202316,
 	Slam = 1464,
+	BloodFury = 20572,
 };
 
 function debugPrint(message)
@@ -96,6 +97,10 @@ function Warrior:ArmsSingleTarget()
 		-- If we don't have avatar, we still want to cast ravager because it is a huge rage generator for execute
 		if rage < 30 and talents[AR.Ravager] and cooldown[AR.Ravager].ready then
 			return AR.Ravager;
+		end
+
+		if UnitRace("player") == 'Orc' and cooldown[AR.BloodFury].ready then
+			return AR.BloodFury;
 		end
 	end
 
@@ -174,8 +179,6 @@ function Warrior:ArmsSingleTarget()
 	else
 		debugPrint("Skipping Bladestorm this frame")
 	end
-
-	
 
 	if rage >= 20 then
 		debugPrint("Slam")

@@ -51,7 +51,7 @@ function Warrior:Arms()
 	end
 
 	-- run_action_list,name=hac,if=raid_event.adds.exists;
-	if targets > 2 then
+	if targets > 1 then
 		return Warrior:ArmsHac();
 	end
 

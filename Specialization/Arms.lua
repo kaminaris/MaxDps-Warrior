@@ -6,6 +6,7 @@ local Warrior = addonTable.Warrior;
 local MaxDps = MaxDps;
 local UnitPower = UnitPower;
 local PowerTypeRage = Enum.PowerType.Rage;
+local debug = true;
 
 local AR = {
 	Charge = 100,
@@ -30,6 +31,12 @@ local AR = {
 	FervorOfBattle = 202316,
 	Slam = 1464,
 };
+
+function debugPrint(message)
+	if (debug) then
+		print(message)
+	end
+end
 
 function Warrior:Arms()
 	local fd = MaxDps.FrameData;
@@ -63,101 +70,128 @@ function Warrior:ArmsSingleTarget()
 	local gcd = fd.gcd;
 	local gcdRemains = fd.gcdRemains;
 	local rage = UnitPower('player', Enum.PowerType.Rage);
+	local targetCondemnable = targetHp > 80 or (talents[AR.Massacre] and targetHp <= 35 or targetHp <= 20); 
 
+	debugPrint("")
+	debugPrint("")
+	debugPrint("------------- single target frame ---------------")
 
-	print("")
-	print("")
-	print("------------- single target frame ---------------")
+	-- We want to increase rage for execution so cast skullsplitter here if you have it and are less than60 rage
+	if talents[AR.Skullsplitter] and targetCondemnable and cooldown[AR.Skullsplitter].ready and (rage < 60 and (not talents[AR.DeadlyCalm] or not buff[AR.DeadlyCalm].up)) then
+		return AR.Skullsplitter;
+	end
 
-	if talents[AR.Avatar] and cooldown[AR.Avatar].ready and talents[AR.Warbreaker] and (cooldown[AR.Warbreaker].remains < 8 and gcdRemains == 0) then
-		print("Avatar:")
-		print("talents[AR.Avatar]", talents[AR.Avatar])
-		print("cooldown[AR.Avatar].ready", cooldown[AR.Avatar].ready)
-		print("(cooldown[AR.Warbreaker].remains", cooldown[AR.Warbreaker].remains)
-		print("gcdRemains", gcdRemains)
+	-- We only want to queue these things up if the target can benefit from the huge rage generation.
+	if (targetCondemnable) then 
+		-- If ravager and avatar are ready when we are < 30 rage, we want to queue them up together.
+		if rage < 30 and talents[AR.Ravager] and cooldown[AR.Ravager].ready and talents[AR.Avatar] and cooldown[AR.Avatar].ready then
+			return AR.Avatar;
+		end
+
+		-- Once we cast avatar, we want to cast ravager
+		if talents[AR.Ravager] and talents[AR.Avatar] and buff[AR.Avatar].remains < 18 and buff[AR.Avatar].remains > 0 and cooldown[AR.Ravager].ready then
+			return AR.Ravager;
+		end
+
+		-- If we don't have avatar, we still want to cast ravager because it is a huge rage generator for execute
+		if rage < 30 and talents[AR.Ravager] and cooldown[AR.Ravager].ready then
+			return AR.Ravager;
+		end
+	end
+
+	local warbreakerUp = talents[AR.Warbreaker] and (cooldown[AR.Warbreaker].remains < 8 and gcdRemains == 0);
+	local colossusSmashUp = cooldown[AR.ColossusSmash].remains < 8 and gcdRemains == 0
+	if talents[AR.Avatar] and cooldown[AR.Avatar].ready and (warbreakerUp or colossusSmashUp) then
+		debugPrint("Avatar:")
+		debugPrint("talents[AR.Avatar]", talents[AR.Avatar])
+		debugPrint("cooldown[AR.Avatar].ready", cooldown[AR.Avatar].ready)
+		debugPrint("(cooldown[AR.Warbreaker].remains", cooldown[AR.Warbreaker].remains)
+		debugPrint("gcdRemains", gcdRemains)
 		return AR.Avatar;
 	else
-		print("Skipping Avatar this frame")
+		debugPrint("Skipping Avatar this frame")
 	end
 
 	if talents[AR.Warbreaker] and cooldown[AR.Warbreaker].ready then
-		print("Warbreaker:")
-		print("talents[AR.Warbreaker]",talents[AR.Warbreaker])
+		debugPrint("Warbreaker:")
+		debugPrint("talents[AR.Warbreaker]",talents[AR.Warbreaker])
 		return AR.Warbreaker;
 	else
-		print("Skipping Warbreaker this frame")
+		debugPrint("Skipping Warbreaker this frame")
 	end
 
-	if cooldown[AR.MortalStrike].ready and debuff[AR.DeepWounds].remains < 4 then
-		print("Mortal Strike for deep wounds:")
-		print("cooldown[AR.MortalStrike].ready", cooldown[AR.MortalStrike].ready)
-		print("debuff[AR.DeepWounds].remains", debuff[AR.DeepWounds].remains)
+	if rage >= 30 and cooldown[AR.MortalStrike].ready and debuff[AR.DeepWounds].remains < 4 then
+		debugPrint("Mortal Strike for deep wounds:")
+		debugPrint("cooldown[AR.MortalStrike].ready", cooldown[AR.MortalStrike].ready)
+		debugPrint("debuff[AR.DeepWounds].remains", debuff[AR.DeepWounds].remains)
 		return AR.MortalStrike;
 	else
-		print("Skipping MortalStrike (for deep wounds) refresh this frame")
+		debugPrint("Skipping MortalStrike (for deep wounds) refresh this frame")
 	end
 
 	if cooldown[AR.Overpower].ready then
-		print("Overpower:")
-		print("cooldown[AR.Overpower].ready", cooldown[AR.Overpower].ready)
+		debugPrint("Overpower:")
+		debugPrint("cooldown[AR.Overpower].ready", cooldown[AR.Overpower].ready)
 		return AR.Overpower;
 	else
-		print("Skipping Overpower this frame")
+		debugPrint("Skipping Overpower this frame")
 	end
 
 	if buff[AR.SuddenDeath].count > 0 then
-		print("Free Condemn:")
-		print("buff[AR.SuddenDeath].count", buff[AR.SuddenDeath].count)
+		debugPrint("Free Condemn:")
+		debugPrint("buff[AR.SuddenDeath].count", buff[AR.SuddenDeath].count)
 		return AR.Condemn;
 	else
-		print("Skipping Free Condemn this frame")
-		print("buff[AR.SuddenDeath].count", buff[AR.SuddenDeath].count)
+		debugPrint("Skipping Free Condemn this frame")
+		debugPrint("buff[AR.SuddenDeath].count", buff[AR.SuddenDeath].count)
 	end
 
 	if (targetHp < 35 and rage >= 20) or (targetHp > 80 and rage >= 20) then
-		print("Normal Condemn:")
-		print("targetHp", targetHp)
-		print("rage", rage)
+		debugPrint("Normal Condemn:")
+		debugPrint("targetHp", targetHp)
+		debugPrint("rage", rage)
 		return AR.Condemn;
 	else
-		print("Skipping Condemn this frame")
-		print("targetHp", targetHp)
-		print("rage", rage)
+		debugPrint("Skipping Condemn this frame")
+		debugPrint("targetHp", targetHp)
+		debugPrint("rage", rage)
 	end
 
 	if cooldown[AR.MortalStrike].ready and rage >= 30 then
-		print("Regular mortal strike")
-		print("cooldown[AR.MortalStrike].ready", cooldown[AR.MortalStrike].ready)
-		print("rage", rage)
+		debugPrint("Regular mortal strike")
+		debugPrint("cooldown[AR.MortalStrike].ready", cooldown[AR.MortalStrike].ready)
+		debugPrint("rage", rage)
 		return AR.MortalStrike;
 	else
-		print("Skipping MortalStrike (regular) this frame")
+		debugPrint("Skipping MortalStrike (regular) this frame")
 	end
 
 	if cooldown[AR.Bladestorm].ready and debuff[AR.ColossusSmash].remains >= 5 then
-		print("Bladestorm:")
-		print("cooldown[AR.Bladestorm].ready", cooldown[AR.Bladestorm].ready)
-		print("debuff[AR.ColossusSmash].remains", debuff[AR.ColossusSmash].remains)
+		debugPrint("Bladestorm:")
+		debugPrint("cooldown[AR.Bladestorm].ready", cooldown[AR.Bladestorm].ready)
+		debugPrint("debuff[AR.ColossusSmash].remains", debuff[AR.ColossusSmash].remains)
 		return AR.Bladestorm;
 	else
-		print("Skipping Bladestorm this frame")
+		debugPrint("Skipping Bladestorm this frame")
 	end
 
+	
+
 	if rage >= 20 then
-		print("Slam")
-		print("rage", rage)
+		debugPrint("Slam")
+		debugPrint("rage", rage)
 		return AR.Slam;
 	else 
-		print("Skipping slam this frame -- DOING NOTHING THIS FRAME!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		debugPrint("Skipping slam this frame -- DOING NOTHING THIS FRAME!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	end
 end
 
 function ArmsFourOrMoreTargets()
-	print("Running arms 4+ target rotation!")
+	debugPrint("Running arms 4+ target rotation!")
 end
 
 function ArmsTwoOrMoreTargets()
-	print("Running arms 2-3 target rotation!")
+	debugPrint("Running arms 2-3 target rotation!")
 end
 
 -- function Warrior:ArmsExecute()
@@ -181,10 +215,10 @@ end
 -- 		return AR.Rend;
 -- 	end
 
--- 	-- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down);
--- 	if talents[AR.Skullsplitter] and cooldown[AR.Skullsplitter].ready and (rage < 60 and ( not talents[AR.DeadlyCalm] or not buff[AR.DeadlyCalm].up )) then
--- 		return AR.Skullsplitter;
--- 	end
+	-- -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down);
+	-- if talents[AR.Skullsplitter] and cooldown[AR.Skullsplitter].ready and (rage < 60 and ( not talents[AR.DeadlyCalm] or not buff[AR.DeadlyCalm].up )) then
+	-- 	return AR.Skullsplitter;
+	-- end
 
 -- 	-- avatar,if=cooldown.colossus_smash.remains<8&gcd.remains=0;
 -- 	if talents[AR.Avatar] and cooldown[AR.Avatar].ready and (cooldown[AR.ColossusSmash].remains < 8 and gcdRemains == 0) then

@@ -234,9 +234,11 @@ function Warrior:SingleTarget()
 end
 
 function Warrior:TwoOrThreeTargets()
+	-- TODO
 end
 
 function Warrior:FourOrMoreTargets()
+	-- TODO
 end
 
 function Warrior:Arms()
@@ -246,12 +248,11 @@ function Warrior:Arms()
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local covenantId = fd.covenant.covenantId;
 	local rage = UnitPower('player', PowerTypeRage);
-	local canExecute = talents[AR.SuddenDeath] and fd.buff[AR.SuddenDeathAura].up --false
-					   --rage > 20 and                                                  -- player has enough rage to execute, and any of the below conditions are met...
-					   --(targetHp < 20 or                                              -- target is <20% hp
-	                   --(talents[AR.Massacre] and targetHp < 35) or                    -- massacre is talented, and the target is <35% hp
-		               --(targetHp > 80 and covenantId == Venthyr) or                   -- player is venthyr, and target is >80% hp
-		               --(talents[AR.SuddenDeath] and fd.buff[AR.SuddenDeathAura].up));    -- sudden death is talented, and the sudden death aura is active on the player
+	local canExecute = rage > 20 and                                                   -- player has enough rage to execute, and any of the below conditions are met...
+					   ((targetHp < 20) or                                             -- target is <20% hp
+	                    (talents[AR.Massacre] and targetHp < 35) or                    -- massacre is talented, and the target is <35% hp
+		                (targetHp > 80 and covenantId == Venthyr) or                   -- player is venthyr, and target is >80% hp
+		                (talents[AR.SuddenDeath] and fd.buff[AR.SuddenDeathAura].up)); -- sudden death is talented, and the sudden death aura is active on the player
 
 
 	fd.rage = rage;

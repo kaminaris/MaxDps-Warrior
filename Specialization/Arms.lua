@@ -148,7 +148,7 @@ function Warrior:SingleTarget()
 
 	-- Priority #1a (optional depends on if talented): Rend refresh
 	if talents[AR.Rend] then
-		if spellChosen == false and rendNeedsRefresh then
+		if spellChosen == false and rendNeedsRefresh and fd.executePhase == false then
 			-- debugPrint("talents[AR.Rend]", talents[AR.Rend])
 			-- debugPrint("rendNeedsRefresh", rendNeedsRefresh)
 			debugPrint("* CHOOSING PRIORITY #1a (REND REFRESH)")
@@ -225,7 +225,7 @@ function Warrior:SingleTarget()
 	end
 
 	-- Priority #4a: Casting Spear of Bastion if you're a kyrian
-	if covenantId == Kyrian then
+	if covenantId == Kyrian and fd.executePhase == false then
 		if cooldown[AR.SpearOfBastion].ready then
 			debugPrint("* CHOOSING PRIORITY #4a (SPEAR OF BASTION)")
 			chosenSpell = AR.SpearOfBastion
@@ -236,7 +236,7 @@ function Warrior:SingleTarget()
 	end
 
 	-- Priority #4b: Casting Ancient Aftershock if you're a night fae
-	if covenantId == NightFae then
+	if covenantId == NightFae and fd.executePhase == false then
 		if cooldown[AR.AncientAftershock].ready then
 			debugPrint("* CHOOSING PRIORITY #4b (ANCIENT AFTERSHOCK)")
 			chosenSpell = AR.AncientAftershock
@@ -247,7 +247,7 @@ function Warrior:SingleTarget()
 	end
 
 	-- Priority #5: Mortal Strike Generic
-	if spellChosen == false and cooldown[AR.MortalStrike].ready and fd.rage > 30 then
+	if spellChosen == false and cooldown[AR.MortalStrike].ready and fd.rage > 30 and fd.executePhase == false then
 		-- debugPrint("Mortal strike ready?", cooldown[AR.MortalStrike].ready)
 		debugPrint("* CHOOSING PRIORITY #5 (MORTAL STRIKE GENERIC)")
 		spellChosen = true
@@ -270,7 +270,7 @@ function Warrior:SingleTarget()
 
 	-- Priority #7: Slam Or Whirlwind (depending on fervor talent)
 	if talents[AR.FervorOfBattle] then
-		if spellChosen == false and fd.rage > 30 then
+		if spellChosen == false and fd.rage > 30 fd.executePhase == false then
 			debugPrint("* CHOOSING PRIORITY #7 (WHIRLWIND)")
 			spellChosen = true
 			chosenSpell = AR.Whirlwind
@@ -278,7 +278,7 @@ function Warrior:SingleTarget()
 			debugPrint("SKIPPING PRIORITY #7 (WHIRLWIND)")
 		end
 	else
-		if spellChosen == false and fd.rage > 20 then
+		if spellChosen == false and fd.rage > 20 and fd.executePhase == false then
 			debugPrint("* CHOOSING PRIORITY #7 (SLAM)")
 			spellChosen = true
 			chosenSpell = AR.Slam
@@ -309,18 +309,19 @@ function Warrior:Arms()
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local covenantId = fd.covenant.covenantId;
 	local rage = UnitPower('player', PowerTypeRage);
-	local canExecute = rage > 20 and                                                   -- player has enough rage to execute, and any of the below conditions are met...
-					   ((targetHp < 20) or                                             -- target is <20% hp
-	                    (talents[AR.Massacre] and targetHp < 35) or                    -- massacre is talented, and the target is <35% hp
-		                (targetHp > 80 and covenantId == Venthyr) or                   -- player is venthyr, and target is >80% hp
+	local executePhase = ((targetHp < 20) or                                           -- target is <20% hp
+						  (talents[AR.Massacre] and targetHp < 35) or                  -- massacre is talented, and the target is <35% hp
+						  (targetHp > 80 and covenantId == Venthyr))                   -- player is venthyr, and target is >80% hp
+	local canExecute = rage > 20 and                                                   -- player has enough rage to execute
+					   (executePhase or                                                -- its execute phase
 		                (talents[AR.SuddenDeath] and fd.buff[AR.SuddenDeathAura].up)); -- sudden death is talented, and the sudden death aura is active on the player
-
 
 	fd.rage = rage;
 	fd.targetHp = targetHp;
 	fd.targets = targets;
 	fd.covenantId = covenantId;
 	fd.canExecute = canExecute;
+	fd.executePhase = executePhase
 
 	if targets >= 4 then
 		return Warrior:FourOrMoreTargets();

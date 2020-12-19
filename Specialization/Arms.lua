@@ -121,6 +121,16 @@ function Warrior:SingleTarget()
 		debugPrint("SKIPPING PRIORITY #0 (AVATAR)")
 	end
 
+	-- Priority 0a: Casting Ravager (if talented)
+	if talents[AR.Ravager] == 1 and
+		cooldown[AR.Ravager].ready then
+			chosenSpell = AR.Ravager
+			spellChosen = true
+		debugPrint("* CHOOSING PRIORITY #0a (RAVAGAR)")
+	else
+		debugPrint("SKIPPING PRIORITY #0a (RAVAGAR)")
+	end
+
 	-- Priority #1: Casting colossus smash or warbreaker (if talented)
 	if colossusSmashReadyNow then
 		-- debugPrint("Colossus smash and/or warbreaker ready now?", colossusSmashReadyNow)

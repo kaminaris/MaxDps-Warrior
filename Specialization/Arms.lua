@@ -196,12 +196,12 @@ function Warrior:ArmsExecute()
 
 	-- condemn;
 	if covenantId == Venthyr then
-		if cooldown[AR.Condemn].ready and canExecute then
+		if cooldown[AR.Condemn].ready and canExecute and rage >= 20 then
 			return AR.Condemn;
 		end
 	else
 		-- execute;
-		if cooldown[AR.Execute].ready and canExecute then
+		if cooldown[AR.Execute].ready and canExecute and rage >= 20 then
 			return AR.Execute;
 		end
 	end

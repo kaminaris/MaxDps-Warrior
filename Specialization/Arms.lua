@@ -270,7 +270,7 @@ function Warrior:SingleTarget()
 
 	-- Priority #7: Slam Or Whirlwind (depending on fervor talent)
 	if talents[AR.FervorOfBattle] then
-		if spellChosen == false and fd.rage > 30 fd.executePhase == false then
+		if spellChosen == false and fd.rage > 30 and fd.executePhase == false then
 			debugPrint("* CHOOSING PRIORITY #7 (WHIRLWIND)")
 			spellChosen = true
 			chosenSpell = AR.Whirlwind

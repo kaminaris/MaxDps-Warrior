@@ -13,7 +13,7 @@ local Necrolord = Enum.CovenantType.Necrolord;
 local Venthyr = Enum.CovenantType.Venthyr;
 local NightFae = Enum.CovenantType.NightFae;
 local Kyrian = Enum.CovenantType.Kyrian;
-local debug = true
+local debug = false
 
 function debugPrint(message, data)
 	if (debug) then
@@ -112,10 +112,6 @@ function Warrior:SingleTarget()
 			cooldown[AR.Avatar].ready and
 			colossusSmashReadyInTheNextEightSeconds
 		);
-
-		-- debugPrint("Avatar talented?", talents[AR.Avatar] == 1)
-		-- debugPrint("Avatar ready?", cooldown[AR.Avatar].ready)
-		-- debugPrint("Colossus smash has <8 seconds left on its cooldown?", colossusSmashReadyInTheNextEightSeconds)
 		debugPrint("* CHOOSING PRIORITY #0 (AVATAR)")
 	else
 		debugPrint("SKIPPING PRIORITY #0 (AVATAR)")
@@ -134,7 +130,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #1: Casting colossus smash or warbreaker (if talented)
 	if colossusSmashReadyNow and spellChosen == false then
-		-- debugPrint("Colossus smash and/or warbreaker ready now?", colossusSmashReadyNow)
 		debugPrint("* CHOOSING PRIORITY #1 (WARBREAKER/COLOSSUS SMASH)")
 		spellChosen = true
 		if talents[AR.Warbreaker] then
@@ -149,8 +144,6 @@ function Warrior:SingleTarget()
 	-- Priority #1a (optional depends on if talented): Rend refresh
 	if talents[AR.Rend] then
 		if spellChosen == false and rendNeedsRefresh and fd.executePhase == false then
-			-- debugPrint("talents[AR.Rend]", talents[AR.Rend])
-			-- debugPrint("rendNeedsRefresh", rendNeedsRefresh)
 			debugPrint("* CHOOSING PRIORITY #1a (REND REFRESH)")
 			spellChosen = true
 			chosenSpell = AR.Rend
@@ -162,10 +155,6 @@ function Warrior:SingleTarget()
 	-- Priority #1b (optional depends on if talented): cast Skullsplitter when <60 rage, and bladestorm isn't gonna be used soon
 	if talents[AR.Skullsplitter] then
 		if spellChosen == false and cooldown[AR.Skullsplitter].ready and fd.rage < 60 and cooldown[AR.Bladestorm].ready == false then
-			-- debugPrint("talents[AR.Warbreaker]", talents[AR.Warbreaker])
-			-- debugPrint("cooldown[AR.Skullsplitter].ready", cooldown[AR.Skullsplitter].ready)
-			-- debugPrint("rage < 60", fd.rage < 60)
-			-- debugPrint("cooldown[AR.Bladestorm].ready == false", cooldown[AR.Bladestorm].ready == false)
 			debugPrint("* CHOOSING PRIORITY #1b (skullsplitter if talented, and low rage and not using bladestorm soon)")
 			spellChosen = true
 			chosenSpell = AR.Skullsplitter
@@ -176,8 +165,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #2: Mortal Strike for Deep Wounds Refresh
 	if spellChosen == false and deepWoundsNeedsRefresh and cooldown[AR.MortalStrike].ready then
-		-- debugPrint("Deep wounds needs refresh?", deepWoundsNeedsRefresh)
-		-- debugPrint("Mortal strike ready?", cooldown[AR.MortalStrike].ready)
 		debugPrint("* CHOOSING PRIORITY #2 (MORTAL STRIKE FOR DEEP WOUNDS REFRESH)")
 		spellChosen = true
 		chosenSpell = AR.MortalStrike
@@ -188,7 +175,6 @@ function Warrior:SingleTarget()
 	-- Priority #2a: Deadly Calm if it's up
 	if talents[AR.DeadlyCalm] then
 		if spellChosen == false and cooldown[AR.DeadlyCalm].ready then
-			-- debugPrint("Deadly Calm ready?", cooldown[AR.DeadlyCalm].ready)
 			debugPrint("* CHOOSING PRIORITY #2a (DEADLY CALM)")
 			spellChosen = true
 			chosenSpell = AR.DeadlyCalm
@@ -199,7 +185,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #3: Overpower
 	if spellChosen == false and cooldown[AR.Overpower].ready then
-		-- debugPrint("Overpower ready?", cooldown[AR.Overpower].ready)
 		debugPrint("* CHOOSING PRIORITY #3 (OVERPOWER)")
 		spellChosen = true
 		chosenSpell = AR.Overpower
@@ -209,10 +194,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #4: Execute/Condemn
 	if spellChosen == false and fd.canExecute then
-		-- debugPrint("Can execute/condemn?", fd.canExecute)
-		-- debugPrint("Venthyr", Venthyr)
-		-- debugPrint("covenentId", fd.covenantId)
-		-- debugPrint("Is player venthyr?", fd.covenantId == Venthyr)
 		debugPrint("* CHOOSING PRIORITY #4 (CONDEMN/EXECUTE)")
 		spellChosen = true
 		if fd.covenantId == Venthyr then
@@ -248,7 +229,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #5: Mortal Strike Generic
 	if spellChosen == false and cooldown[AR.MortalStrike].ready and fd.rage > 30 and fd.executePhase == false then
-		-- debugPrint("Mortal strike ready?", cooldown[AR.MortalStrike].ready)
 		debugPrint("* CHOOSING PRIORITY #5 (MORTAL STRIKE GENERIC)")
 		spellChosen = true
 		chosenSpell = AR.MortalStrike
@@ -258,8 +238,6 @@ function Warrior:SingleTarget()
 
 	-- Priority #6: Bladestorm during colossus smash
 	if spellChosen == false and debuff[AR.ColossusSmashAura].remains > 5 and cooldown[AR.Bladestorm].ready then
-		-- debugPrint("debuff[AR.ColossusSmashAura].remains", debuff[AR.ColossusSmashAura].remains)
-		-- debugPrint("cooldown[AR.Bladestorm].ready", cooldown[AR.Bladestorm].ready)
 		debugPrint("* CHOOSING PRIORITY #6 (BLADESTORM DURING COLOSSUS SMASH)")
 		spellChosen = true
 		chosenSpell = AR.Bladestorm

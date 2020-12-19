@@ -15,28 +15,29 @@ local NightFae = Enum.CovenantType.NightFae;
 local Kyrian = Enum.CovenantType.Kyrian;
 
 local AR = {
-	Charge          = 100,
-	SweepingStrikes = 260708,
-	Bladestorm      = 227847,
-	Ravager         = 152277,
-	Massacre        = 281001,
-	DeadlyCalm      = 262228,
-	Rend            = 772,
-	Skullsplitter   = 260643,
-	Avatar          = 107574,
-	ColossusSmash   = 167105,
-	Cleave          = 845,
-	DeepWoundsAura  = 262115,
-	Warbreaker      = 262161,
-	Condemn         = 330334,
-	SuddenDeath     = 29725,
-	Overpower       = 7384,
-	MortalStrike    = 12294,
-	Dreadnaught     = 262150,
-	Whirlwind       = 1680,
-	FervorOfBattle  = 202316,
-	Slam            = 1464,
-	BloodFury       = 20572,
+	Charge            = 100,
+	SweepingStrikes   = 260708,
+	Bladestorm        = 227847,
+	Ravager           = 152277,
+	Massacre          = 281001,
+	DeadlyCalm        = 262228,
+	Rend              = 772,
+	Skullsplitter     = 260643,
+	Avatar            = 107574,
+	ColossusSmash     = 167105,
+	ColossusSmashAura = 208086,
+	Cleave            = 845,
+	DeepWoundsAura    = 262115,
+	Warbreaker        = 262161,
+	Condemn           = 330334,
+	SuddenDeath       = 29725,
+	Overpower         = 7384,
+	MortalStrike      = 12294,
+	Dreadnaught       = 262150,
+	Whirlwind         = 1680,
+	FervorOfBattle    = 202316,
+	Slam              = 1464,
+	BloodFury         = 20572,
 };
 
 setmetatable(AR, Warrior.spellMeta);
@@ -160,7 +161,7 @@ function Warrior:ArmsExecute()
 		rage >= 20 and
 		canExecute and
 		cooldown[AR.Condemn].ready and
-		(debuff[AR.ColossusSmash].up or buff[AR.SuddenDeath].up or rage > 65)
+		(debuff[AR.ColossusSmashAura].up or buff[AR.SuddenDeath].up or rage > 65)
 	then
 		return AR.Condemn;
 	end
@@ -375,7 +376,7 @@ function Warrior:ArmsSingleTarget()
 	if not talents[AR.Ravager] and
 		cooldown[AR.Bladestorm].ready and
 		not buff[AR.DeadlyCalm].up and
-		(debuff[AR.ColossusSmash].up and rage < 30 or rage < 70)
+		(debuff[AR.ColossusSmashAura].up and rage < 30 or rage < 70)
 	then
 		return AR.Bladestorm;
 	end

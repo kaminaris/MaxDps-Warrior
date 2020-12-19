@@ -413,7 +413,7 @@ end
 function Warrior:Arms()
 	local fd = MaxDps.FrameData;
 	local talents = fd.talents;
-	local targets = 1 --MaxDps:SmartAoe();
+	local targets = MaxDps:SmartAoe();
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local covenantId = fd.covenant.covenantId;
 	local rage = UnitPower('player', PowerTypeRage);

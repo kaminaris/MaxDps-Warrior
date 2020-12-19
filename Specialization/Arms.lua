@@ -26,30 +26,33 @@ function debugPrint(message, data)
 end
 
 local AR = {
-	Charge            = 100,
-	SweepingStrikes   = 260708,
-	Bladestorm        = 227847,
-	Ravager           = 152277,
-	Massacre          = 281001,
-	DeadlyCalm        = 262228,
-	Rend              = 772,
-	Skullsplitter     = 260643,
+	AncientAftershock = 325886,
 	Avatar            = 107574,
+	BloodFury         = 20572,
+	Bladestorm        = 227847,
+	Charge            = 100,
+	Cleave            = 845,
 	ColossusSmash     = 167105,
 	ColossusSmashAura = 208086,
-	Cleave            = 845,
-	DeepWoundsAura    = 262115,
-	Warbreaker        = 262161,
+	ConquerorsBanner  = 324143,
 	Condemn           = 330334,
+	DeadlyCalm        = 262228,
+	DeepWoundsAura    = 262115,
+	Dreadnaught       = 262150,
+	FervorOfBattle    = 202316,
+	Massacre          = 281001,
+	MortalStrike      = 12294,
+	Overpower         = 7384,
+	Ravager           = 152277,
+	Rend              = 772,
+	Skullsplitter     = 260643,
+	Slam              = 1464,
+	SpearOfBastion    = 307865,
 	SuddenDeath       = 29725,
 	SuddenDeathAura   = 52437,
-	Overpower         = 7384,
-	MortalStrike      = 12294,
-	Dreadnaught       = 262150,
+	SweepingStrikes   = 260708,
+	Warbreaker        = 262161,
 	Whirlwind         = 1680,
-	FervorOfBattle    = 202316,
-	Slam              = 1464,
-	BloodFury         = 20572,
 };
 
 setmetatable(AR, Warrior.spellMeta);
@@ -86,6 +89,19 @@ function Warrior:SingleTarget()
 
 	debugPrint(" ")
 	debugPrint("--- Running single target arms rotation ---");
+
+	-- Priority #-1: Casting Conqueror's Banner if you're a necrolord
+	if covenantId == Necrolord then
+		if cooldown[AR.ConquerorsBanner].ready then
+			debugPrint("* CHOOSING PRIORITY #-1 (CONQUERORS BANNER)")
+			MaxDps:GlowCooldown(
+				AR.ConquerorsBanner,
+				cooldown[AR.ConquerorsBanner].ready
+			);
+		else
+			debugPrint("SKIPPING PRIORITY #-1 (CONQUERORS BANNER)")
+		end
+	end
 
 	-- Priority #0: Casting avatar (if talented) in conjunction with colossus smash debuff
 	if talents[AR.Avatar] == 1 and
@@ -158,6 +174,18 @@ function Warrior:SingleTarget()
 		debugPrint("SKIPPING PRIORITY #2 (MORTAL STRIKE FOR DEEP WOUNDS REFRESH)")
 	end
 
+	-- Priority #2a: Deadly Calm if it's up
+	if talents[AR.DeadlyCalm] then
+		if spellChosen == false and cooldown[AR.DeadlyCalm].ready then
+			-- debugPrint("Deadly Calm ready?", cooldown[AR.DeadlyCalm].ready)
+			debugPrint("* CHOOSING PRIORITY #2a (DEADLY CALM)")
+			spellChosen = true
+			chosenSpell = AR.DeadlyCalm
+		else
+			debugPrint("SKIPPING PRIORITY #2a (DEADLY CALM)")
+		end
+	end
+
 	-- Priority #3: Overpower
 	if spellChosen == false and cooldown[AR.Overpower].ready then
 		-- debugPrint("Overpower ready?", cooldown[AR.Overpower].ready)
@@ -183,6 +211,28 @@ function Warrior:SingleTarget()
 		end
 	else
 		debugPrint("SKIPPING PRIORITY #4 (CONDEMN/EXECUTE)")
+	end
+
+	-- Priority #4a: Casting Spear of Bastion if you're a kyrian
+	if covenantId == Kyrian then
+		if cooldown[AR.SpearOfBastion].ready then
+			debugPrint("* CHOOSING PRIORITY #4a (SPEAR OF BASTION)")
+			chosenSpell = AR.SpearOfBastion
+			spellChosen = true
+		else
+			debugPrint("SKIPPING PRIORITY #4a (SPEAR OF BASTION)")
+		end
+	end
+
+	-- Priority #4b: Casting Ancient Aftershock if you're a night fae
+	if covenantId == NightFae then
+		if cooldown[AR.AncientAftershock].ready then
+			debugPrint("* CHOOSING PRIORITY #4b (ANCIENT AFTERSHOCK)")
+			chosenSpell = AR.AncientAftershock
+			spellChosen = true
+		else
+			debugPrint("SKIPPING PRIORITY #4b (ANCIENT AFTERSHOCK)")
+		end
 	end
 
 	-- Priority #5: Mortal Strike Generic

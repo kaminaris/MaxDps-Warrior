@@ -56,7 +56,7 @@ function Warrior:Arms()
 	fd.rage = rage;
 	fd.targetHp = targetHp;
 	fd.targets = targets;
-	fd.canCondemn = canExecute;
+	fd.canExecute = canExecute;
 
 	if talents[AR.Avatar] then
 		-- avatar,if=cooldown.colossus_smash.remains<8&gcd.remains=0;

@@ -132,8 +132,8 @@ function Warrior:FurySingleTarget()
 		end
 	else
 		-- execute;
-		if buff[FR.SuddenDeathAura].up or cooldown[FR.Execute].ready and canExecute and rage >= 20 then
-			return FR.Execute;
+		if buff[FR.SuddenDeathAura].up or cooldown[Execute].ready and canExecute and rage >= 20 then
+			return Execute;
 		end
 	end
 

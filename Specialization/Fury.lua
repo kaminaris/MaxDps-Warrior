@@ -14,29 +14,32 @@ local NightFae = Enum.CovenantType.NightFae;
 local Kyrian = Enum.CovenantType.Kyrian;
 
 local FR = {
-	Charge          = 100,
-	HeroicLeap      = 6544,
-	Rampage         = 184367,
-	Recklessness    = 1719,
-	RecklessAbandon = 202751,
-	AngerManagement = 152278,
-	Massacre        = 206315,
-	MeatCleaver     = 280392,
-	Whirlwind       = 190411,
-	RagingBlow      = 85288,
-	Siegebreaker    = 280772,
-	Enrage          = 184361,
-	Frenzy          = 335077,
-	Condemn         = 330334,
-	Execute         = 5308,
-	ExecuteMassacre = 280735,
-	Bladestorm      = 46924,
-	Bloodthirst     = 23881,
-	ViciousContempt = 337302,
-	Cruelty         = 335070,
-	DragonRoar      = 118000,
-	Onslaught       = 315720,
-	SuddenDeathAura = 280776,
+	AncientAftershock = 325886,
+	ConquerorsBanner  = 324143,
+	SpearOfBastion    = 307865,
+	Charge            = 100,
+	HeroicLeap        = 6544,
+	Rampage           = 184367,
+	Recklessness      = 1719,
+	RecklessAbandon   = 202751,
+	AngerManagement   = 152278,
+	Massacre          = 206315,
+	MeatCleaver       = 280392,
+	Whirlwind         = 190411,
+	RagingBlow        = 85288,
+	Siegebreaker      = 280772,
+	Enrage            = 184361,
+	Frenzy            = 335077,
+	Condemn           = 330325,
+	Execute           = 5308,
+	ExecuteMassacre   = 280735,
+	Bladestorm        = 46924,
+	Bloodthirst       = 23881,
+	ViciousContempt   = 337302,
+	Cruelty           = 335070,
+	DragonRoar        = 118000,
+	Onslaught         = 315720,
+	SuddenDeathAura   = 280776,
 
 	-- leggo
 	WillOfTheBerserkerBonusId = 6966,
@@ -50,6 +53,7 @@ function Warrior:Fury()
 	local cooldown = fd.cooldown;
 	local buff = fd.buff;
 	local talents = fd.talents;
+	local covenantId = fd.covenant.covenantId;
 	local targets = MaxDps:SmartAoe();
 	local rage = UnitPower('player', PowerTypeRage);
 
@@ -61,6 +65,14 @@ function Warrior:Fury()
 
 	if talents[FR.Bladestorm] then
 		MaxDps:GlowCooldown(FR.Bladestorm, cooldown[FR.Bladestorm].ready);
+	end
+
+	if covenantId == NightFae then
+		MaxDps:GlowCooldown(FR.AncientAftershock, cooldown[FR.AncientAftershock].ready);
+	elseif covenantId == Necrolord then
+		MaxDps:GlowCooldown(FR.ConquerorsBanner, cooldown[FR.ConquerorsBanner].ready);
+	elseif covenantId == Kyrian then
+		MaxDps:GlowCooldown(FR.SpearOfBastion, cooldown[FR.SpearOfBastion].ready);
 	end
 
 	-- rampage,if=cooldown.recklessness.remains<3&talent.reckless_abandon.enabled;
@@ -96,10 +108,16 @@ function Warrior:FurySingleTarget()
 	local conduit = fd.covenant.soulbindConduits;
 
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
-	local canExecute = (talents[FR.Massacre] and targetHp < 35) or
-		targetHp < 20 or
-		(targetHp > 80 and covenantId == Venthyr);
-	local Execute = talents[FR.Massacre] and FR.ExecuteMassacre or FR.Execute;
+	local canExecute = rage >= 20 and (
+			(talents[FR.Massacre] and targetHp < 35) or
+			targetHp < 20 or
+			(targetHp > 80 and covenantId == Venthyr)
+		) or
+			buff[FR.SuddenDeathAura].up
+	;
+
+	local Execute = covenantId == Venthyr and FR.Condemn or
+		(talents[FR.Massacre] and FR.ExecuteMassacre or FR.Execute);
 
 	-- raging_blow,if=runeforge.will_of_the_berserker.equipped&buff.will_of_the_berserker.remains<gcd;
 	if cooldown[FR.RagingBlow].ready and
@@ -125,16 +143,10 @@ function Warrior:FurySingleTarget()
 		return FR.Rampage;
 	end
 
-	if covenantId == Venthyr then
-		-- condemn;
-		if buff[FR.SuddenDeathAura].up or cooldown[FR.Condemn].ready and canExecute and rage >= 20 then
-			return FR.Condemn;
-		end
-	else
-		-- execute;
-		if buff[FR.SuddenDeathAura].up or cooldown[Execute].ready and canExecute and rage >= 20 then
-			return Execute;
-		end
+	-- condemn;
+	-- execute;
+	if canExecute then
+		return Execute;
 	end
 
 	-- bladestorm,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>45);

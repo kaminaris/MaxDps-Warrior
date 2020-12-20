@@ -15,6 +15,9 @@ local NightFae = Enum.CovenantType.NightFae;
 local Kyrian = Enum.CovenantType.Kyrian;
 
 local AR = {
+	AncientAftershock = 325886,
+	ConquerorsBanner  = 324143,
+	SpearOfBastion    = 307865,
 	Charge            = 100,
 	SweepingStrikes   = 260708,
 	Bladestorm        = 227847,
@@ -31,6 +34,7 @@ local AR = {
 	Warbreaker        = 262161,
 	Condemn           = 330334,
 	SuddenDeath       = 29725,
+	SuddenDeathAura   = 52437,
 	Overpower         = 7384,
 	MortalStrike      = 12294,
 	Dreadnaught       = 262150,
@@ -38,6 +42,8 @@ local AR = {
 	FervorOfBattle    = 202316,
 	Slam              = 1464,
 	BloodFury         = 20572,
+	Execute           = 163201,
+	ExecuteMassacre   = 281000
 };
 
 setmetatable(AR, Warrior.spellMeta);
@@ -46,13 +52,20 @@ function Warrior:Arms()
 	local fd = MaxDps.FrameData;
 	local cooldown = fd.cooldown;
 	local talents = fd.talents;
+	local buff = fd.buff;
 	local targets = MaxDps:SmartAoe();
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local covenantId = fd.covenant.covenantId;
 	local rage = UnitPower('player', PowerTypeRage);
-	local canExecute = (talents[AR.Massacre] and targetHp < 35) or
+	local inExecutePhase = (talents[AR.Massacre] and targetHp < 35) or
 		targetHp < 20 or
 		(targetHp > 80 and covenantId == Venthyr);
+
+	fd.Execute = covenantId == Venthyr and AR.Condemn or
+		(talents[AR.Massacre] and AR.ExecuteMassacre or AR.Execute);
+
+	local canExecute = cooldown[fd.Execute].ready and rage >= 20 and inExecutePhase or
+		buff[AR.SuddenDeathAura].up;
 
 	fd.rage = rage;
 	fd.targetHp = targetHp;
@@ -65,6 +78,14 @@ function Warrior:Arms()
 			AR.Avatar,
 			cooldown[AR.Avatar].ready and cooldown[AR.ColossusSmash].remains < 8
 		);
+	end
+
+	if covenantId == NightFae then
+		MaxDps:GlowCooldown(AR.AncientAftershock, cooldown[AR.AncientAftershock].ready);
+	elseif covenantId == Necrolord then
+		MaxDps:GlowCooldown(AR.ConquerorsBanner, cooldown[AR.ConquerorsBanner].ready);
+	elseif covenantId == Kyrian then
+		MaxDps:GlowCooldown(AR.SpearOfBastion, cooldown[AR.SpearOfBastion].ready);
 	end
 
 	-- sweeping_strikes,if=spell_targets.whirlwind>1&(cooldown.bladestorm.remains>15|talent.ravager.enabled);
@@ -81,7 +102,7 @@ function Warrior:Arms()
 	end
 
 	-- run_action_list,name=execute,if=(talent.massacre.enabled&target.health.pct<35)|target.health.pct<20|(target.health.pct>80&covenant.venthyr);
-	if canExecute then
+	if inExecutePhase then
 		return Warrior:ArmsExecute();
 	end
 
@@ -99,6 +120,7 @@ function Warrior:ArmsExecute()
 	local canExecute = fd.canExecute;
 	local rage = fd.rage;
 	local covenantId = fd.covenant.covenantId;
+	local Execute = fd.Execute;
 
 	-- deadly_calm;
 	if talents[AR.DeadlyCalm] and cooldown[AR.DeadlyCalm].ready then
@@ -157,13 +179,8 @@ function Warrior:ArmsExecute()
 	end
 
 	-- condemn,if=debuff.colossus_smash.up|buff.sudden_death.react|rage>65;
-	if covenantId == Venthyr and
-		rage >= 20 and
-		canExecute and
-		cooldown[AR.Condemn].ready and
-		(debuff[AR.ColossusSmashAura].up or buff[AR.SuddenDeath].up or rage > 65)
-	then
-		return AR.Condemn;
+	if canExecute and (debuff[AR.ColossusSmashAura].up or rage > 65) then
+		return Execute;
 	end
 
 	-- overpower,if=charges=2;
@@ -195,15 +212,8 @@ function Warrior:ArmsExecute()
 	end
 
 	-- condemn;
-	if covenantId == Venthyr then
-		if cooldown[AR.Condemn].ready and canExecute and rage >= 20 then
-			return AR.Condemn;
-		end
-	else
-		-- execute;
-		if cooldown[AR.Execute].ready and canExecute and rage >= 20 then
-			return AR.Execute;
-		end
+	if canExecute then
+		return Execute;
 	end
 end
 
@@ -216,6 +226,7 @@ function Warrior:ArmsHac()
 	local rage = fd.rage;
 	local covenantId = fd.covenant.covenantId;
 	local canExecute = fd.canExecute;
+	local Execute = fd.Execute;
 
 	-- skullsplitter,if=rage<60&buff.deadly_calm.down;
 	if talents[AR.Skullsplitter] and
@@ -294,13 +305,13 @@ function Warrior:ArmsHac()
 
 	if covenantId == Venthyr then
 		-- condemn;
-		if rage >= 20 and canExecute then
+		if canExecute then
 			return AR.Condemn;
 		end
 	else
 		-- execute,if=buff.sweeping_strikes.up;
-		if rage >= 20 and buff[AR.SweepingStrikes].up and cooldown[AR.Execute].ready then
-			return AR.Execute;
+		if canExecute then -- and buff[AR.SweepingStrikes].up
+			return Execute;
 		end
 	end
 
@@ -324,6 +335,7 @@ function Warrior:ArmsSingleTarget()
 	local targets = fd.targets;
 	local gcd = fd.gcd;
 	local canExecute = fd.canExecute;
+	local Execute = fd.Execute;
 	local covenantId = fd.covenant.covenantId;
 	local rage = fd.rage;
 
@@ -412,14 +424,10 @@ function Warrior:ArmsSingleTarget()
 	end
 
 
-	if rage >= 20 and buff[AR.SuddenDeath].up and canExecute then
-		if covenantId == Venthyr then
-			-- condemn,if=buff.sudden_death.react;
-			return AR.Condemn;
-		else
-			-- execute,if=buff.sudden_death.react;
-			return AR.Execute;
-		end
+	if buff[AR.SuddenDeathAura].up then
+		-- condemn,if=buff.sudden_death.react;
+		-- execute,if=buff.sudden_death.react;
+		return Execute;
 	end
 
 	-- mortal_strike;

@@ -25,6 +25,7 @@ local FR = {
 	AngerManagement   = 152278,
 	Massacre          = 206315,
 	MeatCleaver       = 280392,
+	MeatCleaverAura   = 85739,
 	Whirlwind         = 190411,
 	RagingBlow        = 85288,
 	Siegebreaker      = 280772,
@@ -87,7 +88,7 @@ function Warrior:Fury()
 	--end
 
 	-- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up|raid_event.adds.in<gcd&!buff.meat_cleaver.up;
-	if targets > 1 and not buff[FR.MeatCleaver].up then
+	if targets > 1 and not buff[FR.MeatCleaverAura].up then
 		return FR.Whirlwind;
 	end
 

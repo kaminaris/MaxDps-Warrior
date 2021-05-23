@@ -67,7 +67,7 @@ function Warrior:Fury()
 	local gcd = fd.gcd;
 	local targetHp = MaxDps:TargetPercentHealth() * 100;
 	local timeToDie = fd.timeToDie;
-	local Bloodlust = MaxDps:Bloodlust();
+	--local Bloodlust = MaxDps:Bloodlust();
 	
 	local _, _, _, BladestormCastttime = GetSpellInfo(46924);
 	local BsCt = BladestormCastttime - gcd;
@@ -127,8 +127,6 @@ function Warrior:FurySingleTarget()
 	local rage = fd.rage;
 	local covenantId = fd.covenant.covenantId;
 	local conduit = fd.covenant.soulbindConduits;
-	local level = UnitLevel("player");
-	
 	local gcdRemains = gcd / 10;
 
 	local targetHp = MaxDps:TargetPercentHealth() * 100;

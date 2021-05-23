@@ -1,11 +1,12 @@
 ## Title: MaxDps_Warrior
 ## Version: 9.0.5
 ## Author: Kaminaris
-## Interface: 90002
+## Interface: 90005
 ## Dependencies: MaxDps
 ## LoadOnDemand: 1
 ## X-Curse-Project-ID: 92062
 ## X-WoWI-ID: 24645
+## X-Wago-ID: ZQ6anYKW
 
 Main.lua
 Specialization\Arms.lua

@@ -145,10 +145,10 @@ function Warrior:FurySingleTarget()
         return executeSpellId
     end
 
-    local recklessnessEmpowered = buff[FR.Recklessness].up and talents[FR.RecklessAbadon]
+    local bloodthirst = MaxDps:FindSpell(FR.Bloodthirst)
 
     -- bloodthirst,if=buff.enrage.down|(talent.annihilator&!buff.recklessness.up)
-    if not recklessnessEmpowered and talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (not buff[FR.Enrage].up or (talents[FR.Annihilator] and not buff[FR.Recklessness].up)) then
+    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (not buff[FR.Enrage].up or (talents[FR.Annihilator] and not buff[FR.Recklessness].up)) then
         return FR.Bloodthirst
     end
 
@@ -167,23 +167,29 @@ function Warrior:FurySingleTarget()
         return FR.Onslaught
     end
 
+    local ragingBlow = MaxDps:FindSpell(FR.RagingBlow)
+
     -- raging_blow,if=charges>1
-    if not recklessnessEmpowered and talents[FR.RagingBlow] and cooldown[FR.RagingBlow].ready and (cooldown[FR.RagingBlow].charges > 1) then
+    if talents[FR.RagingBlow] and ragingBlow and cooldown[FR.RagingBlow].ready and (cooldown[FR.RagingBlow].charges > 1) then
         return FR.RagingBlow
     end
 
+    local crushingBlow = MaxDps:FindSpell(FR.CrushingBlow)
+
     -- crushing_blow,if=charges>1
-    if recklessnessEmpowered and talents[FR.RagingBlow] and cooldown[FR.CrushingBlow].ready and (cooldown[FR.CrushingBlow].charges > 1) then
+    if talents[FR.RagingBlow] and crushingBlow and cooldown[FR.CrushingBlow].ready and (cooldown[FR.CrushingBlow].charges > 1) then
         return FR.CrushingBlow
     end
 
+    local bloodbath = MaxDps:FindSpell(FR.Bloodbath)
+
     -- bloodbath,if=buff.enrage.down|talent.annihilator
-    if recklessnessEmpowered and talents[FR.Bloodthirst] and cooldown[FR.Bloodbath].ready and (not buff[FR.Enrage].up or talents[FR.Annihilator]) then
+    if talents[FR.Bloodthirst] and bloodbath and cooldown[FR.Bloodbath].ready and (not buff[FR.Enrage].up or talents[FR.Annihilator]) then
         return FR.Bloodbath
     end
 
     -- bloodthirst,if=talent.annihilator
-    if not recklessnessEmpowered and talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (talents[FR.Annihilator]) then
+    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (talents[FR.Annihilator]) then
         return FR.Bloodthirst
     end
 
@@ -198,22 +204,22 @@ function Warrior:FurySingleTarget()
     end
 
     -- bloodthirst,if=!talent.annihilator
-    if not recklessnessEmpowered and talents[FR.Bloodthirst] and cooldown[FR.Bloodthirst].ready and (not talents[FR.Annihilator]) then
+    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (not talents[FR.Annihilator]) then
         return FR.Bloodthirst
     end
 
     -- bloodbath
-    if recklessnessEmpowered and talents[FR.Bloodthirst] and cooldown[FR.Bloodbath].ready then
+    if talents[FR.Bloodthirst] and bloodbath and cooldown[FR.Bloodbath].ready then
         return FR.Bloodbath
     end
 
     -- raging_blow
-    if not recklessnessEmpowered and talents[FR.RagingBlow] and cooldown[FR.RagingBlow].ready then
+    if talents[FR.RagingBlow] and ragingBlow and cooldown[FR.RagingBlow].ready then
         return FR.RagingBlow
     end
 
     -- crushing_blow
-    if recklessnessEmpowered and talents[FR.RagingBlow] and cooldown[FR.CrushingBlow].ready then
+    if talents[FR.RagingBlow] and crushingBlow and cooldown[FR.CrushingBlow].ready then
         return FR.CrushingBlow
     end
 

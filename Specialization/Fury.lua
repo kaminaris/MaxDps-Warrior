@@ -50,6 +50,7 @@ local FR = {
     OdynsFury = 385059,
     Onslaught = 315720,
     RagingBlow = 85288,
+	RagingBlowEmpowered = 335097,
     Rampage = 184367,
     Ravager = 228920,
     RecklessAbandon = 202751,
@@ -59,6 +60,7 @@ local FR = {
     SpearOfBastion = 376079,
     SuddenDeathAura = 280776,
     ThunderousRoar = 384318,
+	TitanicRage = 394329,
     ViciousContempt = 337302,
     Whirlwind = 190411,
 };
@@ -142,6 +144,10 @@ function Warrior:FurySingleTarget()
 
     if not talents[FR.Annihilator] and cooldown[FR.RagingBlow].charges >= 1 then
         return FR.RagingBlow;
+    end
+	
+	if not talents[FR.TitanicRage] and cooldown[FR.RagingBlowEmpowered].charges >= 1 then
+        return FR.RagingBlowEmpowered;
     end
 
     if cooldown[FR.Bloodthirst].ready then

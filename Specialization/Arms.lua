@@ -1,25 +1,26 @@
-local _, addonTable = ...;
+local _, addonTable = ...
 --- @type MaxDps
 if not MaxDps then
     return
 end
 
-local Warrior = addonTable.Warrior;
-local MaxDps = MaxDps;
-local UnitPower = UnitPower;
-local PowerTypeRage = Enum.PowerType.Rage;
-local fd;
-local cooldown;
-local talents;
-local buff;
-local targets;
-local targetHp;
-local rage;
-local debuff;
-local inExecutePhase;
-local avatarInRotation = true;
-local bladeStormInRotation = true;
-local spearOfBastionInRotation = true;
+local Warrior = addonTable.Warrior
+local MaxDps = MaxDps
+local UnitPower = UnitPower
+local PowerTypeRage = Enum.PowerType.Rage
+local fd
+local cooldown
+local talents
+local buff
+local targets
+local targetHp
+local rage
+local debuff
+local inExecutePhase
+local avatarInRotation = true
+local bladeStormInRotation = true
+local spearOfBastionInRotation = true
+local executeAbility
 
 local AR = {
     AshenJuggernaut = 392536,
@@ -41,7 +42,8 @@ local AR = {
     InForTheKill = 248621,
     Juggernaut = 383292,
     MartialProwess = 316440,
-    Massacre = 281001,
+	MassacreAbility = 281000,
+    MassacreTalent = 281001,
     MercilessBonegrinderTalent = 383317,
     MercilessBonegrinderBuff = 383316,
     MortalStrike = 12294,
@@ -65,52 +67,52 @@ local AR = {
     Warbreaker = 262161,
     Whirlwind = 1680,
     WreckingThrow = 384110,
-};
+}
 
-setmetatable(AR, Warrior.spellMeta);
+setmetatable(AR, Warrior.spellMeta)
 
 function Warrior:Arms()
-    fd = MaxDps.FrameData;
-    cooldown = fd.cooldown;
-    debuff = fd.debuff;
-    talents = fd.talents;
-    buff = fd.buff;
-    targets = MaxDps:SmartAoe();
-    targetHp = MaxDps:TargetPercentHealth() * 100;
-    rage = UnitPower('player', PowerTypeRage);
+    fd = MaxDps.FrameData
+    cooldown = fd.cooldown
+    debuff = fd.debuff
+    talents = fd.talents
+    buff = fd.buff
+    targets = MaxDps:SmartAoe()
+    targetHp = MaxDps:TargetPercentHealth() * 100
+    rage = UnitPower('player', PowerTypeRage)
 
-    inExecutePhase = (talents[AR.Massacre] and targetHp < 35) or
-            targetHp < 20;
+    inExecutePhase = (talents[AR.MassacreTalent] and targetHp < 35) or
+            targetHp < 20
+	if talents[AR.MassacreTalent] then
+		executeAbility = AR.MassacreAbility
+	else
+		executeAbility = AR.Execute
+	end
 
     -- TODO need to check warbreaker with all instances of colossus smash.
 
-    MaxDps:GlowCooldown(AR.Avatar, not avatarInRotation and cooldown[AR.Avatar].ready);
-    MaxDps:GlowCooldown(AR.Bladestorm, not bladeStormInRotation and cooldown[AR.Bladestorm].ready);
-    MaxDps:GlowCooldown(AR.SpearOfBastion, not spearOfBastionInRotation and cooldown[AR.SpearOfBastion].ready);
-
-
-    --if targets > 1 and targets < 3 then
-    --    return Warrior:ArmsMultiLessThanFour();
-    --end
+    MaxDps:GlowCooldown(AR.Avatar, not avatarInRotation and cooldown[AR.Avatar].ready)
+    MaxDps:GlowCooldown(AR.Bladestorm, not bladeStormInRotation and cooldown[AR.Bladestorm].ready)
+    MaxDps:GlowCooldown(AR.SpearOfBastion, not spearOfBastionInRotation and cooldown[AR.SpearOfBastion].ready)
 
     if targets > 3 then
-        return Warrior:ArmsMultiTarget();
+        return Warrior:ArmsMultiTarget()
     end
 
     if inExecutePhase then
-        return Warrior:ArmsSingleTargetExecute();
+        return Warrior:ArmsSingleTargetExecute()
     end
 
-    return Warrior:ArmsSingleTarget();
+    return Warrior:ArmsSingleTarget()
 
 end
 function Warrior:ArmsAvatar()
-    local avatarReady = false;
+    local avatarReady = false
     if talents[AR.Avatar] then
         if talents[AR.ColossusSmash] then
-            avatarReady = cooldown[AR.Avatar].ready and (cooldown[AR.ColossusSmash].remains < 4 or cooldown[AR.Warbreaker].remains < 4 );
+            avatarReady = cooldown[AR.Avatar].ready and (cooldown[AR.ColossusSmash].remains < 4 or cooldown[AR.Warbreaker].remains < 4 )
         else
-            avatarReady = cooldown[AR.Avatar].ready;
+            avatarReady = cooldown[AR.Avatar].ready
         end
     end
 
@@ -120,28 +122,28 @@ function Warrior:ArmsAvatar()
 end
 function Warrior:ArmsSingleTarget()
     if targets > 1 and cooldown[AR.SweepingStrikes].ready then
-        return AR.SweepingStrikes;
+        return AR.SweepingStrikes
     end
 
     if talents[AR.Rend] and
             rage >= 30 and
             debuff[AR.RendDebuff].refreshable
     then
-        return AR.Rend;
+        return AR.Rend
     end
 
-    local avatarNow = Warrior:ArmsAvatar();
+    local avatarNow = Warrior:ArmsAvatar()
     if avatarNow then
-        return avatarNow;
+        return avatarNow
     end
 
     if talents[AR.Warbreaker] then
         if cooldown[AR.Warbreaker].ready then
-            return AR.Warbreaker;
+            return AR.Warbreaker
         end
     else
         if cooldown[AR.ColossusSmash].ready then
-            return AR.ColossusSmash;
+            return AR.ColossusSmash
         end
     end
 
@@ -150,67 +152,67 @@ function Warrior:ArmsSingleTarget()
     end
 
     if talents[AR.ThunderousRoar] and buff[AR.InForTheKill].up or buff[AR.TestOfMight].up then
-        return AR.ThunderousRoar;
+        return AR.ThunderousRoar
     end
 
     if talents[AR.TideOfBlood] and (cooldown[AR.ColossusSmash].remains > 40 or cooldown[AR.Warbreaker].remains > 40) then
-        return AR.Skullsplitter;
+        return AR.Skullsplitter
     end
 
     if cooldown[AR.MortalStrike].ready and rage >= 30 and debuff[AR.DeepWoundsAura].remains <= 2 then
-        return AR.MortalStrike;
+        return AR.MortalStrike
     end
 
     if buff[AR.SuddenDeathAura].up then
-        return AR.Execute;
+        return executeAbility
     end
 
     if talents[AR.Bladestorm] and cooldown[AR.Bladestorm].ready and rage < 30 and bladeStormInRotation then
-        return AR.Bladestorm;
+        return AR.Bladestorm
     end
 
     if cooldown[AR.MortalStrike].ready and rage >= 30 then
-        return AR.MortalStrike;
+        return AR.MortalStrike
     end
 
     if cooldown[AR.Overpower].ready then
-        return AR.Overpower;
+        return AR.Overpower
     end
 
     if talents[AR.FervorOfBattle] and rage >= 30 then
-        return AR.Whirlwind;
+        return AR.Whirlwind
     elseif rage >= 30 then
-        return AR.Slam;
+        return AR.Slam
     end
 
 end
 function Warrior:ArmsSingleTargetExecute()
     if targets > 1 and cooldown[AR.SweepingStrikes].ready then
-        return AR.SweepingStrikes;
+        return AR.SweepingStrikes
     end
     if talents[AR.Rend] and
             rage >= 30 and
             debuff[AR.RendDebuff].refreshable
     then
-        return AR.Rend;
+        return AR.Rend
     end
 
     if cooldown[AR.MortalStrike].ready and rage >= 30 and debuff[AR.DeepWoundsAura].remains <= 2 then
-        return AR.MortalStrike;
+        return AR.MortalStrike
     end
 
-    local avatarNow = Warrior:ArmsAvatar();
+    local avatarNow = Warrior:ArmsAvatar()
     if avatarNow then
-        return avatarNow;
+        return avatarNow
     end
 
     if talents[AR.Warbreaker] then
         if cooldown[AR.Warbreaker].ready then
-            return AR.Warbreaker;
+            return AR.Warbreaker
         end
     else
         if cooldown[AR.ColossusSmash].ready then
-            return AR.ColossusSmash;
+            return AR.ColossusSmash
         end
     end
 
@@ -219,19 +221,19 @@ function Warrior:ArmsSingleTargetExecute()
     end
 
     if buff[AR.SuddenDeathAura].up or rage >= 20 then
-        return AR.Execute;
+        return executeAbility
     end
 
     if talents[AR.ThunderousRoar] and buff[AR.InForTheKill].up or buff[AR.TestOfMight].up then
-        return AR.ThunderousRoar;
+        return AR.ThunderousRoar
     end
 
     if talents[AR.TideOfBlood] and (cooldown[AR.ColossusSmash].remains > 40 or cooldown[AR.Warbreaker].remains > 40) then
-        return AR.Skullsplitter;
+        return AR.Skullsplitter
     end
 
     if cooldown[AR.Overpower].ready then
-        return AR.Overpower;
+        return AR.Overpower
     end
 end
 function Warrior:ArmsMultiTarget()
@@ -241,47 +243,47 @@ function Warrior:ArmsMultiTarget()
     end
 
     if talents[AR.BloodAndThunder] and debuff[AR.RendDebuff].refreshable then
-        return AR.ThunderClap;
+        return AR.ThunderClap
     end
 
     if talents[AR.Warbreaker] then
         if cooldown[AR.Warbreaker].ready then
-            return AR.Warbreaker;
+            return AR.Warbreaker
         end
     else
-        -- colossus_smash;
+        -- colossus_smash
         if cooldown[AR.ColossusSmash].ready then
-            return AR.ColossusSmash;
+            return AR.ColossusSmash
         end
     end
 
-    local avatarNow = Warrior:ArmsAvatar();
+    local avatarNow = Warrior:ArmsAvatar()
     if avatarNow then
-        return avatarNow;
+        return avatarNow
     end
 
     if talents[AR.Bladestorm] and cooldown[AR.Bladestorm].ready then
-        return AR.Bladestorm;
+        return AR.Bladestorm
     end
 
     if talents[AR.ThunderousRoar] and buff[AR.InForTheKill].up or buff[AR.TestOfMight].up then
-        return AR.ThunderousRoar;
+        return AR.ThunderousRoar
     end
 
     if talents[AR.Cleave] and rage >= 20 and cooldown[AR.Cleave].ready then
-        return AR.Cleave;
+        return AR.Cleave
     end
 
     if rage >= 70 then
-        return AR.Whirlwind;
+        return AR.Whirlwind
     end
 
     if cooldown[AR.Overpower].ready then
-        return AR.Overpower;
+        return AR.Overpower
     end
 
     if buff[AR.SuddenDeathAura].up then
-        return AR.Execute;
+        return executeAbility
     end
 end
 

@@ -1,229 +1,210 @@
 local _, addonTable = ...
 
 --- @type MaxDps
-if not MaxDps then return end 
+if not MaxDps then return end
 
 local Warrior = addonTable.Warrior
----@type MaxDps
 local MaxDps = MaxDps
+local UnitPower = UnitPower
+local UnitHealth = UnitHealth
+local UnitAura = UnitAura
+local GetSpellDescription = GetSpellDescription
+local UnitHealthMax = UnitHealthMax
+local UnitPowerMax = UnitPowerMax
+local PowerTypeRage = Enum.PowerType.Rage
 
-local FR = {
-    Annihilator = 383916,
-    Avatar = 107574,
-    BerserkerStance = 386196,
-    Bloodbath = 335096,
-    Bloodthirst = 23881,
-    Charge = 100,
-    CrushingBlow = 335097,
-    ElysianMight = 386285,
-    Enrage = 184362,
-    Execute = 5308,
-    Execute2 = 280735,
-    Frenzy = 335082,
-    HeroicLeap = 6544,
-    ImprovedWhirlwind = 12950,
-    Massacre = 206315,
-    MeatCleaver = 280392,
-    OdynsFury = 385059,
-    Onslaught = 315720,
-    OverwhelmingRage = 382767,
-    Pummel = 6552,
-    RagingBlow = 85288,
-    Rampage = 184367,
-    Ravager = 228920,
-    Recklessness = 1719,
-    RecklessAbadon = 202751,
-    Slam = 1464,
-    SpearOfBastion = 376079,
-    SuddenDeathAura = 280776,
-    Tenderize = 388933,
-    ThunderousRoar = 384318,
-    TitansTorment = 390135,
-    Whirlwind = 190411,
-    WhirlwindBuff = 85739,
-    WreckingThrow = 384110
-}
+local fd
+local cooldown
+local buff
+local talents
+local targets
+local rage
+local rageMax
+local rageDeficit
+local targetHP
+local targetmaxHP
+local targethealthPerc
+local curentHP
+local maxHP
+local healthPerc
 
-setmetatable(FR, Warrior.spellMeta)
+local className, classFilename, classId = UnitClass("player")
+local currentSpec = GetSpecialization()
+local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
+local classtable
 
-local function inRange(spellId)
-    local slotId = FindSpellBookSlotBySpellID(spellId)
-    if not slotId then
-        return false
-    end
-
-    return UnitExists("target")
-            and UnitCanAttack("player", "target")
-            and IsSpellInRange(slotId, "spell", "target") == 1
-end
+--setmetatable(classtable, Warrior.spellMeta)
 
 function Warrior:Fury()
-    local fd = MaxDps.FrameData
-    local cooldown = fd.cooldown
-    local buff = fd.buff
-    local talents = fd.talents
-    local targets = MaxDps:SmartAoe()
-    local timeToDie = fd.timeToDie
+	fd = MaxDps.FrameData
+	cooldown = fd.cooldown
+	buff = fd.buff
+	talents = fd.talents
+	targets = MaxDps:SmartAoe()
+	rage = UnitPower('player', PowerTypeRage)
+	rageMax = UnitPowerMax('player', PowerTypeRage)
+	rageDeficit = rageMax - rage
+	targetHP = UnitHealth('target')
+	targetmaxHP = UnitHealthMax('target')
+	targethealthPerc = (targetHP / targetmaxHP) * 100
+	curentHP = UnitHealth('player')
+	maxHP = UnitHealthMax('player')
+	healthPerc = (curentHP / maxHP) * 100
+	classtable = MaxDps.SpellTable
+    classtable.MeatCleaver = 85739
+    classtable.MercilessAssault = 409983
+    classtable.Enrage = 184362
 
-    -- charge,if=time<=0.5|movement.distance>5
-    if cooldown[FR.Charge].ready and inRange(FR.Charge) then
-        return FR.Charge
+    if targets > 1  then
+        return Warrior:FuryMultiTarget()
     end
 
-    -- ravager,if=cooldown.avatar.remains<3
-    if talents[FR.Ravager] and cooldown[FR.Ravager].ready and (cooldown[FR.Avatar].remains < 3) then
-        return FR.Ravager
-    end
-
-    -- avatar,if=talent.titans_torment&buff.enrage.up&(buff.elysian_might.up|!covenant.kyrian)
-    if talents[FR.Avatar] and cooldown[FR.Avatar].ready and (talents[FR.TitansTorment] and buff[FR.Enrage].up and buff[FR.ElysianMight].up) then
-        return FR.Avatar
-    end
-
-    -- avatar,if=!talent.titans_torment&(buff.recklessness.up|target.time_to_die<20)
-    if talents[FR.Avatar] and cooldown[FR.Avatar].ready and (not talents[FR.TitansTorment] and (buff[FR.Recklessness].up or timeToDie < 20)) then
-        return FR.Avatar
-    end
-
-    -- recklessness,if=talent.annihilator&cooldown.avatar.remains<1|cooldown.avatar.remains>40|!talent.avatar|target.time_to_die<20
-    if talents[FR.Recklessness] and cooldown[FR.Recklessness].ready and (talents[FR.Annihilator] and cooldown[FR.Avatar].remains < 1 or cooldown[FR.Avatar].remains > 40 or not talents[FR.Avatar] or timeToDie < 20) then
-        return FR.Recklessness
-    end
-
-    -- recklessness,if=!talent.annihilator
-    if talents[FR.Recklessness] and cooldown[FR.Recklessness].ready and (not talents[FR.Annihilator]) then
-        return FR.Recklessness
-    end
-
-    -- spear_of_bastion,if=buff.enrage.up&(buff.recklessness.up|buff.avatar.up|target.time_to_die<20)
-    if talents[FR.SpearOfBastion] and cooldown[FR.SpearOfBastion].ready and (buff[FR.Enrage].up and (buff[FR.Recklessness].up or buff[FR.Avatar].up or timeToDie < 20)) then
-        return FR.SpearOfBastion
-    end
-
-    -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up|raid_event.adds.in<2&!buff.meat_cleaver.up
-    if targets > 1 and (not talents[FR.ImprovedWhirlwind] or not buff[FR.WhirlwindBuff].up) then
-        return FR.Whirlwind
-    end
-
-    -- call_action_list,name=single_target
     return Warrior:FurySingleTarget()
 end
 
-local function isSpellAvailable(spellId)
-    local slotId = FindSpellBookSlotBySpellID(spellId)
-    if not slotId then
-        return false
+function Warrior:FurySingleTarget()
+    --Cast Ravager on the pull, or as soon as the target is well positioned and not expected to move.
+    if talents[classtable.Ravager] and cooldown[classtable.Ravager].ready then
+        return classtable.Ravager
+    end
+    --Cast Recklessness on cooldown or whenever burst damage is needed.
+    if cooldown[classtable.Recklessness].ready then
+        return classtable.Recklessness
     end
 
-    return select(3, GetSpellBookItemName(slotId, "spell")) == spellId
+    -- OdynsFury before avatar
+    if MaxDps.tier[31] and MaxDps.tier[31].count >= 4 and talents[classtable.OdynsFury] and talents[classtable.Avatar] and cooldown[classtable.Avatar].ready and cooldown[classtable.OdynsFury].ready then
+        return classtable.OdynsFury
+    end
+
+    --Cast Avatar alongside Recklessness.
+    if talents[classtable.Avatar] and buff[classtable.Recklessness].up and cooldown[classtable.Avatar].ready then
+        return classtable.Avatar
+    end
+    --Cast Spear of Bastion during Recklessness and while Enraged.
+    if talents[classtable.SpearofBastion] and buff[classtable.Recklessness].up and buff[classtable.Enrage].up and cooldown[classtable.SpearofBastion].ready then
+        return classtable.SpearofBastion
+    end
+    --Cast Odyn's Fury while Enraged. With the T31 set bonus, it should always be used before Avatar.
+    if talents[classtable.OdynsFury] and buff[classtable.Enrage].up and cooldown[classtable.OdynsFury].ready then
+        return classtable.OdynsFury
+    end
+    --Cast Avatar as the initial 4-second Avatar buff triggered by Odyn's Fury is falling off in order to maximize DoT and Dancing Blades uptime.
+    if talents[classtable.Avatar] and (buff[classtable.Avatarbuff].duration <= 1 and not cooldown[classtable.OdynsFury].ready) and cooldown[classtable.Avatar].ready then
+        return classtable.Avatar
+    end
+    --Cast Bloodthirst when it has a 100% chance to crit through the Merciless Assault buff (generally 6 stacks with Recklessness).
+    if buff[classtable.MercilessAssault].count == 6 and cooldown[classtable.Bloodthirst].ready then
+        return classtable.Bloodthirst
+    end
+    --Cast Bloodbath to consume the Reckless Abandon buff.
+    if buff[classtable.RecklessAbandon].up and cooldown[classtable.Bloodbath].ready then
+        return classtable.Bloodbath
+    end
+    --Cast Thunderous Roar while Enraged.
+    if talents[classtable.ThunderousRoar] and buff[classtable.Enrage].up and cooldown[classtable.ThunderousRoar].ready then
+        return classtable.ThunderousRoar
+    end
+    --Cast Onslaught while Enraged or with Tenderize talented.
+    if (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
+        return classtable.Onslaught
+    end
+    --Cast Execute only while the Furious Bloodthirst buff is not active.
+    if (not buff[classtable.FuriousBloodthirst].up) and targethealthPerc < 20 and rage >= 30 and cooldown[classtable.Execute].ready then
+        return classtable.Execute
+    end
+    --Cast Rampage to spend Rage and maintain Enrage.
+    if rage >= 80 and cooldown[classtable.Rampage].ready then
+        return classtable.Rampage
+    end
+    --Cast Execute as able.
+    if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+        return classtable.Execute
+    end
+    --Cast Bloodthirst on cooldown to reduce gaps in the rotation.
+    if cooldown[classtable.Bloodthirst].ready then
+        return classtable.Bloodthirst
+    end
+    --Cast Slam as a filler between Bloodthirst casts.
+    if rage >= 20 and cooldown[classtable.Slam].ready then
+        return classtable.Slam
+    end
+    --Cast Whirlwind as a filler between Bloodthirst casts.
+    if cooldown[classtable.Whirlwind].ready then
+        return classtable.Whirlwind
+    end
 end
 
-function Warrior:FurySingleTarget()
-    local fd = MaxDps.FrameData
-    local cooldown = fd.cooldown
-    local buff = fd.buff
-    local talents = fd.talents
-    local targets = MaxDps:SmartAoe()
-    local gcd = fd.gcd
-    local rage = UnitPower('player', Enum.PowerType.Rage)
-
-    -- rampage,if=buff.recklessness.up|buff.enrage.remains<gcd|(rage>110&talent.overwhelming_rage)|(rage>80&!talent.overwhelming_rage)|buff.frenzy.remains<1.5
-    if talents[FR.Rampage] and rage >= 80 and (buff[FR.Recklessness].up or buff[FR.Enrage].remains < gcd or (rage > 110 and talents[FR.OverwhelmingRage]) or (rage > 80 and not talents[FR.OverwhelmingRage]) or buff[FR.Frenzy].remains < 1.5) then
-        return FR.Rampage
+function Warrior:FuryMultiTarget()
+    --Cast Ravager on the pull, or as soon as the target is well positioned and not expected to move.
+    if talents[classtable.Ravager] and cooldown[classtable.Ravager].ready then
+        return classtable.Ravager
     end
-
-    local targetHp = MaxDps:TargetPercentHealth() * 100
-    local canExecute = ((talents[FR.Massacre] and targetHp < 35) or
-            targetHp < 20) or
-            buff[FR.SuddenDeathAura].up
-    
-
-    local executeSpellId = isSpellAvailable(FR.Execute2) and FR.Execute2 or FR.Execute
-
-    -- execute
-    if cooldown[executeSpellId].ready and canExecute then
-        return executeSpellId
+    --Cast Recklessness.
+    if cooldown[classtable.Recklessness].ready then
+        return classtable.Recklessness
     end
-
-    local bloodthirst = MaxDps:FindSpell(FR.Bloodthirst)
-
-    -- bloodthirst,if=buff.enrage.down|(talent.annihilator&!buff.recklessness.up)
-    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (not buff[FR.Enrage].up or (talents[FR.Annihilator] and not buff[FR.Recklessness].up)) then
-        return FR.Bloodthirst
+    --Cast Avatar with Recklessness.
+    if buff[classtable.Recklessness].up and cooldown[classtable.Avatar].ready then
+        return classtable.Avatar
     end
+    --Cast Charge whenever out of range.
 
-    -- thunderous_roar,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>15)
-    if talents[FR.ThunderousRoar] and cooldown[FR.ThunderousRoar].ready and (buff[FR.Enrage].up and targets > 1) then
-        return FR.ThunderousRoar
+    --Cast Whirlwind when the buff is not active.
+    if not buff[classtable.MeatCleaver].up and cooldown[classtable.Whirlwind].ready then
+        return classtable.Whirlwind
     end
-
-    -- odyns_fury,if=buff.enrage.up&(spell_targets.whirlwind>1|raid_event.adds.in>15)
-    if talents[FR.OdynsFury] and cooldown[FR.OdynsFury].ready and (buff[FR.Enrage].up and targets > 1) then
-        return FR.OdynsFury
+    --Cast Odyn's Fury while Enraged or with Titanic Rage.
+    if talents[classtable.OdynsFury] and (buff[classtable.Enrage].up or talents[classtable.TitanicRage]) and cooldown[classtable.OdynsFury].ready then
+        return classtable.OdynsFury
     end
-
-    -- onslaught,if=!talent.annihilator&buff.enrage.up|talent.tenderize
-    if talents[FR.Onslaught] and cooldown[FR.Onslaught].ready and (not talents[FR.Annihilator] and buff[FR.Enrage].up or talents[FR.Tenderize]) then
-        return FR.Onslaught
+    --Cast Spear of Bastion while Enraged.
+    if talents[classtable.SpearofBastion] and buff[classtable.Enrage].up and cooldown[classtable.SpearofBastion].ready then
+        return classtable.SpearofBastion
     end
-
-    local ragingBlow = MaxDps:FindSpell(FR.RagingBlow)
-
-    -- raging_blow,if=charges>1
-    if talents[FR.RagingBlow] and ragingBlow and cooldown[FR.RagingBlow].ready and (cooldown[FR.RagingBlow].charges > 1) then
-        return FR.RagingBlow
+    --Cast Thunderous Roar while Enraged.
+    if talents[classtable.ThunderousRoar] and buff[classtable.Enrage].up and cooldown[classtable.ThunderousRoar].ready then
+        return classtable.ThunderousRoar
     end
-
-    local crushingBlow = MaxDps:FindSpell(FR.CrushingBlow)
-
-    -- crushing_blow,if=charges>1
-    if talents[FR.RagingBlow] and crushingBlow and cooldown[FR.CrushingBlow].ready and (cooldown[FR.CrushingBlow].charges > 1) then
-        return FR.CrushingBlow
+    --Cast Avatar to trigger Odyn's Fury via Titan's Torment. When Titanic Rage is talented, delay until the initial Whirlwind buff stacks have fallen.
+    if talents[classtable.Avatar] and (talents[classtable.TitansTorment] and cooldown[classtable.Avatar].ready) or ((talents[classtable.TitansTorment] and not buff[classtable.MeatCleaver].up) and cooldown[classtable.Avatar].ready) then
+        return classtable.Avatar
     end
-
-    local bloodbath = MaxDps:FindSpell(FR.Bloodbath)
-
-    -- bloodbath,if=buff.enrage.down|talent.annihilator
-    if talents[FR.Bloodthirst] and bloodbath and cooldown[FR.Bloodbath].ready and (not buff[FR.Enrage].up or talents[FR.Annihilator]) then
-        return FR.Bloodbath
+    --Cast Bloodthirst when it has a 100% chance to crit through the Merciless Assault buff (generally 6 stacks with Recklessness).
+    if buff[classtable.MercilessAssault].count == 6 and cooldown[classtable.Bloodthirst].ready then
+        return classtable.Bloodthirst
     end
-
-    -- bloodthirst,if=talent.annihilator
-    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (talents[FR.Annihilator]) then
-        return FR.Bloodthirst
+    --Cast Bloodbath to consume the Reckless Abandon buff.
+    if buff[classtable.RecklessAbandon].up and cooldown[classtable.Bloodbath].ready then
+        return classtable.Bloodbath
     end
-
-    -- rampage
-    if talents[FR.Rampage] and rage >= 80 then
-        return FR.Rampage
+    --Cast Onslaught while Enraged or with Tenderize talented.
+    if (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
+        return classtable.Onslaught
     end
-
-    -- slam,if=talent.annihilator
-    if rage >= 20 and (talents[FR.Annihilator]) then
-        return FR.Slam
+    --Cast Execute only while the Furious Bloodthirst buff is not active.
+    if rage >= 30 and targethealthPerc < 20 and not buff[classtable.FuriousBloodthirst].up and cooldown[classtable.Execute].ready then
+        return classtable.Execute
     end
-
-    -- bloodthirst,if=!talent.annihilator
-    if talents[FR.Bloodthirst] and bloodthirst and cooldown[FR.Bloodthirst].ready and (not talents[FR.Annihilator]) then
-        return FR.Bloodthirst
+    --Cast Rampage to spend Rage and maintain Enrage.
+    if rage >= 80 and cooldown[classtable.Rampage].ready then
+        return classtable.Rampage
     end
-
-    -- bloodbath
-    if talents[FR.Bloodthirst] and bloodbath and cooldown[FR.Bloodbath].ready then
-        return FR.Bloodbath
+    --Cast Execute as able.
+    if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+        return classtable.Execute
     end
-
-    -- raging_blow
-    if talents[FR.RagingBlow] and ragingBlow and cooldown[FR.RagingBlow].ready then
-        return FR.RagingBlow
+    --Cast Bloodthirst on cooldown to reduce gaps in the rotation.
+    if cooldown[classtable.Bloodthirst].ready then
+        return classtable.Bloodthirst
     end
-
-    -- crushing_blow
-    if talents[FR.RagingBlow] and crushingBlow and cooldown[FR.CrushingBlow].ready then
-        return FR.CrushingBlow
+    --Cast Slam as a filler between Bloodthirst casts.
+    if rage >= 20 and cooldown[classtable.Slam].ready then
+        return classtable.Slam
     end
-
-    -- whirlwind
-    return FR.Whirlwind
+    --Cast Whirlwind as a filler between Bloodthirst casts.
+    if cooldown[classtable.Whirlwind].ready then
+        return classtable.Whirlwind
+    end
 end
 

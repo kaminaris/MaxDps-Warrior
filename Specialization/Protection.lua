@@ -1,108 +1,138 @@
-local _, addonTable = ...;
+local _, addonTable = ...
 
 --- @type MaxDps
 if not MaxDps then
 	return
 end
 
-local Warrior = addonTable.Warrior;
-local MaxDps = MaxDps;
-local UnitPower = UnitPower;
-local UnitHealth = UnitHealth;
-local UnitAura = UnitAura;
-local GetSpellDescription = GetSpellDescription;
-local UnitHealthMax = UnitHealthMax;
-local UnitPowerMax = UnitPowerMax;
-local PowerTypeRage = Enum.PowerType.Rage;
+local Warrior = addonTable.Warrior
+local MaxDps = MaxDps
+local UnitPower = UnitPower
+local UnitHealth = UnitHealth
+local UnitAura = UnitAura
+local GetSpellDescription = GetSpellDescription
+local UnitHealthMax = UnitHealthMax
+local UnitPowerMax = UnitPowerMax
+local PowerTypeRage = Enum.PowerType.Rage
 
-local PR = {
-	Avatar            = 107574,
-	ThunderClap       = 6343,
-	UnstoppableForce  = 275336,
-	ShieldBlock       = 2565,
-	ShieldBlockAura   = 132404,
-	ShieldSlam        = 23922,
-	LastStand         = 12975,
-	Bolster           = 280001,
-	IgnorePain        = 190456,
-	BoomingVoice      = 202743,
-	DemoralizingShout = 1160,
-	Ravager           = 228920,
-	DragonRoar        = 118000,
-	Revenge           = 6572,
-	NeverSurrender    = 202561,
-	RevengeAura       = 5302,
-	Devastate         = 20243,
-};
+local fd
+local cooldown
+local buff
+local talents
+local targets
+local rage
+local rageMax
+local rageDeficit
+local targetHP
+local targetmaxHP
+local targethealthPerc
+local curentHP
+local maxHP
+local healthPerc
+
+local className, classFilename, classId = UnitClass("player")
+local currentSpec = GetSpecialization()
+local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
+local classtable
+
+--setmetatable(classtable, Warrior.spellMeta)
 
 function Warrior:Protection()
-	local fd = MaxDps.FrameData;
-	local cooldown = fd.cooldown;
-	local buff = fd.buff;
-	local talents = fd.talents;
-	local rage = UnitPower('player', PowerTypeRage);
-	local rageMax = UnitPowerMax('player', PowerTypeRage);
-	local rageDeficit = rageMax - rage;
-	local curentHP = UnitHealth('player');
-	local maxHP = UnitHealthMax('player');
-	local healthPerc = (curentHP / maxHP) * 100;
-	MaxDps:GlowEssences();
+	fd = MaxDps.FrameData
+	cooldown = fd.cooldown
+	buff = fd.buff
+	talents = fd.talents
+	targets = MaxDps:SmartAoe()
+	rage = UnitPower('player', PowerTypeRage)
+	rageMax = UnitPowerMax('player', PowerTypeRage)
+	rageDeficit = rageMax - rage
+	targetHP = UnitHealth('target')
+	targetmaxHP = UnitHealthMax('target')
+	targethealthPerc = (targetHP / targetmaxHP) * 100
+	curentHP = UnitHealth('player')
+	maxHP = UnitHealthMax('player')
+	healthPerc = (curentHP / maxHP) * 100
+	classtable = MaxDps["SpellTable"]
 
-	MaxDps:GlowCooldown(PR.Avatar, cooldown[PR.Avatar].ready);
-
-	if healthPerc <= 95 then
-		return Warrior:ProtectionDefense();
+	if targets > 1 then
+		return Warrior:ProtectionMultiTarget()
 	end
 
-	return Warrior:ProtectionOffense();
+	return Warrior:ProtectionSingleTarget()
 end
 
-function Warrior:ProtectionDefense()
-	local fd = MaxDps.FrameData;
-	local cooldown = fd.cooldown;
-	local buff = fd.buff;
-	local talents = fd.talents;
-	local rage = UnitPower('player', PowerTypeRage);
-	local rageMax = UnitPowerMax('player', PowerTypeRage);
-	local rageDeficit = rageMax - rage;
-	if buff[PR.IgnorePain].refreshable and rage >= 40 then
-		return PR.IgnorePain;
-	end
 
-	if cooldown[PR.DemoralizingShout].ready then
-		return PR.DemoralizingShout;
-	end
 
-	return Warrior:ProtectionOffense();
+function Warrior:ProtectionSingleTarget()
+	--Cast Avatar on cooldown
+	if talents[classtable.Avatar] and cooldown[classtable.Avatar].ready then
+        return classtable.Avatar
+    end
+	--Cast Demoralizing Shout on cooldown (only with Booming Voice Icon Booming Voice).
+	if cooldown[classtable.DemoralizingShout].ready then
+        return classtable.DemoralizingShout
+    end
+	--Cast Ravager
+	if cooldown[classtable.Ravager].ready then
+        return classtable.Ravager
+    end
+	--Cast Thunderous Roar
+	if talents[classtable.ThunderousRoar] and cooldown[classtable.ThunderousRoar].ready then
+        return classtable.ThunderousRoar
+    end
+	--Cast Shield Charge
+	if talents[classtable.ShieldCharge] and cooldown[classtable.ShieldCharge].ready then
+        return classtable.ShieldCharge
+    end
+	--Cast Spear of Bastion
+	if talents[classtable.SpearofBastion] and cooldown[classtable.SpearofBastion].ready then
+        return classtable.SpearofBastion
+    end
+	--Cast Shield Slam on cooldown
+	if cooldown[classtable.ShieldSlam].ready then
+        return classtable.ShieldSlam
+    end
+	--Cast Thunder Clap on cooldown
+	if cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
+    end
+	--Cast Execute, if you do not need Rage for survivability
+	if targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+		return classtable.Execute
+	end
+	--Cast Revenge, if you do not need Rage for survivability
+	if cooldown[classtable.Revenge].ready then
+		return classtable.Revenge
+	end
 end
 
-function Warrior:ProtectionOffense()
-	local fd = MaxDps.FrameData;
-	local cooldown = fd.cooldown;
-	local buff = fd.buff;
-	local talents = fd.talents;
-	local rage = UnitPower('player', PowerTypeRage);
-	local rageMax = UnitPowerMax('player', PowerTypeRage);
-	local rageDeficit = rageMax - rage;
-
-	-- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up);
-	if cooldown[PR.ThunderClap].ready then
-		return PR.ThunderClap;
-	end
-
-	if cooldown[PR.Revenge].ready and buff[PR.RevengeAura].up then
-		return PR.Revenge;
-	end
-
-	if cooldown[PR.ShieldSlam].ready then
-		return PR.ShieldSlam;
-	end
-
-	if talents[PR.DragonRoar] and cooldown[PR.DragonRoar].ready then
-		return PR.DragonRoar;
-	end
-
-	if cooldown[PR.Revenge].ready and rage > 75 then
-		return PR.Revenge;
-	end
+function Warrior:ProtectionMultiTarget()
+	--Cast Ravager.
+	if cooldown[classtable.Ravager].ready then
+        return classtable.Ravager
+    end
+	--Cast Thunderous Roar
+	if cooldown[classtable.ThunderousRoar].ready then
+        return classtable.ThunderousRoar
+    end
+	--Cast Shield Charge.
+	if cooldown[classtable.ShieldCharge].ready then
+        return classtable.ShieldCharge
+    end
+	--Cast Spear of Bastion.
+	if cooldown[classtable.SpearofBastion].ready then
+        return classtable.SpearofBastion
+    end
+	--Cast Thunder Clap on cooldown.
+	if cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
+    end
+	--Cast Shield Slam on cooldown.
+	if cooldown[classtable.ShieldSlam].ready then
+        return classtable.ShieldSlam
+    end
+	--Cast Revenge.
+	if cooldown[classtable.Ravager].ready then
+        return classtable.Ravager
+    end
 end

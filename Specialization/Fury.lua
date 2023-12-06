@@ -90,7 +90,7 @@ function Warrior:FurySingleTarget()
         return classtable.OdynsFury
     end
     --Cast Avatar as the initial 4-second Avatar buff triggered by Odyn's Fury is falling off in order to maximize DoT and Dancing Blades uptime.
-    if talents[classtable.Avatar] and (buff[classtable.Avatarbuff].duration <= 1 and not cooldown[classtable.OdynsFury].ready) and cooldown[classtable.Avatar].ready then
+    if talents[classtable.Avatar] and (buff[classtable.Avatar].duration <= 1 and not cooldown[classtable.OdynsFury].ready) and cooldown[classtable.Avatar].ready then
         return classtable.Avatar
     end
     --Cast Bloodthirst when it has a 100% chance to crit through the Merciless Assault buff (generally 6 stacks with Recklessness).

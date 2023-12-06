@@ -121,12 +121,16 @@ function Warrior:FurySingleTarget()
     if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
+    --Cast Raging Blow as the main rotational attack.
+    if not talents[classtable.Annihilator] and cooldown[classtable.RagingBlow].ready then
+        return classtable.RagingBlow
+    end
     --Cast Bloodthirst on cooldown to reduce gaps in the rotation.
     if cooldown[classtable.Bloodthirst].ready then
         return classtable.Bloodthirst
     end
     --Cast Slam as a filler between Bloodthirst casts.
-    if rage >= 20 and cooldown[classtable.Slam].ready then
+    if not talents[classtable.Annihilator] and rage >= 20 and cooldown[classtable.Slam].ready then
         return classtable.Slam
     end
     --Cast Whirlwind as a filler between Bloodthirst casts.
@@ -194,12 +198,16 @@ function Warrior:FuryMultiTarget()
     if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
+    --Cast Raging Blow as the main rotational attack.
+    if not talents[classtable.Annihilator] and cooldown[classtable.RagingBlow].ready then
+        return classtable.RagingBlow
+    end
     --Cast Bloodthirst on cooldown to reduce gaps in the rotation.
     if cooldown[classtable.Bloodthirst].ready then
         return classtable.Bloodthirst
     end
     --Cast Slam as a filler between Bloodthirst casts.
-    if rage >= 20 and cooldown[classtable.Slam].ready then
+    if not talents[classtable.Annihilator] and rage >= 20 and cooldown[classtable.Slam].ready then
         return classtable.Slam
     end
     --Cast Whirlwind as a filler between Bloodthirst casts.

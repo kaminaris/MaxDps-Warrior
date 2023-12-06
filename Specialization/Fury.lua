@@ -106,7 +106,7 @@ function Warrior:FurySingleTarget()
         return classtable.ThunderousRoar
     end
     --Cast Onslaught while Enraged or with Tenderize talented.
-    if (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
+    if talents[classtable.Onslaught] and (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
         return classtable.Onslaught
     end
     --Cast Execute only while the Furious Bloodthirst buff is not active.
@@ -183,7 +183,7 @@ function Warrior:FuryMultiTarget()
         return classtable.Bloodbath
     end
     --Cast Onslaught while Enraged or with Tenderize talented.
-    if (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
+    if talents[classtable.Onslaught] and (buff[classtable.Enrage].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
         return classtable.Onslaught
     end
     --Cast Execute only while the Furious Bloodthirst buff is not active.

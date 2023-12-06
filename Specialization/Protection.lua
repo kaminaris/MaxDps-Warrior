@@ -69,11 +69,11 @@ function Warrior:ProtectionSingleTarget()
         return classtable.Avatar
     end
 	--Cast Demoralizing Shout on cooldown (only with Booming Voice Icon Booming Voice).
-	if cooldown[classtable.DemoralizingShout].ready then
+	if talents[classtable.DemoralizingShout] and cooldown[classtable.DemoralizingShout].ready then
         return classtable.DemoralizingShout
     end
 	--Cast Ravager
-	if cooldown[classtable.Ravager].ready then
+	if talents[classtable.Ravager] and cooldown[classtable.Ravager].ready then
         return classtable.Ravager
     end
 	--Cast Thunderous Roar
@@ -93,38 +93,38 @@ function Warrior:ProtectionSingleTarget()
         return classtable.ShieldSlam
     end
 	--Cast Thunder Clap on cooldown
-	if cooldown[classtable.ThunderClap].ready then
+	if talents[classtable.ThunderClap] and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
 	--Cast Execute, if you do not need Rage for survivability
-	if targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+	if rage >=20 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
 		return classtable.Execute
 	end
 	--Cast Revenge, if you do not need Rage for survivability
-	if cooldown[classtable.Revenge].ready then
+	if talents[classtable.Revenge] and cooldown[classtable.Revenge].ready then
 		return classtable.Revenge
 	end
 end
 
 function Warrior:ProtectionMultiTarget()
 	--Cast Ravager.
-	if cooldown[classtable.Ravager].ready then
+	if talents[classtable.Ravager] and cooldown[classtable.Ravager].ready then
         return classtable.Ravager
     end
 	--Cast Thunderous Roar
-	if cooldown[classtable.ThunderousRoar].ready then
+	if talents[classtable.ThunderousRoar] and cooldown[classtable.ThunderousRoar].ready then
         return classtable.ThunderousRoar
     end
 	--Cast Shield Charge.
-	if cooldown[classtable.ShieldCharge].ready then
+	if talents[classtable.ShieldCharge] and cooldown[classtable.ShieldCharge].ready then
         return classtable.ShieldCharge
     end
 	--Cast Spear of Bastion.
-	if cooldown[classtable.SpearofBastion].ready then
+	if talents[classtable.SpearofBastion] and cooldown[classtable.SpearofBastion].ready then
         return classtable.SpearofBastion
     end
 	--Cast Thunder Clap on cooldown.
-	if cooldown[classtable.ThunderClap].ready then
+	if talents[classtable.ThunderClap] and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
 	--Cast Shield Slam on cooldown.
@@ -132,7 +132,7 @@ function Warrior:ProtectionMultiTarget()
         return classtable.ShieldSlam
     end
 	--Cast Revenge.
-	if cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+	if talents[classtable.Revenge] and cooldown[classtable.Revenge].ready then
+        return classtable.Revenge
     end
 end

@@ -79,15 +79,15 @@ end
 
 function Warrior:ArmsSingleTarget()
     --Cast Execute to consume Sudden Death procs.
-    if buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
+    if rage >=20 and buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Mortal Strike on cooldown.
-    if rage >=30 and cooldown[classtable.MortalStrike].ready then
+    if talents[classtable.MortalStrike] and rage >=30 and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
     --Cast Thunder Clap to apply Rend or if less than 3 seconds remain on the debuff.
-    if rage >=40 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
+    if talents[classtable.ThunderClap] and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
     --Cast Avatar simultaneously with Colossus Smash or Warbreaker.
@@ -95,8 +95,8 @@ function Warrior:ArmsSingleTarget()
         return classtable.Avatar
     end
     --Cast Warbreaker or Colossus Smash.
-    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (cooldown[classtable.ColossusSmash].ready) then
-        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (classtable.ColossusSmash)
+    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (talents[classtable.ColossusSmash] and cooldown[classtable.ColossusSmash].ready) then
+        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (talents[classtable.ColossusSmash] and classtable.ColossusSmash)
     end
     --Cast Spear of Bastion during Colossus Smash.
     if talents[classtable.SpearofBastion] and debuff[classtable.ColossusSmash].up and cooldown[classtable.SpearofBastion].ready then
@@ -111,7 +111,7 @@ function Warrior:ArmsSingleTarget()
         return classtable.ThunderousRoar
     end
     --Cast Whirlwind as a large rage dump.
-    if rage >=60 and cooldown[classtable.Whirlwind].ready then
+    if rage >=30 and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
     --Cast Bladestorm during Test of Might.
@@ -119,7 +119,7 @@ function Warrior:ArmsSingleTarget()
         return classtable.Bladestorm
     end
     --Cast Overpower as able.
-    if cooldown[classtable.Overpower].ready then
+    if talents[classtable.Overpower] and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
     --Cast Slam to spend rage.
@@ -130,16 +130,16 @@ end
 
 function Warrior:ArmsMultiTarget()
     --Cast Execute to consume Sudden Death procs.
-    if buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
+    if rage >=20 and buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Thunder Clap to apply Rend or if less than 4 seconds remain on the debuff.
-    if (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
+    if talents[classtable.ThunderClap] and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
     --Cast Warbreaker to apply Colossus Smash.
-    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (cooldown[classtable.ColossusSmash].ready) then
-        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (classtable.ColossusSmash)
+    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (talents[classtable.ColossusSmash] and cooldown[classtable.ColossusSmash].ready) then
+        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (talents[classtable.ColossusSmash] and classtable.ColossusSmash)
     end
     --Cast Sweeping Strikes when Bladestorm is not about to be cast, in order to not waste duration.
     if buff[classtable.SuddenDeathAura].up and cooldown[classtable.SweepingStrikes].ready then
@@ -154,7 +154,7 @@ function Warrior:ArmsMultiTarget()
         return classtable.Avatar
     end
     --Cast Whirlwind during the Hurricane or Merciless Bonegrinder buffs following Bladestorm.
-    if (buff[classtable.Hurricane].up or buff[classtable.MercilessBonegrinder].up) and rage >=60 and cooldown[classtable.Whirlwind].ready then
+    if (buff[classtable.Hurricane].up or buff[classtable.MercilessBonegrinder].up) and rage >=30 and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
     --Cast Thunderous Roar during Test of Might or In for the Kill.
@@ -170,23 +170,23 @@ function Warrior:ArmsMultiTarget()
         return classtable.Skullsplitter
     end
     --Cast Cleave as needed to reapply Deep Wounds to multiple targets.
-    if not debuff[classtable.DeepWounds].up and cooldown[classtable.Cleave].ready then
+    if rage >=20 and talents[classtable.Cleave] and not debuff[classtable.DeepWounds].up and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
     --Cast Whirlwind as the main rotational ability.
-    if buff[classtable.SuddenDeathAura].up and rage >=60 and cooldown[classtable.Whirlwind].ready then
+    if buff[classtable.SuddenDeathAura].up and rage >=30 and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
     --Cast Mortal Strike on with two stacks of Executioner's Precision or to reapply Deep Wounds.
-    if rage >=30 and (buff[classtable.ExecutionersPrecision].count == 2 or not debuff[classtable.DeepWounds].up) and cooldown[classtable.MortalStrike].ready then
+    if talents[classtable.MortalStrike] and rage >=30 and (buff[classtable.ExecutionersPrecision].count == 2 or not debuff[classtable.DeepWounds].up) and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
     --Cast Overpower as a multitarget filler.
-    if cooldown[classtable.Overpower].ready then
+    if talents[classtable.Overpower] and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
     --Cast Whirlwind against multiple targets.
-    if rage >=60 and cooldown[classtable.Whirlwind].ready then
+    if rage >=30 and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
     --Cast Execute to spend excess Rage.
@@ -194,7 +194,7 @@ function Warrior:ArmsMultiTarget()
         return classtable.Execute
     end
     --Cast Thunder Clap as a filler.
-    if rage >=40 and cooldown[classtable.ThunderClap].ready then
+    if talents[classtable.ThunderClap] and rage >=40 and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
 end

@@ -33,8 +33,6 @@ local currentSpec = GetSpecialization()
 local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
 local classtable
 
---setmetatable(classtable, Warrior.spellMeta)
-
 function Warrior:Fury()
 	fd = MaxDps.FrameData
 	cooldown = fd.cooldown
@@ -56,6 +54,7 @@ function Warrior:Fury()
     classtable.Enrage = 184362
     classtable.Bloodbath = 335096
     classtable.RecklessAbandonBuff = 396752
+    setmetatable(classtable, Warrior.spellMeta)
 
     if targets > 1  then
         return Warrior:FuryMultiTarget()

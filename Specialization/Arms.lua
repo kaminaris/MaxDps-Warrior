@@ -36,8 +36,6 @@ local currentSpec = GetSpecialization()
 local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
 local classtable
 
---setmetatable(classtable, Warrior.spellMeta)
-
 function Warrior:Arms()
 	fd = MaxDps.FrameData
 	cooldown = fd.cooldown
@@ -55,6 +53,7 @@ function Warrior:Arms()
 	maxHP = UnitHealthMax('player')
 	healthPerc = (curentHP / maxHP) * 100
 	classtable = MaxDps.SpellTable
+    setmetatable(classtable, Warrior.spellMeta)
 
     inExecutePhase = (talents[classtable.Massacre] and targetHP < 35) or targetHP < 20
 

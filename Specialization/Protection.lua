@@ -51,6 +51,7 @@ function Warrior:Protection()
 	maxHP = UnitHealthMax('player')
 	healthPerc = (curentHP / maxHP) * 100
 	classtable = MaxDps.SpellTable
+	classtable.SuddenDeathBuff = 52437
 	--setmetatable(classtable, Warrior.spellMeta)
 
 	if targets > 1 then
@@ -96,7 +97,7 @@ function Warrior:ProtectionSingleTarget()
         return classtable.ThunderClap
     end
 	--Cast Execute, if you do not need Rage for survivability
-	if rage >=20 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+	if (rage >=20 and targethealthPerc < 20) or (talents[classtable.SuddenDeath] and buff[classtable.SuddenDeathBuff].up) and cooldown[classtable.Execute].ready then
 		return classtable.Execute
 	end
 	--Cast Revenge, if you do not need Rage for survivability

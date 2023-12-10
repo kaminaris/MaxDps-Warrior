@@ -54,6 +54,8 @@ function Warrior:Fury()
     classtable.Enrage = 184362
     classtable.Bloodbath = 335096
     classtable.RecklessAbandonBuff = 396752
+    classtable.FuriousBloodthirstBuff = 423211
+    classtable.SuddenDeathBuff = 280776
     --setmetatable(classtable, Warrior.spellMeta)
 
     if targets > 1  then
@@ -111,7 +113,7 @@ function Warrior:FurySingleTarget()
         return classtable.Onslaught
     end
     --Cast Execute only while the Furious Bloodthirst buff is not active.
-    if (not buff[classtable.FuriousBloodthirst].up) and targethealthPerc < 20 and rage >= 30 and cooldown[classtable.Execute].ready then
+    if (not buff[classtable.FuriousBloodthirstBuff].up) and targethealthPerc < 20 and rage >= 30 and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Rampage to spend Rage and maintain Enrage.
@@ -119,7 +121,7 @@ function Warrior:FurySingleTarget()
         return classtable.Rampage
     end
     --Cast Execute as able.
-    if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+    if (rage >= 30 and targethealthPerc < 20) or (rage >= 30 and talents[classtable.SuddenDeath] and buff[classtable.SuddenDeathBuff].up) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Raging Blow as the main rotational attack.
@@ -188,7 +190,7 @@ function Warrior:FuryMultiTarget()
         return classtable.Onslaught
     end
     --Cast Execute only while the Furious Bloodthirst buff is not active.
-    if rage >= 30 and targethealthPerc < 20 and not buff[classtable.FuriousBloodthirst].up and cooldown[classtable.Execute].ready then
+    if rage >= 30 and targethealthPerc < 20 and not buff[classtable.FuriousBloodthirstBuff].up and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Rampage to spend Rage and maintain Enrage.
@@ -196,7 +198,7 @@ function Warrior:FuryMultiTarget()
         return classtable.Rampage
     end
     --Cast Execute as able.
-    if rage >= 30 and targethealthPerc < 20 and cooldown[classtable.Execute].ready then
+    if (rage >= 30 and targethealthPerc < 20) or (rage >= 30 and talents[classtable.SuddenDeath] and buff[classtable.SuddenDeathBuff].up) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Raging Blow as the main rotational attack.

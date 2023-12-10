@@ -53,6 +53,8 @@ function Warrior:Arms()
 	maxHP = UnitHealthMax('player')
 	healthPerc = (curentHP / maxHP) * 100
 	classtable = MaxDps.SpellTable
+    classtable.RendDebuff = 388539
+    classtable.SuddenDeathBuff = 52437
     --setmetatable(classtable, Warrior.spellMeta)
 
     inExecutePhase = (talents[classtable.Massacre] and targetHP < 35) or targetHP < 20
@@ -78,7 +80,7 @@ end
 
 function Warrior:ArmsSingleTarget()
     --Cast Execute to consume Sudden Death procs.
-    if rage >=20 and buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
+    if rage >=20 and buff[classtable.SuddenDeathBuff].up and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Mortal Strike on cooldown.
@@ -129,7 +131,7 @@ end
 
 function Warrior:ArmsMultiTarget()
     --Cast Execute to consume Sudden Death procs.
-    if rage >=20 and buff[classtable.SuddenDeathAura].up and cooldown[classtable.Execute].ready then
+    if rage >=20 and buff[classtable.SuddenDeathBuff].up and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     --Cast Thunder Clap to apply Rend or if less than 4 seconds remain on the debuff.
@@ -141,7 +143,7 @@ function Warrior:ArmsMultiTarget()
         return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (talents[classtable.ColossusSmash] and classtable.ColossusSmash)
     end
     --Cast Sweeping Strikes when Bladestorm is not about to be cast, in order to not waste duration.
-    if buff[classtable.SuddenDeathAura].up and cooldown[classtable.SweepingStrikes].ready then
+    if buff[classtable.SuddenDeathBuff].up and cooldown[classtable.SweepingStrikes].ready then
         return classtable.SweepingStrikes
     end
     --Cast Spear of Bastion during the Colossus Smash debuff.
@@ -173,7 +175,7 @@ function Warrior:ArmsMultiTarget()
         return classtable.Cleave
     end
     --Cast Whirlwind as the main rotational ability.
-    if buff[classtable.SuddenDeathAura].up and rage >=30 and cooldown[classtable.Whirlwind].ready then
+    if buff[classtable.SuddenDeathBuff].up and rage >=30 and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
     --Cast Mortal Strike on with two stacks of Executioner's Precision or to reapply Deep Wounds.

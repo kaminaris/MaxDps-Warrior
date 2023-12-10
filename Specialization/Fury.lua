@@ -54,7 +54,7 @@ function Warrior:Fury()
     classtable.Enrage = 184362
     classtable.Bloodbath = 335096
     classtable.RecklessAbandonBuff = 396752
-    setmetatable(classtable, Warrior.spellMeta)
+    --setmetatable(classtable, Warrior.spellMeta)
 
     if targets > 1  then
         return Warrior:FuryMultiTarget()

@@ -51,7 +51,7 @@ function Warrior:Protection()
 	maxHP = UnitHealthMax('player')
 	healthPerc = (curentHP / maxHP) * 100
 	classtable = MaxDps.SpellTable
-	setmetatable(classtable, Warrior.spellMeta)
+	--setmetatable(classtable, Warrior.spellMeta)
 
 	if targets > 1 then
 		return Warrior:ProtectionMultiTarget()

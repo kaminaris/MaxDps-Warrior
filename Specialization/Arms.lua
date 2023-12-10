@@ -53,7 +53,7 @@ function Warrior:Arms()
 	maxHP = UnitHealthMax('player')
 	healthPerc = (curentHP / maxHP) * 100
 	classtable = MaxDps.SpellTable
-    setmetatable(classtable, Warrior.spellMeta)
+    --setmetatable(classtable, Warrior.spellMeta)
 
     inExecutePhase = (talents[classtable.Massacre] and targetHP < 35) or targetHP < 20
 

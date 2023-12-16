@@ -18,6 +18,7 @@ local PowerTypeRage = Enum.PowerType.Rage
 local fd
 local cooldown
 local buff
+local debuff
 local talents
 local targets
 local rage
@@ -39,6 +40,7 @@ function Warrior:Protection()
 	fd = MaxDps.FrameData
 	cooldown = fd.cooldown
 	buff = fd.buff
+	debuff = fd.debuff
 	talents = fd.talents
 	targets = MaxDps:SmartAoe()
 	rage = UnitPower('player', PowerTypeRage)
@@ -88,6 +90,9 @@ function Warrior:ProtectionSingleTarget()
 	if talents[classtable.SpearofBastion] and cooldown[classtable.SpearofBastion].ready then
         return classtable.SpearofBastion
     end
+    if (not talents[classtable.BloodandThunder]) and talents[classtable.Rend] and rage >= 30 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].refreshable) and cooldown[classtable.Rend].ready then
+        return classtable.Rend
+    end
 	--Cast Shield Slam on cooldown
 	if cooldown[classtable.ShieldSlam].ready then
         return classtable.ShieldSlam
@@ -101,7 +106,7 @@ function Warrior:ProtectionSingleTarget()
 		return classtable.Execute
 	end
 	--Cast Revenge, if you do not need Rage for survivability
-	if talents[classtable.Revenge] and cooldown[classtable.Revenge].ready then
+	if talents[classtable.Revenge] and rage >= 20 and cooldown[classtable.Revenge].ready then
 		return classtable.Revenge
 	end
 end
@@ -123,16 +128,19 @@ function Warrior:ProtectionMultiTarget()
 	if talents[classtable.SpearofBastion] and cooldown[classtable.SpearofBastion].ready then
         return classtable.SpearofBastion
     end
-	--Cast Thunder Clap on cooldown.
-	if talents[classtable.ThunderClap] and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+    if (not talents[classtable.BloodandThunder]) and talents[classtable.Rend] and rage >= 30 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].refreshable) and cooldown[classtable.Rend].ready then
+        return classtable.Rend
     end
 	--Cast Shield Slam on cooldown.
 	if cooldown[classtable.ShieldSlam].ready then
         return classtable.ShieldSlam
     end
+	--Cast Thunder Clap on cooldown.
+	if talents[classtable.ThunderClap] and cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
+    end
 	--Cast Revenge.
-	if talents[classtable.Revenge] and cooldown[classtable.Revenge].ready then
+	if talents[classtable.Revenge] and rage >= 20 and cooldown[classtable.Revenge].ready then
         return classtable.Revenge
     end
 end

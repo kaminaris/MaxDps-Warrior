@@ -43,7 +43,7 @@ function Warrior:Arms()
 	buff = fd.buff
     debuff = fd.debuff
 	talents = fd.talents
-	targets = 3 --MaxDps:SmartAoe()
+	targets = MaxDps:SmartAoe()
 	rage = UnitPower('player', PowerTypeRage)
 	rageMax = UnitPowerMax('player', PowerTypeRage)
 	rageDeficit = rageMax - rage

@@ -103,16 +103,19 @@ function Warrior:ArmsSingleTarget()
         return classtable.MortalStrike
     end
     --Cast Thunder Clap to apply Rend or if less than 3 seconds remain on the debuff.
-    if talents[classtable.ThunderClap] and rage >= 40 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].refreshable) and cooldown[classtable.ThunderClap].ready then
+    if talents[classtable.BloodandThunder] and talents[classtable.ThunderClap] and rage >= 40 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].refreshable) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
+    end
+    if (not talents[classtable.BloodandThunder]) and talents[classtable.Rend] and rage >= 30 and (not debuff[classtable.RendDebuff] or debuff[classtable.RendDebuff].refreshable) and cooldown[classtable.Rend].ready then
+        return classtable.Rend
     end
     --Cast Avatar simultaneously with Colossus Smash or Warbreaker.
     if talents[classtable.Avatar] and (cooldown[classtable.ColossusSmash].ready or cooldown[classtable.Warbreaker].ready) and cooldown[classtable.Avatar].ready then
         return classtable.Avatar
     end
     --Cast Warbreaker or Colossus Smash.
-    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready) then
-        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (not talents[classtable.Warbreaker] and classtable.ColossusSmash)
+    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (not talents[classtable.Warbreaker] and talents[classtable.ColossusSmash] and cooldown[classtable.ColossusSmash].ready) then
+        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (not talents[classtable.Warbreaker] and talents[classtable.ColossusSmash] and classtable.ColossusSmash)
     end
     --Cast Spear of Bastion during Colossus Smash.
     if talents[classtable.SpearofBastion] and debuff[classtable.ColossusSmashDebuff].up and cooldown[classtable.SpearofBastion].ready then
@@ -150,16 +153,20 @@ function Warrior:ArmsMultiTarget()
         return classtable.Execute
     end
     --Cast Thunder Clap to apply Rend or if less than 4 seconds remain on the debuff.
-    if talents[classtable.ThunderClap] and rage >= 40 and (not debuff[classtable.RendDebuff].up or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
+    if talents[classtable.BloodandThunder] and talents[classtable.ThunderClap] and rage >= 40 and (not debuff[classtable.RendDebuff].up or debuff[classtable.RendDebuff].duration < 3) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
     --Cast Warbreaker to apply Colossus Smash.
-    if (talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready) or (not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready) then
-        return (talents[classtable.Warbreaker] and classtable.Warbreaker) or (not talents[classtable.Warbreaker] and classtable.ColossusSmash)
+    if talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+        return classtable.Warbreaker
     end
     --Cast Sweeping Strikes when Bladestorm is not about to be cast, in order to not waste duration.
     if (cooldown[classtable.Bladestorm].duration > 2 or cooldown[classtable.BladestormHurricane].duration > 2) and cooldown[classtable.SweepingStrikes].ready then
         return classtable.SweepingStrikes
+    end
+    -- Cast Colossus Smash After SweepingStrikes if not talented into Warbreaker
+    if not talents[classtable.Warbreaker] and talents[classtable.ColossusSmash] and cooldown[classtable.ColossusSmash].ready then
+        return classtable.ColossusSmash
     end
     --Cast Spear of Bastion during the Colossus Smash debuff.
     if talents[classtable.SpearofBastion] and debuff[classtable.ColossusSmashDebuff].up and cooldown[classtable.SpearofBastion].ready then

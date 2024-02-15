@@ -70,6 +70,12 @@ function Warrior:Arms()
 
     inExecutePhase = (talents[classtable.Massacre] and targetHP < 35) or targetHP < 20
 
+    if talents[classtable.Massacre] then
+        classtable.Execute = 281000
+    else
+        classtable.Execute = 163201
+    end
+
     if targets >= 3 then
         return Warrior:ArmsMultiTarget()
     end

@@ -1,5 +1,5 @@
 ## Title: MaxDps_Warrior
-## Version: 10.0.20
+## Version: 10.0.21
 ## Author: Kaminaris
 ## Interface: 100205
 ## Dependencies: MaxDps

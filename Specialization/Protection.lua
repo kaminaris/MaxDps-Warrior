@@ -277,12 +277,12 @@ function Warrior:Protection()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
-    classtable.RendDeBuff = 0
-    classtable.EarthenTenacityBuff = 0
-    classtable.ViolentOutburstBuff = 0
-    classtable.AvatarBuff = 0
-    classtable.SuddenDeathBuff = 0
-    classtable.RevengeBuff = 0
+    classtable.RendDeBuff = 388539
+    classtable.EarthenTenacityBuff = 405582
+    classtable.ViolentOutburstBuff = 386478
+    classtable.AvatarBuff = 401150
+    classtable.SuddenDeathBuff = 52437
+    classtable.RevengeBuff = 5302
 
     --if (MaxDps:FindSpell(classtable.AutoAttack) and CheckSpellCosts(classtable.AutoAttack, 'AutoAttack')) and cooldown[classtable.AutoAttack].ready then
     --    return classtable.AutoAttack

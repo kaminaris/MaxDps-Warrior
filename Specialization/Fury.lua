@@ -200,6 +200,23 @@ local function CheckPrevSpell(spell)
 end
 
 
+local function boss()
+    if UnitExists('boss1')
+    or UnitExists('boss2')
+    or UnitExists('boss3')
+    or UnitExists('boss4')
+    or UnitExists('boss5')
+    or UnitExists('boss6')
+    or UnitExists('boss7')
+    or UnitExists('boss8')
+    or UnitExists('boss9')
+    or UnitExists('boss10') then
+        return true
+    end
+    return false
+end
+
+
 function Fury:precombat()
     --if (MaxDps:FindSpell(classtable.BattleShout) and CheckSpellCosts(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
     --    return classtable.BattleShout
@@ -243,7 +260,7 @@ function Fury:multi_target()
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
     if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
     if (MaxDps:FindSpell(classtable.Rampage) and CheckSpellCosts(classtable.Rampage, 'Rampage')) and (talents[classtable.AngerManagement]) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
@@ -284,7 +301,7 @@ function Fury:multi_target()
 end
 function Fury:single_target()
     if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and (cooldown[classtable.Recklessness].remains <gcd or buff[classtable.RecklessnessBuff].up) and cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
     if (MaxDps:FindSpell(classtable.Recklessness) and CheckSpellCosts(classtable.Recklessness, 'Recklessness')) and (not talents[classtable.AngerManagement] or ( talents[classtable.AngerManagement] and cooldown[classtable.Avatar].ready or cooldown[classtable.Avatar].remains <gcd or cooldown[classtable.Avatar].remains >30 )) and cooldown[classtable.Recklessness].ready then
         return classtable.Recklessness
@@ -292,7 +309,7 @@ function Fury:single_target()
     if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and (not talents[classtable.TitansTorment] or ( talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) )) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and (buff[classtable.EnrageBuff].up and ( ( buff[classtable.FuriousBloodthirstBuff].up and talents[classtable.TitansTorment] ) or not talents[classtable.TitansTorment] or targets >1 or not (MaxDps.tier and MaxDps.tier[31].count >= 2) ) and math.huge >15) and cooldown[classtable.ChampionsSpear].ready then
+    if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and (buff[classtable.EnrageBuff].up and ( ( buff[classtable.FuriousBloodthirstBuff].up and talents[classtable.TitansTorment] ) or not talents[classtable.TitansTorment] or boss and ttd <20 or targets >1 or not (MaxDps.tier and MaxDps.tier[31].count >= 2) ) and math.huge >15) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
     if (MaxDps:FindSpell(classtable.Whirlwind) and CheckSpellCosts(classtable.Whirlwind, 'Whirlwind')) and (targets >1 and talents[classtable.ImprovedWhirlwind] and not buff[classtable.MeatCleaverBuff].up or math.huge <2 and talents[classtable.ImprovedWhirlwind] and not buff[classtable.MeatCleaverBuff].up) and cooldown[classtable.Whirlwind].ready then
@@ -395,7 +412,7 @@ function Fury:variables()
 end
 
 function Fury:callaction()
-    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and (timeInCombat <= 0.5 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >5) and cooldown[classtable.Charge].ready then
+    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and (timeInCombat <= 0.5 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
         return classtable.Charge
     end
     if (MaxDps:FindSpell(classtable.HeroicLeap) and CheckSpellCosts(classtable.HeroicLeap, 'HeroicLeap')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >25) and cooldown[classtable.HeroicLeap].ready then

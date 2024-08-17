@@ -419,7 +419,7 @@ function Fury:callaction()
         return classtable.HeroicLeap
     end
     if (MaxDps:FindSpell(classtable.Pummel) and CheckSpellCosts(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
-        MaxDps:GlowCooldown(classtable.Pummel, select(8,UnitCastingInfo('target') == false) and cooldown[classtable.Pummel].ready)
+        MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
     local trinketsCheck = Fury:trinkets()
     if trinketsCheck then

@@ -210,7 +210,7 @@ end
 
 function Protection:callaction()
     if (MaxDps:FindSpell(classtable.Pummel) and CheckSpellCosts(classtable.Pummel, 'Pummel')) and cooldown[classtable.Pummel].ready then
-        MaxDps:GlowCooldown(classtable.Pummel, select(8,UnitCastingInfo('target') == false) and cooldown[classtable.Pummel].ready)
+        MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
     if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and (timeInCombat == 0 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
         return classtable.Charge

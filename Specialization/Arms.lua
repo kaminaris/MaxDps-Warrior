@@ -200,6 +200,23 @@ local function CheckPrevSpell(spell)
 end
 
 
+local function boss()
+    if UnitExists('boss1')
+    or UnitExists('boss2')
+    or UnitExists('boss3')
+    or UnitExists('boss4')
+    or UnitExists('boss5')
+    or UnitExists('boss6')
+    or UnitExists('boss7')
+    or UnitExists('boss8')
+    or UnitExists('boss9')
+    or UnitExists('boss10') then
+        return true
+    end
+    return false
+end
+
+
 function Arms:precombat()
     --if (MaxDps:FindSpell(classtable.BattleShout) and CheckSpellCosts(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
     --    return classtable.BattleShout
@@ -222,7 +239,7 @@ function Arms:execute()
         return classtable.Skullsplitter
     end
     if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
     if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
@@ -263,7 +280,7 @@ function Arms:aoe()
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
     if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and (cooldown[classtable.SweepingStrikes].remains <= 1 or buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
     if (MaxDps:FindSpell(classtable.SweepingStrikes) and CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and cooldown[classtable.SweepingStrikes].ready then
         MaxDps:GlowCooldown(classtable.SweepingStrikes, cooldown[classtable.SweepingStrikes].ready)
@@ -334,7 +351,7 @@ function Arms:single_target()
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
     if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
-        return classtable.Ravager
+        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
     if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
@@ -382,7 +399,7 @@ function Arms:variables()
 end
 
 function Arms:callaction()
-    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >5) and cooldown[classtable.Charge].ready then
+    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
         return classtable.Charge
     end
     if (MaxDps:FindSpell(classtable.Pummel) and CheckSpellCosts(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then

@@ -141,16 +141,16 @@ function Protection:aoe()
     if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= 1) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
-    if (MaxDps:FindSpell(classtable.ThunderBlast) and CheckSpellCosts(classtable.ThunderBlast, 'ThunderBlast')) and (buff[classtable.ViolentOutburstBuff].up and targets >6 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderBlast].ready then
+    if (MaxDps:FindSpell(classtable.ThunderBlast) and CheckSpellCosts(classtable.ThunderBlast, 'ThunderBlast')) and (buff[classtable.ViolentOutburstBuff].up and targets >= 2 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderBlast].ready then
         return classtable.ThunderBlast
     end
-    if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (buff[classtable.ViolentOutburstBuff].up and targets >6 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderClap].ready then
+    if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (buff[classtable.ViolentOutburstBuff].up and targets >= 4 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce] and talents[classtable.CrashingThunder] or buff[classtable.ViolentOutburstBuff].up and targets >6 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
     if (MaxDps:FindSpell(classtable.Revenge) and CheckSpellCosts(classtable.Revenge, 'Revenge')) and (Rage >= 70 and talents[classtable.SeismicReverberation] and targets >= 3) and cooldown[classtable.Revenge].ready then
         return classtable.Revenge
     end
-    if (MaxDps:FindSpell(classtable.ShieldSlam) and CheckSpellCosts(classtable.ShieldSlam, 'ShieldSlam')) and (Rage <= 60 or buff[classtable.ViolentOutburstBuff].up and targets <= 7) and cooldown[classtable.ShieldSlam].ready then
+    if (MaxDps:FindSpell(classtable.ShieldSlam) and CheckSpellCosts(classtable.ShieldSlam, 'ShieldSlam')) and (Rage <= 60 or buff[classtable.ViolentOutburstBuff].up and targets <= 4 and talents[classtable.CrashingThunder]) and cooldown[classtable.ShieldSlam].ready then
         return classtable.ShieldSlam
     end
     if (MaxDps:FindSpell(classtable.ThunderBlast) and CheckSpellCosts(classtable.ThunderBlast, 'ThunderBlast')) and cooldown[classtable.ThunderBlast].ready then
@@ -164,6 +164,15 @@ function Protection:aoe()
     end
 end
 function Protection:generic()
+    if (MaxDps:FindSpell(classtable.ThunderBlast) and CheckSpellCosts(classtable.ThunderBlast, 'ThunderBlast')) and (( buff[classtable.ThunderBlastBuff].count == 2 and buff[classtable.BurstofPowerBuff].count <= 1 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce] ) or Rage <= 70 and talents[classtable.Demolish]) and cooldown[classtable.ThunderBlast].ready then
+        return classtable.ThunderBlast
+    end
+    if (MaxDps:FindSpell(classtable.ShieldSlam) and CheckSpellCosts(classtable.ShieldSlam, 'ShieldSlam')) and (( buff[classtable.BurstofPowerBuff].count == 2 and buff[classtable.ThunderBlastBuff].count <= 1 or buff[classtable.ViolentOutburstBuff].up ) or Rage <= 70 and talents[classtable.Demolish]) and cooldown[classtable.ShieldSlam].ready then
+        return classtable.ShieldSlam
+    end
+    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and (Rage >= 70 or ( Rage >= 40 and cooldown[classtable.ShieldSlam].ready==false and talents[classtable.Demolish] or Rage >= 50 and cooldown[classtable.ShieldSlam].ready==false ) or buff[classtable.SuddenDeathBuff].up and talents[classtable.SuddenDeath]) and cooldown[classtable.Execute].ready then
+        return classtable.Execute
+    end
     if (MaxDps:FindSpell(classtable.ShieldSlam) and CheckSpellCosts(classtable.ShieldSlam, 'ShieldSlam')) and cooldown[classtable.ShieldSlam].ready then
         return classtable.ShieldSlam
     end
@@ -172,12 +181,6 @@ function Protection:generic()
     end
     if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= 2 and not buff[classtable.ViolentOutburstBuff].up) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
-    end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and (buff[classtable.SuddenDeathBuff].up and talents[classtable.SuddenDeath]) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
-    end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
     end
     if (MaxDps:FindSpell(classtable.ThunderBlast) and CheckSpellCosts(classtable.ThunderBlast, 'ThunderBlast')) and (( targets >1 or cooldown[classtable.ShieldSlam].ready==false and not buff[classtable.ViolentOutburstBuff].up )) and cooldown[classtable.ThunderBlast].ready then
         return classtable.ThunderBlast
@@ -188,7 +191,7 @@ function Protection:generic()
     if (MaxDps:FindSpell(classtable.Revenge) and CheckSpellCosts(classtable.Revenge, 'Revenge')) and (( Rage >= 80 and targetHP >20 or buff[classtable.RevengeBuff].up and targetHP <= 20 and Rage <= 18 and cooldown[classtable.ShieldSlam].ready==false or buff[classtable.RevengeBuff].up and targetHP >20 ) or ( Rage >= 80 and targetHP >35 or buff[classtable.RevengeBuff].up and targetHP <= 35 and Rage <= 18 and cooldown[classtable.ShieldSlam].ready==false or buff[classtable.RevengeBuff].up and targetHP >35 ) and talents[classtable.Massacre]) and cooldown[classtable.Revenge].ready then
         return classtable.Revenge
     end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and (targets == 1) and cooldown[classtable.Execute].ready then
+    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     if (MaxDps:FindSpell(classtable.Revenge) and CheckSpellCosts(classtable.Revenge, 'Revenge')) and (targetHP >20) and cooldown[classtable.Revenge].ready then
@@ -209,7 +212,7 @@ function Protection:callaction()
     if (MaxDps:FindSpell(classtable.Pummel) and CheckSpellCosts(classtable.Pummel, 'Pummel')) and cooldown[classtable.Pummel].ready then
         MaxDps:GlowCooldown(classtable.Pummel, select(8,UnitCastingInfo('target') == false) and cooldown[classtable.Pummel].ready)
     end
-    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and (timeInCombat == 0) and cooldown[classtable.Charge].ready then
+    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and (timeInCombat == 0 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
         return classtable.Charge
     end
     if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
@@ -233,6 +236,9 @@ function Protection:callaction()
     if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
+    if (MaxDps:FindSpell(classtable.Demolish) and CheckSpellCosts(classtable.Demolish, 'Demolish')) and (buff[classtable.ColossalMightBuff].count >= 3) and cooldown[classtable.Demolish].ready then
+        return classtable.Demolish
+    end
     if (MaxDps:FindSpell(classtable.ThunderousRoar) and CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
         MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
     end
@@ -244,9 +250,6 @@ function Protection:callaction()
     end
     if (MaxDps:FindSpell(classtable.ShieldBlock) and CheckSpellCosts(classtable.ShieldBlock, 'ShieldBlock')) and (buff[classtable.ShieldBlockBuff].duration <= 10) and cooldown[classtable.ShieldBlock].ready then
         MaxDps:GlowCooldown(classtable.ShieldBlock, cooldown[classtable.ShieldBlock].ready)
-    end
-    if (MaxDps:FindSpell(classtable.Demolish) and CheckSpellCosts(classtable.Demolish, 'Demolish')) and cooldown[classtable.Demolish].ready then
-        return classtable.Demolish
     end
     if (targets >= 3) then
         local aoeCheck = Protection:aoe()
@@ -293,11 +296,14 @@ function Warrior:Protection()
     classtable.RendDeBuff = 388539
     classtable.ViolentOutburstBuff = 386478
     classtable.AvatarBuff = 401150
+    classtable.ThunderBlastBuff = 0
+    classtable.BurstofPowerBuff = 0
     classtable.SuddenDeathBuff = 52437
     classtable.RevengeBuff = 5302
     classtable.LastStandBuff = 12975
     classtable.SeeingRedBuff = 0
     classtable.ShieldBlockBuff = 132404
+    classtable.ColossalMightBuff = 0
 
     local precombatCheck = Protection:precombat()
     if precombatCheck then

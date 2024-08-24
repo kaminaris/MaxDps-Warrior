@@ -449,6 +449,8 @@ function Warrior:Fury()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
+    classtable.Bloodbath = 335096
+    classtable.CrushingBlow = 335097
     for spellId in pairs(MaxDps.Flags) do
         self.Flags[spellId] = false
         self:ClearGlowIndependent(spellId, spellId)

@@ -79,7 +79,7 @@ local adds_remain
 local execute_phase
 
 local function CheckSpellCosts(spell,spellstring)
-    if not IsSpellKnownOrOverridesKnown(spell) then return false end
+    if not IsSpellKnown(spell) then return false end
     if not C_Spell.IsSpellUsable(spell) then return false end
     if spellstring == 'TouchofDeath' then
         if targethealthPerc > 15 then
@@ -218,175 +218,175 @@ end
 
 
 function Arms:precombat()
-    --if (MaxDps:FindSpell(classtable.BattleShout) and CheckSpellCosts(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
+    --if (CheckSpellCosts(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
     --    return classtable.BattleShout
     --end
-    if (MaxDps:FindSpell(classtable.BattleStance) and CheckSpellCosts(classtable.BattleStance, 'BattleStance')) and cooldown[classtable.BattleStance].ready then
+    if (CheckSpellCosts(classtable.BattleStance, 'BattleStance')) and cooldown[classtable.BattleStance].ready then
         return classtable.BattleStance
     end
 end
 function Arms:execute()
-    if (MaxDps:FindSpell(classtable.SweepingStrikes) and CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and (targets >1) and cooldown[classtable.SweepingStrikes].ready then
+    if (CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and (targets >1) and cooldown[classtable.SweepingStrikes].ready then
         MaxDps:GlowCooldown(classtable.SweepingStrikes, cooldown[classtable.SweepingStrikes].ready)
     end
-    if (MaxDps:FindSpell(classtable.ThunderousRoar) and CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
+    if (CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
         MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
     end
-    if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
+    if (CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:FindSpell(classtable.Skullsplitter) and CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and cooldown[classtable.Skullsplitter].ready then
+    if (CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and cooldown[classtable.Skullsplitter].ready then
         return classtable.Skullsplitter
     end
-    if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
+    if (CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
         MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
-    if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
+    if (CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:FindSpell(classtable.ColossusSmash) and CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
+    if (CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
         return classtable.ColossusSmash
     end
-    if (MaxDps:FindSpell(classtable.Warbreaker) and CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
+    if (CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
         return classtable.Warbreaker
     end
-    if (MaxDps:FindSpell(classtable.MortalStrike) and CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2) and cooldown[classtable.MortalStrike].ready then
+    if (CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2) and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and (Rage <60) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and (Rage <60) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
+    if (CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
-    if (MaxDps:FindSpell(classtable.Bladestorm) and CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and cooldown[classtable.Bladestorm].ready then
+    if (CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
 end
 function Arms:aoe()
-    if (MaxDps:FindSpell(classtable.Cleave) and CheckSpellCosts(classtable.Cleave, 'Cleave')) and (not buff[classtable.StrikeVulnerabilitiesBuff].up or buff[classtable.CollateralDamageBuff].up and buff[classtable.MercilessBonegrinderBuff].up) and cooldown[classtable.Cleave].ready then
+    if (CheckSpellCosts(classtable.Cleave, 'Cleave')) and (not buff[classtable.StrikeVulnerabilitiesBuff].up or buff[classtable.CollateralDamageBuff].up and buff[classtable.MercilessBonegrinderBuff].up) and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
-    if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].duration <3 and targets >= 3) and cooldown[classtable.ThunderClap].ready then
+    if (CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].duration <3 and targets >= 3) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
-    if (MaxDps:FindSpell(classtable.ThunderousRoar) and CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
+    if (CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
         MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
     end
-    if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
+    if (CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and (cooldown[classtable.SweepingStrikes].remains <= 1 or buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Ravager].ready then
+    if (CheckSpellCosts(classtable.Ravager, 'Ravager')) and (cooldown[classtable.SweepingStrikes].remains <= 1 or buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Ravager].ready then
         MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
-    if (MaxDps:FindSpell(classtable.SweepingStrikes) and CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and cooldown[classtable.SweepingStrikes].ready then
+    if (CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and cooldown[classtable.SweepingStrikes].ready then
         MaxDps:GlowCooldown(classtable.SweepingStrikes, cooldown[classtable.SweepingStrikes].ready)
     end
-    if (MaxDps:FindSpell(classtable.Skullsplitter) and CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Skullsplitter].ready then
+    if (CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Skullsplitter].ready then
         return classtable.Skullsplitter
     end
-    if (MaxDps:FindSpell(classtable.Warbreaker) and CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
+    if (CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
         return classtable.Warbreaker
     end
-    if (MaxDps:FindSpell(classtable.Bladestorm) and CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and (talents[classtable.Unhinged] or talents[classtable.MercilessBonegrinder]) and cooldown[classtable.Bladestorm].ready then
+    if (CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and (talents[classtable.Unhinged] or talents[classtable.MercilessBonegrinder]) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
-    if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
+    if (CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:FindSpell(classtable.ColossusSmash) and CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
+    if (CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
         return classtable.ColossusSmash
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and (buff[classtable.SweepingStrikesBuff].up and cooldown[classtable.Overpower].charges == 2) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and (buff[classtable.SweepingStrikesBuff].up and cooldown[classtable.Overpower].charges == 2) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.Cleave) and CheckSpellCosts(classtable.Cleave, 'Cleave')) and cooldown[classtable.Cleave].ready then
+    if (CheckSpellCosts(classtable.Cleave, 'Cleave')) and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
-    if (MaxDps:FindSpell(classtable.MortalStrike) and CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.MortalStrike].ready then
+    if (CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Execute].ready then
+    if (CheckSpellCosts(classtable.Execute, 'Execute')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
-    if (MaxDps:FindSpell(classtable.Bladestorm) and CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and cooldown[classtable.Bladestorm].ready then
+    if (CheckSpellCosts(classtable.Bladestorm, 'Bladestorm')) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
+    if (CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
-    if (MaxDps:FindSpell(classtable.MortalStrike) and CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
+    if (CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
+    if (CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
-    if (MaxDps:FindSpell(classtable.Whirlwind) and CheckSpellCosts(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
+    if (CheckSpellCosts(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
         return classtable.Whirlwind
     end
 end
 function Arms:single_target()
-    if (MaxDps:FindSpell(classtable.ThunderClap) and CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= gcd and targets >= 2 and not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.ThunderClap].ready then
+    if (CheckSpellCosts(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= gcd and targets >= 2 and not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.ThunderClap].ready then
         return classtable.ThunderClap
     end
-    if (MaxDps:FindSpell(classtable.SweepingStrikes) and CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and (targets >1) and cooldown[classtable.SweepingStrikes].ready then
+    if (CheckSpellCosts(classtable.SweepingStrikes, 'SweepingStrikes')) and (targets >1) and cooldown[classtable.SweepingStrikes].ready then
         MaxDps:GlowCooldown(classtable.SweepingStrikes, cooldown[classtable.SweepingStrikes].ready)
     end
-    if (MaxDps:FindSpell(classtable.Rend) and CheckSpellCosts(classtable.Rend, 'Rend')) and (debuff[classtable.RendDeBuff].remains <= gcd) and cooldown[classtable.Rend].ready then
+    if (CheckSpellCosts(classtable.Rend, 'Rend')) and (debuff[classtable.RendDeBuff].remains <= gcd) and cooldown[classtable.Rend].ready then
         return classtable.Rend
     end
-    if (MaxDps:FindSpell(classtable.ThunderousRoar) and CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
+    if (CheckSpellCosts(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
         MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
     end
-    if (MaxDps:FindSpell(classtable.ChampionsSpear) and CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
+    if (CheckSpellCosts(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:FindSpell(classtable.Ravager) and CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
+    if (CheckSpellCosts(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
         MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
-    if (MaxDps:FindSpell(classtable.Avatar) and CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
+    if (CheckSpellCosts(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:FindSpell(classtable.ColossusSmash) and CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
+    if (CheckSpellCosts(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
         return classtable.ColossusSmash
     end
-    if (MaxDps:FindSpell(classtable.Warbreaker) and CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
+    if (CheckSpellCosts(classtable.Warbreaker, 'Warbreaker')) and cooldown[classtable.Warbreaker].ready then
         return classtable.Warbreaker
     end
-    if (MaxDps:FindSpell(classtable.Cleave) and CheckSpellCosts(classtable.Cleave, 'Cleave')) and (targets >= 3) and cooldown[classtable.Cleave].ready then
+    if (CheckSpellCosts(classtable.Cleave, 'Cleave')) and (targets >= 3) and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and (targets >1 and ( buff[classtable.SweepingStrikesBuff].up or talents[classtable.Dreadnaught] ) and cooldown[classtable.Overpower].charges == 2) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and (targets >1 and ( buff[classtable.SweepingStrikesBuff].up or talents[classtable.Dreadnaught] ) and cooldown[classtable.Overpower].charges == 2) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.MortalStrike) and CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
+    if (CheckSpellCosts(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
         return classtable.MortalStrike
     end
-    if (MaxDps:FindSpell(classtable.Skullsplitter) and CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and cooldown[classtable.Skullsplitter].ready then
+    if (CheckSpellCosts(classtable.Skullsplitter, 'Skullsplitter')) and cooldown[classtable.Skullsplitter].ready then
         return classtable.Skullsplitter
     end
-    if (MaxDps:FindSpell(classtable.Execute) and CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
+    if (CheckSpellCosts(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
-    if (MaxDps:FindSpell(classtable.Overpower) and CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+    if (CheckSpellCosts(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
         return classtable.Overpower
     end
-    if (MaxDps:FindSpell(classtable.Rend) and CheckSpellCosts(classtable.Rend, 'Rend')) and (debuff[classtable.RendDeBuff].remains <= 8) and cooldown[classtable.Rend].ready then
+    if (CheckSpellCosts(classtable.Rend, 'Rend')) and (debuff[classtable.RendDeBuff].remains <= 8) and cooldown[classtable.Rend].ready then
         return classtable.Rend
     end
-    if (MaxDps:FindSpell(classtable.Cleave) and CheckSpellCosts(classtable.Cleave, 'Cleave')) and (targets >= 2 and talents[classtable.FervorofBattle]) and cooldown[classtable.Cleave].ready then
+    if (CheckSpellCosts(classtable.Cleave, 'Cleave')) and (targets >= 2 and talents[classtable.FervorofBattle]) and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
-    if (MaxDps:FindSpell(classtable.Slam) and CheckSpellCosts(classtable.Slam, 'Slam')) and cooldown[classtable.Slam].ready then
+    if (CheckSpellCosts(classtable.Slam, 'Slam')) and cooldown[classtable.Slam].ready then
         return classtable.Slam
     end
 end
@@ -399,10 +399,10 @@ function Arms:variables()
 end
 
 function Arms:callaction()
-    if (MaxDps:FindSpell(classtable.Charge) and CheckSpellCosts(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
+    if (CheckSpellCosts(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
         return classtable.Charge
     end
-    if (MaxDps:FindSpell(classtable.Pummel) and CheckSpellCosts(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
+    if (CheckSpellCosts(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
         MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
     local variablesCheck = Arms:variables()

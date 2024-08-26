@@ -141,7 +141,7 @@ function Fury:multi_target()
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.RecklessAbandon]) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and ( ( targetHP >35 and talents[classtable.Massacre] or targetHP >20 ) and buff[classtable.SuddenDeathBuff].remains <= gcd )) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and ( ( targetHP <=35 and talents[classtable.Massacre] or targetHP <=20 ) and buff[classtable.SuddenDeathBuff].remains <= gcd )) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then
@@ -209,7 +209,7 @@ function Fury:single_target()
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.RecklessAbandon] and ( buff[classtable.RecklessnessBuff].up or buff[classtable.EnrageBuff].remains <gcd or RagePerc >85 )) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and not buff[classtable.FuriousBloodthirstBuff].up and buff[classtable.AshenJuggernautBuff].up or buff[classtable.SuddenDeathBuff].remains <= gcd and ( targetHP >35 and talents[classtable.Massacre] or targetHP >20 )) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and not buff[classtable.FuriousBloodthirstBuff].up and buff[classtable.AshenJuggernautBuff].up or buff[classtable.SuddenDeathBuff].remains <= gcd and ( targetHP <=35 and talents[classtable.Massacre] or targetHP <=20 )) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.Execute].ready then

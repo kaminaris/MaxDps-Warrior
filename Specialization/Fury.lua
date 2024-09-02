@@ -77,7 +77,6 @@ local trinket_two_manual
 local st_planning
 local adds_remain
 local execute_phase
-
 function Fury:precombat()
     --if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
     --    return classtable.BattleShout
@@ -88,23 +87,26 @@ function Fury:precombat()
     --if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (not MaxDps:CheckEquipped('FyralaththeDreamrender')) and cooldown[classtable.Recklessness].ready then
     --    return classtable.Recklessness
     --end
-    --if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready then
-    --    MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
-    --end
+    --MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready)
 end
 function Fury:multi_target()
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( not talents[classtable.AngerManagement] and cooldown[classtable.Avatar].remains <1 and talents[classtable.TitansTorment] ) or talents[classtable.AngerManagement] or not talents[classtable.TitansTorment]) and cooldown[classtable.Recklessness].ready then
-        return classtable.Recklessness
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (cooldown[classtable.Avatar].ready and talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) or not talents[classtable.TitansTorment]) and cooldown[classtable.ThunderBlast].ready then
+        return classtable.ThunderBlast
     end
-    if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) or not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready then
-        MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
+    MaxDps:GlowCooldown(classtable.Recklessness,(MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( not talents[classtable.AngerManagement] and cooldown[classtable.Avatar].remains <1 and talents[classtable.TitansTorment] ) or talents[classtable.AngerManagement] or not talents[classtable.TitansTorment]) and cooldown[classtable.ThunderousRoar].ready)
+    MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) or not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready)
+    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.Rampage].ready then
+        return classtable.Rampage
     end
-    if (MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ThunderousRoar].ready then
-        MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ThunderBlast].ready then
+        return classtable.ThunderBlast
     end
-    if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ChampionsSpear].ready then
-        MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (not buff[classtable.MeatCleaverBuff].up) and cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
     end
+    MaxDps:GlowCooldown(classtable.ThunderousRoar,MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar') and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ThunderousRoar].ready)
+    MaxDps:GlowCooldown(classtable.Ravager,MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager') and (buff[classtable.EnrageBuff].up) and cooldown[classtable.Ravager].ready)
+    MaxDps:GlowCooldown(classtable.ChampionsSpear,MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear') and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ChampionsSpear].ready)
     if (MaxDps:CheckSpellUsable(classtable.OdynsFury, 'OdynsFury')) and (debuff[classtable.OdynsFuryTormentMhDeBuff].remains <1 and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) and cooldown[classtable.Avatar].remains) and cooldown[classtable.OdynsFury].ready then
         return classtable.OdynsFury
     end
@@ -114,20 +116,9 @@ function Fury:multi_target()
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and buff[classtable.AshenJuggernautBuff].remains <= gcd and talents[classtable.AshenJuggernaut]) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
+    MaxDps:GlowCooldown(classtable.Bladestorm,MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and (buff[classtable.EnrageBuff].up and cooldown[classtable.Avatar].remains >= 9) and cooldown[classtable.Bladestorm].ready)
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (RagePerc >85 and cooldown[classtable.Bladestorm].remains <= gcd and not debuff[classtable.ChampionsMightDeBuff].up) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (buff[classtable.EnrageBuff].up and cooldown[classtable.Avatar].remains >= 9) and cooldown[classtable.Bladestorm].ready then
-        MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.Ravager].ready then
-        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.AngerManagement]) and cooldown[classtable.Rampage].ready then
-        return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (buff[classtable.FuriousBloodthirstBuff].up) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
     end
     if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and cooldown[classtable.CrushingBlow].ready then
         return classtable.CrushingBlow
@@ -135,25 +126,25 @@ function Fury:multi_target()
     if (MaxDps:CheckSpellUsable(classtable.Onslaught, 'Onslaught')) and (talents[classtable.Tenderize] or buff[classtable.EnrageBuff].up) and cooldown[classtable.Onslaught].ready then
         return classtable.Onslaught
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (not debuff[classtable.GushingWoundDeBuff].duration) and cooldown[classtable.Bloodbath].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then
         return classtable.Bloodbath
     end
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.RecklessAbandon]) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and ( ( targetHP <=35 and talents[classtable.Massacre] or targetHP <=20 ) and buff[classtable.SuddenDeathBuff].remains <= gcd )) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and ( ( targetHP >35 and talents[classtable.Massacre] or targetHP >20 ) or buff[classtable.SuddenDeathBuff].remains >= gcd )) and cooldown[classtable.Execute].ready then
         return classtable.Execute
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
     end
     if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
         return classtable.Bloodthirst
     end
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
+    end
     if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and cooldown[classtable.RagingBlow].ready then
         return classtable.RagingBlow
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.SuddenDeathBuff].up) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
     if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
@@ -161,106 +152,61 @@ function Fury:multi_target()
     end
 end
 function Fury:single_target()
-    if (MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager')) and (cooldown[classtable.Recklessness].remains <gcd or buff[classtable.RecklessnessBuff].up) and cooldown[classtable.Ravager].ready then
-        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (cooldown[classtable.Avatar].ready and talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) or not talents[classtable.TitansTorment]) and cooldown[classtable.ThunderBlast].ready then
+        return classtable.ThunderBlast
     end
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (not talents[classtable.AngerManagement] or ( talents[classtable.AngerManagement] and cooldown[classtable.Avatar].ready or cooldown[classtable.Avatar].remains <gcd or cooldown[classtable.Avatar].remains >30 )) and cooldown[classtable.Recklessness].ready then
-        return classtable.Recklessness
+    MaxDps:GlowCooldown(classtable.Recklessness,(not talents[classtable.AngerManagement] or ( talents[classtable.AngerManagement] and cooldown[classtable.Avatar].ready or cooldown[classtable.Avatar].remains <gcd or cooldown[classtable.Avatar].remains >30 )) and cooldown[classtable.Recklessness].ready)
+    MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (not talents[classtable.TitansTorment] or ( talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) )) and cooldown[classtable.Avatar].ready)
+    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.Rampage].ready then
+        return classtable.Rampage
     end
-    if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (not talents[classtable.TitansTorment] or ( talents[classtable.TitansTorment] and ( buff[classtable.EnrageBuff].up or talents[classtable.TitanicRage] ) )) and cooldown[classtable.Avatar].ready then
-        MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
+    MaxDps:GlowCooldown(classtable.Ravager,MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager') and cooldown[classtable.Ravager].ready)
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.ThunderBlast].ready then
+        return classtable.ThunderBlast
     end
-    if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and (buff[classtable.EnrageBuff].up and ( ( buff[classtable.FuriousBloodthirstBuff].up and talents[classtable.TitansTorment] ) or not talents[classtable.TitansTorment] or MaxDps:boss() and ttd <20 or targets >1 or not (MaxDps.tier and MaxDps.tier[31].count >= 2) ) and math.huge >15) and cooldown[classtable.ChampionsSpear].ready then
-        MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >1 and talents[classtable.ImprovedWhirlwind] and not buff[classtable.MeatCleaverBuff].up or math.huge <2 and talents[classtable.ImprovedWhirlwind] and not buff[classtable.MeatCleaverBuff].up) and cooldown[classtable.Whirlwind].ready then
-        return classtable.Whirlwind
+    MaxDps:GlowCooldown(classtable.ThunderousRoar,MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar') and (buff[classtable.EnrageBuff].up and ( targets >1 or math.huge >15 )) and cooldown[classtable.ThunderousRoar].ready)
+    MaxDps:GlowCooldown(classtable.ChampionsSpear,MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear') and (buff[classtable.EnrageBuff].up and ( ( buff[classtable.FuriousBloodthirstBuff].up and talents[classtable.TitansTorment] ) or not talents[classtable.TitansTorment] or ttd <20 or targets >1 or not (MaxDps.tier and MaxDps.tier[31].count >= 2) ) and math.huge >15) and cooldown[classtable.ChampionsSpear].ready)
+    if (MaxDps:CheckSpellUsable(classtable.OdynsFury, 'OdynsFury')) and (buff[classtable.EnrageBuff].up and ( targets >1 or math.huge >15 ) and ( talents[classtable.DancingBlades] and buff[classtable.DancingBladesBuff].remains <5 or not talents[classtable.DancingBlades] )) and cooldown[classtable.OdynsFury].ready then
+        return classtable.OdynsFury
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.AshenJuggernautBuff].up and buff[classtable.AshenJuggernautBuff].remains <gcd) and cooldown[classtable.Execute].ready then
         return classtable.Execute
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (buff[classtable.EnrageBuff].up and ( buff[classtable.AvatarBuff].up or buff[classtable.RecklessnessBuff].up and talents[classtable.AngerManagement] )) and cooldown[classtable.Bladestorm].ready then
-        MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.OdynsFury, 'OdynsFury')) and (buff[classtable.EnrageBuff].up and ( targets >1 or math.huge >15 ) and ( talents[classtable.DancingBlades] and buff[classtable.DancingBladesBuff].remains <5 or not talents[classtable.DancingBlades] )) and cooldown[classtable.OdynsFury].ready then
-        return classtable.OdynsFury
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.AngerManagement] and ( buff[classtable.RecklessnessBuff].up or buff[classtable.EnrageBuff].remains <gcd or RagePerc >85 )) and cooldown[classtable.Rampage].ready then
-        return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and ((MaxDps.tier and MaxDps.tier[30].count >= 4) and buff[classtable.Bloodthirst].count == 6 ) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (( (MaxDps.tier and MaxDps.tier[30].count >= 4) and buff[classtable.Bloodthirst].count == 6 ) or ( not talents[classtable.RecklessAbandon] and buff[classtable.FuriousBloodthirstBuff].up and buff[classtable.EnrageBuff].up and ( not debuff[classtable.GushingWoundDeBuff].duration or buff[classtable.ChampionsMightBuff].up ) )) and cooldown[classtable.Bloodthirst].ready then
-        return classtable.Bloodthirst
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (buff[classtable.FuriousBloodthirstBuff].up) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar')) and (buff[classtable.EnrageBuff].up and ( targets >1 or math.huge >15 )) and cooldown[classtable.ThunderousRoar].ready then
-        MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Onslaught, 'Onslaught')) and (buff[classtable.EnrageBuff].up or talents[classtable.Tenderize]) and cooldown[classtable.Onslaught].ready then
-        return classtable.Onslaught
-    end
-    if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.CrushingBlow].ready then
-        return classtable.CrushingBlow
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.RecklessAbandon] and ( buff[classtable.RecklessnessBuff].up or buff[classtable.EnrageBuff].remains <gcd or RagePerc >85 )) and cooldown[classtable.Rampage].ready then
-        return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up and not buff[classtable.FuriousBloodthirstBuff].up and buff[classtable.AshenJuggernautBuff].up or buff[classtable.SuddenDeathBuff].remains <= gcd and ( targetHP <=35 and talents[classtable.Massacre] or targetHP <=20 )) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.EnrageBuff].up) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (talents[classtable.AngerManagement]) and cooldown[classtable.Rampage].ready then
-        return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (buff[classtable.EnrageBuff].up and talents[classtable.RecklessAbandon]) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (targetHP <35 and talents[classtable.Massacre]) and cooldown[classtable.Rampage].ready then
-        return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (not buff[classtable.EnrageBuff].up or not buff[classtable.FuriousBloodthirstBuff].up) and cooldown[classtable.Bloodthirst].ready then
-        return classtable.Bloodthirst
-    end
-    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and (cooldown[classtable.RagingBlow].charges >1) and cooldown[classtable.RagingBlow].ready then
-        return classtable.RagingBlow
-    end
-    if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and (cooldown[classtable.CrushingBlow].charges >1) and cooldown[classtable.CrushingBlow].ready then
-        return classtable.CrushingBlow
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
-    end
-    if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and (buff[classtable.EnrageBuff].up and talents[classtable.RecklessAbandon]) and cooldown[classtable.CrushingBlow].ready then
-        return classtable.CrushingBlow
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (not buff[classtable.FuriousBloodthirstBuff].up) and cooldown[classtable.Bloodthirst].ready then
-        return classtable.Bloodthirst
-    end
-    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and (cooldown[classtable.RagingBlow].charges >1) and cooldown[classtable.RagingBlow].ready then
-        return classtable.RagingBlow
-    end
+    MaxDps:GlowCooldown(classtable.Bladestorm,MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and (buff[classtable.EnrageBuff].up and ( buff[classtable.AvatarBuff].up or buff[classtable.RecklessnessBuff].up and talents[classtable.AngerManagement] )) and cooldown[classtable.Bladestorm].ready)
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and cooldown[classtable.Rampage].ready then
         return classtable.Rampage
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then
-        return classtable.Bloodbath
-    end
-    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and cooldown[classtable.RagingBlow].ready then
-        return classtable.RagingBlow
     end
     if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and cooldown[classtable.CrushingBlow].ready then
         return classtable.CrushingBlow
     end
+    if (MaxDps:CheckSpellUsable(classtable.Onslaught, 'Onslaught')) and cooldown[classtable.Onslaught].ready then
+        return classtable.Onslaught
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then
+        return classtable.Bloodbath
+    end
+    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and (buff[classtable.EnrageBuff].up and Rage <110) and cooldown[classtable.RagingBlow].ready then
+        return classtable.RagingBlow
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
+        return classtable.Execute
+    end
+    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and cooldown[classtable.RagingBlow].ready then
+        return classtable.RagingBlow
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.SuddenDeathBuff].up) and cooldown[classtable.Execute].ready then
+        return classtable.Execute
+    end
     if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
         return classtable.Bloodthirst
     end
-    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and cooldown[classtable.Slam].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
+        return classtable.ThunderClap
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (talents[classtable.ImprovedWhirlwind]) and cooldown[classtable.Whirlwind].ready then
+        return classtable.Whirlwind
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (not talents[classtable.ImprovedWhirlwind]) and cooldown[classtable.Slam].ready then
         return classtable.Slam
     end
 end
@@ -273,15 +219,13 @@ function Fury:variables()
 end
 
 function Fury:callaction()
-    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (timeInCombat <= 0.5 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
+    MaxDps:GlowCooldown(classtable.Pummel,MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel') and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) and cooldown[classtable.Pummel].ready)
+    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >5) and cooldown[classtable.Charge].ready then
         return classtable.Charge
     end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >25) and cooldown[classtable.HeroicLeap].ready then
-        return classtable.HeroicLeap
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
-        MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (( raid_event.movement.distance >25 and raid_event.movement.in >45 )) and cooldown[classtable.HeroicLeap].ready then
+    --    return classtable.HeroicLeap
+    --end
     local trinketsCheck = Fury:trinkets()
     if trinketsCheck then
         return trinketsCheck
@@ -330,24 +274,22 @@ function Warrior:Fury()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
-    classtable.Bloodbath = 335096
-    classtable.CrushingBlow = 335097
+        classtable.Bloodbath = 335096
+        classtable.CrushingBlow = 335097
     for spellId in pairs(MaxDps.Flags) do
         self.Flags[spellId] = false
         self:ClearGlowIndependent(spellId, spellId)
     end
     classtable.EnrageBuff = 184362
-    classtable.OdynsFuryTormentMhDeBuff = 0
     classtable.MeatCleaverBuff = 85739
+    classtable.OdynsFuryTormentMhDeBuff = 0
     classtable.AshenJuggernautBuff = 392537
     classtable.ChampionsMightDeBuff = 376080
-    classtable.FuriousBloodthirstBuff = 423211
-    classtable.GushingWoundDeBuff = 385042
     classtable.SuddenDeathBuff = 280776
-    classtable.RecklessnessBuff = 1719
-    classtable.AvatarBuff = 107574
+    classtable.FuriousBloodthirstBuff = 423211
     classtable.DancingBladesBuff = 391688
-    classtable.ChampionsMightBuff = 386284
+    classtable.AvatarBuff = 107574
+    classtable.RecklessnessBuff = 1719
 
     local precombatCheck = Fury:precombat()
     if precombatCheck then

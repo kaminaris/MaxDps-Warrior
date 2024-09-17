@@ -16,13 +16,14 @@ Warrior.spellMeta = {
 }
 
 function Warrior:Enable()
-	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior [Arms, Fury, Protection]', "info");
-
 	if MaxDps.Spec == 1 then
+		MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Arms', "info");
 		MaxDps.NextSpell = Warrior.Arms;
 	elseif MaxDps.Spec == 2 then
+		MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Fury', "info");
 		MaxDps.NextSpell = Warrior.Fury;
 	elseif MaxDps.Spec == 3 then
+		MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Protection', "info");
 		MaxDps.NextSpell = Warrior.Protection;
 	end
 

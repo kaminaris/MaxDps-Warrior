@@ -80,13 +80,16 @@ local adds_remain
 local execute_phase
 local on_gcd_racials
 function Fury:precombat()
-    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready and UnitAffectingCombat('player') then
+    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready and not UnitAffectingCombat('player') then
+        if not setSpell then setSpell = classtable.BattleShout end
     end
-    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and cooldown[classtable.BerserkerStance].ready and UnitAffectingCombat('player') then
+    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and cooldown[classtable.BerserkerStance].ready and not UnitAffectingCombat('player') then
+        if not setSpell then setSpell = classtable.BerserkerStance end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (not MaxDps:CheckEquipped('FyralaththeDreamrender')) and cooldown[classtable.Recklessness].ready and UnitAffectingCombat('player') then
+    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (not MaxDps:CheckEquipped('FyralaththeDreamrender')) and cooldown[classtable.Recklessness].ready and not UnitAffectingCombat('player') then
+        if not setSpell then setSpell = classtable.Recklessness end
     end
-    MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready)
+    --MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (not talents[classtable.TitansTorment]) and cooldown[classtable.Avatar].ready)
 end
 function Fury:slayer_st()
     if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( not talents[classtable.AngerManagement] and cooldown[classtable.Avatar].remains <1 and talents[classtable.TitansTorment] ) or talents[classtable.AngerManagement] or not talents[classtable.TitansTorment]) and cooldown[classtable.Recklessness].ready then
@@ -350,12 +353,12 @@ end
 
 function Fury:callaction()
     MaxDps:GlowCooldown(classtable.Pummel,MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel') and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
-    --if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (timeInCombat <= 0.5 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >5) and cooldown[classtable.Charge].ready then
-    --    if not setSpell then setSpell = classtable.Charge end
-    --end
-    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (( raid_event.movement.distance >25 and raid_event.movement.in >45 )) and cooldown[classtable.HeroicLeap].ready then
-    --    if not setSpell then setSpell = classtable.HeroicLeap end
-    --end
+    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
+        if not setSpell then setSpell = classtable.Charge end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and ( (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10 ) and cooldown[classtable.HeroicLeap].ready then
+        if not setSpell then setSpell = classtable.HeroicLeap end
+    end
     Fury:trinkets()
     Fury:variables()
     if (talents[classtable.SlayersDominance] and targets == 1) then

@@ -2,6 +2,7 @@ local _, addonTable = ...
 local Warrior = addonTable.Warrior
 local MaxDps = _G.MaxDps
 if not MaxDps then return end
+local setSpell
 
 local UnitPower = UnitPower
 local UnitHealth = UnitHealth
@@ -66,140 +67,114 @@ local RagePerc
 local Protection = {}
 
 function Protection:precombat()
-    --if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and cooldown[classtable.BattleStance].ready then
-    --    return classtable.BattleStance
-    --end
-    --if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready then
-    --    return classtable.BattleShout
-    --end
+    if (MaxDps:CheckSpellUsable(classtable.DefensiveStance, 'DefensiveStance')) and not buff[classtable.DefensiveStance].up and cooldown[classtable.DefensiveStance].ready and not UnitAffectingCombat('player') then
+        if not setSpell then setSpell = classtable.DefensiveStance end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and cooldown[classtable.BattleShout].ready and not UnitAffectingCombat('player') then
+        if not setSpell then setSpell = classtable.BattleShout end
+    end
 end
 function Protection:aoe()
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (debuff[classtable.RendDeBuff].remains <= 1) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= 1) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (buff[classtable.ViolentOutburstBuff].up and targets >= 2 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (buff[classtable.ViolentOutburstBuff].up and targets >= 4 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce] and talents[classtable.CrashingThunder] or buff[classtable.ViolentOutburstBuff].up and targets >6 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce]) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.Revenge, 'Revenge')) and (Rage >= 70 and talents[classtable.SeismicReverberation] and targets >= 3) and cooldown[classtable.Revenge].ready then
-        return classtable.Revenge
+        if not setSpell then setSpell = classtable.Revenge end
     end
     if (MaxDps:CheckSpellUsable(classtable.ShieldSlam, 'ShieldSlam')) and (Rage <= 60 or buff[classtable.ViolentOutburstBuff].up and targets <= 4 and talents[classtable.CrashingThunder]) and cooldown[classtable.ShieldSlam].ready then
-        return classtable.ShieldSlam
+        if not setSpell then setSpell = classtable.ShieldSlam end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.Revenge, 'Revenge')) and (Rage >= 30 or Rage >= 40 and talents[classtable.BarbaricTraining]) and cooldown[classtable.Revenge].ready then
-        return classtable.Revenge
+        if not setSpell then setSpell = classtable.Revenge end
     end
 end
 function Protection:generic()
-    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (( buff[classtable.ThunderBlastBuff].count == 2 and buff[classtable.BurstofPowerBuff].count <= 1 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce] ) or Rage <= 70 and talents[classtable.Demolish]) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (( buff[classtable.ThunderBlastBuff].count == 2 and buff[classtable.BurstofPowerBuff].count <= 1 and buff[classtable.AvatarBuff].up and talents[classtable.UnstoppableForce] )) and cooldown[classtable.ThunderBlast].ready then
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ShieldSlam, 'ShieldSlam')) and (( buff[classtable.BurstofPowerBuff].count == 2 and buff[classtable.ThunderBlastBuff].count <= 1 or buff[classtable.ViolentOutburstBuff].up ) or Rage <= 70 and talents[classtable.Demolish]) and cooldown[classtable.ShieldSlam].ready then
-        return classtable.ShieldSlam
+        if not setSpell then setSpell = classtable.ShieldSlam end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (Rage >= 70 or ( Rage >= 40 and cooldown[classtable.ShieldSlam].ready==false and talents[classtable.Demolish] or Rage >= 50 and cooldown[classtable.ShieldSlam].ready==false ) or buff[classtable.SuddenDeathBuff].up and talents[classtable.SuddenDeath]) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
+        if not setSpell then setSpell = classtable.Execute end
     end
     if (MaxDps:CheckSpellUsable(classtable.ShieldSlam, 'ShieldSlam')) and cooldown[classtable.ShieldSlam].ready then
-        return classtable.ShieldSlam
+        if not setSpell then setSpell = classtable.ShieldSlam end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (debuff[classtable.RendDeBuff].remains <= 2 and not buff[classtable.ViolentOutburstBuff].up) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= 2 and not buff[classtable.ViolentOutburstBuff].up) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (( targets >1 or cooldown[classtable.ShieldSlam].ready==false and not buff[classtable.ViolentOutburstBuff].up )) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (( targets >1 or cooldown[classtable.ShieldSlam].ready==false and not buff[classtable.ViolentOutburstBuff].up )) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.Revenge, 'Revenge')) and (( Rage >= 80 and targetHP >20 or buff[classtable.RevengeBuff].up and targetHP <= 20 and Rage <= 18 and cooldown[classtable.ShieldSlam].ready==false or buff[classtable.RevengeBuff].up and targetHP >20 ) or ( Rage >= 80 and targetHP >35 or buff[classtable.RevengeBuff].up and targetHP <= 35 and Rage <= 18 and cooldown[classtable.ShieldSlam].ready==false or buff[classtable.RevengeBuff].up and targetHP >35 ) and talents[classtable.Massacre]) and cooldown[classtable.Revenge].ready then
-        return classtable.Revenge
+        if not setSpell then setSpell = classtable.Revenge end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
-        return classtable.Execute
+        if not setSpell then setSpell = classtable.Execute end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Revenge, 'Revenge')) and (targetHP >20) and cooldown[classtable.Revenge].ready then
-        return classtable.Revenge
+    if (MaxDps:CheckSpellUsable(classtable.Revenge, 'Revenge')) and cooldown[classtable.Revenge].ready then
+        if not setSpell then setSpell = classtable.Revenge end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (( targets >= 1 or cooldown[classtable.ShieldSlam].ready==false and buff[classtable.ViolentOutburstBuff].up )) and cooldown[classtable.ThunderBlast].ready then
-        return classtable.ThunderBlast
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (( targets >= 1 or cooldown[classtable.ShieldSlam].ready==false and buff[classtable.ViolentOutburstBuff].up )) and cooldown[classtable.ThunderClap].ready then
-        return classtable.ThunderClap
+        if not setSpell then setSpell = classtable.ThunderClap end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Devastate, 'Devastate')) and cooldown[classtable.Devastate].ready then
-        return classtable.Devastate
+    if (MaxDps:CheckSpellUsable(classtable.Devastate, 'Devastate')) and not talents[classtable.Devastator] and cooldown[classtable.Devastate].ready then
+        if not setSpell then setSpell = classtable.Devastate end
     end
 end
 
 function Protection:callaction()
-    if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and cooldown[classtable.Pummel].ready then
-        MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
+    MaxDps:GlowCooldown(classtable.Pummel,MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel') and ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
+    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
+        if not setSpell then setSpell = classtable.Charge end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (timeInCombat == 0 or (LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >8) and cooldown[classtable.Charge].ready then
-        return classtable.Charge
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
-        MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ShieldWall, 'ShieldWall')) and (talents[classtable.ImmovableObject] and not buff[classtable.AvatarBuff].up) and cooldown[classtable.ShieldWall].ready then
-        MaxDps:GlowCooldown(classtable.ShieldWall, cooldown[classtable.ShieldWall].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.IgnorePain, 'IgnorePain')) and (targetHP >= 20 and ( RageDeficit <= 15 and cooldown[classtable.ShieldSlam].ready or RageDeficit <= 40 and cooldown[classtable.ShieldCharge].ready and talents[classtable.ChampionsBulwark] or RageDeficit <= 20 and cooldown[classtable.ShieldCharge].ready or RageDeficit <= 30 and cooldown[classtable.DemoralizingShout].ready and talents[classtable.BoomingVoice] or RageDeficit <= 20 and cooldown[classtable.Avatar].ready or RageDeficit <= 45 and cooldown[classtable.DemoralizingShout].ready and talents[classtable.BoomingVoice] and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] or RageDeficit <= 30 and cooldown[classtable.Avatar].ready and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] or RageDeficit <= 20 or RageDeficit <= 40 and cooldown[classtable.ShieldSlam].ready and buff[classtable.ViolentOutburstBuff].up and talents[classtable.HeavyRepercussions] and talents[classtable.ImpenetrableWall] or RageDeficit <= 55 and cooldown[classtable.ShieldSlam].ready and buff[classtable.ViolentOutburstBuff].up and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] and talents[classtable.HeavyRepercussions] and talents[classtable.ImpenetrableWall] or RageDeficit <= 17 and cooldown[classtable.ShieldSlam].ready and talents[classtable.HeavyRepercussions] or RageDeficit <= 18 and cooldown[classtable.ShieldSlam].ready and talents[classtable.ImpenetrableWall] ) or ( Rage >= 70 or buff[classtable.SeeingRedBuff].count == 7 and Rage >= 35 ) and cooldown[classtable.ShieldSlam].remains <= 1 and buff[classtable.ShieldBlockBuff].remains >= 4 and (MaxDps.tier and MaxDps.tier[31].count >= 2)) and cooldown[classtable.IgnorePain].ready then
-        MaxDps:GlowCooldown(classtable.IgnorePain, cooldown[classtable.IgnorePain].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.LastStand, 'LastStand')) and (( targetHP >= 90 and talents[classtable.UnnervingFocus] or targetHP <= 20 and talents[classtable.UnnervingFocus] ) or talents[classtable.Bolster] or (MaxDps.tier and MaxDps.tier[30].count >= 2) or (MaxDps.tier and MaxDps.tier[30].count >= 4)) and cooldown[classtable.LastStand].ready then
-        MaxDps:GlowCooldown(classtable.LastStand, cooldown[classtable.LastStand].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
-        MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.DemoralizingShout, 'DemoralizingShout')) and (talents[classtable.BoomingVoice]) and cooldown[classtable.DemoralizingShout].ready then
-        return classtable.DemoralizingShout
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
-        MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
+    MaxDps:GlowCooldown(classtable.Avatar,MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar') and (not buff[classtable.ThunderBlastBuff].up or buff[classtable.ThunderBlastBuff].count <= 2) and cooldown[classtable.Avatar].ready)
+    MaxDps:GlowCooldown(classtable.ShieldWall,MaxDps:CheckSpellUsable(classtable.ShieldWall, 'ShieldWall') and (talents[classtable.ImmovableObject] and not buff[classtable.AvatarBuff].up) and cooldown[classtable.ShieldWall].ready)
+    MaxDps:GlowCooldown(classtable.IgnorePain,MaxDps:CheckSpellUsable(classtable.IgnorePain, 'IgnorePain') and (targetHP >= 20 and ( RageDeficit <= 15 and cooldown[classtable.ShieldSlam].ready or RageDeficit <= 40 and cooldown[classtable.ShieldCharge].ready and talents[classtable.ChampionsBulwark] or RageDeficit <= 20 and cooldown[classtable.ShieldCharge].ready or RageDeficit <= 30 and cooldown[classtable.DemoralizingShout].ready and talents[classtable.BoomingVoice] or RageDeficit <= 20 and cooldown[classtable.Avatar].ready or RageDeficit <= 45 and cooldown[classtable.DemoralizingShout].ready and talents[classtable.BoomingVoice] and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] or RageDeficit <= 30 and cooldown[classtable.Avatar].ready and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] or RageDeficit <= 20 or RageDeficit <= 40 and cooldown[classtable.ShieldSlam].ready and buff[classtable.ViolentOutburstBuff].up and talents[classtable.HeavyRepercussions] and talents[classtable.ImpenetrableWall] or RageDeficit <= 55 and cooldown[classtable.ShieldSlam].ready and buff[classtable.ViolentOutburstBuff].up and buff[classtable.LastStandBuff].up and talents[classtable.UnnervingFocus] and talents[classtable.HeavyRepercussions] and talents[classtable.ImpenetrableWall] or RageDeficit <= 17 and cooldown[classtable.ShieldSlam].ready and talents[classtable.HeavyRepercussions] or RageDeficit <= 18 and cooldown[classtable.ShieldSlam].ready and talents[classtable.ImpenetrableWall] ) or ( Rage >= 70 or buff[classtable.SeeingRedBuff].count == 7 and Rage >= 35 ) and cooldown[classtable.ShieldSlam].remains <= 1 and buff[classtable.ShieldBlockBuff].remains >= 4 and (MaxDps.tier and MaxDps.tier[31].count >= 2)) and cooldown[classtable.IgnorePain].ready)
+    MaxDps:GlowCooldown(classtable.LastStand,MaxDps:CheckSpellUsable(classtable.LastStand, 'LastStand') and (( targetHP >= 90 and talents[classtable.UnnervingFocus] or targetHP <= 20 and talents[classtable.UnnervingFocus] ) or talents[classtable.Bolster] or (MaxDps.tier and MaxDps.tier[30].count >= 2) or (MaxDps.tier and MaxDps.tier[30].count >= 4)) and cooldown[classtable.LastStand].ready)
+    MaxDps:GlowCooldown(classtable.Ravager,MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager') and cooldown[classtable.Ravager].ready)
+    MaxDps:GlowCooldown(classtable.Ravager,MaxDps:CheckSpellUsable(classtable.DemoralizingShout, 'DemoralizingShout') and talents[classtable.BoomingVoice] and cooldown[classtable.DemoralizingShout].ready)
+    MaxDps:GlowCooldown(classtable.ChampionsSpear,MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear') and cooldown[classtable.ChampionsSpear].ready)
+    if (MaxDps:CheckSpellUsable(classtable.ThunderBlast, 'ThunderBlast')) and (targets >= 2 and buff[classtable.ThunderBlastBuff].count == 2) and cooldown[classtable.ThunderBlast].ready then
+        if not setSpell then setSpell = classtable.ThunderBlast end
     end
     if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and (buff[classtable.ColossalMightBuff].count >= 3) and cooldown[classtable.Demolish].ready then
-        return classtable.Demolish
+        if not setSpell then setSpell = classtable.Demolish end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
-        MaxDps:GlowCooldown(classtable.ThunderousRoar, cooldown[classtable.ThunderousRoar].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Shockwave, 'Shockwave')) and (talents[classtable.RumblingEarth] and targets >= 3) and cooldown[classtable.Shockwave].ready then
-        MaxDps:GlowCooldown(classtable.Shockwave, cooldown[classtable.Shockwave].ready)
-    end
+    MaxDps:GlowCooldown(classtable.ThunderousRoar,MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar') and cooldown[classtable.ThunderousRoar].ready)
     if (MaxDps:CheckSpellUsable(classtable.ShieldCharge, 'ShieldCharge')) and cooldown[classtable.ShieldCharge].ready then
-        return classtable.ShieldCharge
+        if not setSpell then setSpell = classtable.ShieldCharge end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ShieldBlock, 'ShieldBlock')) and (buff[classtable.ShieldBlockBuff].duration <= 10) and cooldown[classtable.ShieldBlock].ready then
-        MaxDps:GlowCooldown(classtable.ShieldBlock, cooldown[classtable.ShieldBlock].ready)
-    end
+    MaxDps:GlowCooldown(classtable.ShieldBlock,MaxDps:CheckSpellUsable(classtable.ShieldBlock, 'ShieldBlock') and (buff[classtable.ShieldBlockBuff].remains <= 10) and cooldown[classtable.ShieldBlock].ready)
     if (targets >= 3) then
-        local aoeCheck = Protection:aoe()
-        if aoeCheck then
-            return Protection:aoe()
-        end
+        Protection:aoe()
     end
-    local genericCheck = Protection:generic()
-    if genericCheck then
-        return genericCheck
-    end
+    Protection:generic()
 end
 function Warrior:Protection()
     fd = MaxDps.FrameData
@@ -228,10 +203,10 @@ function Warrior:Protection()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
-    for spellId in pairs(MaxDps.Flags) do
-        self.Flags[spellId] = false
-        self:ClearGlowIndependent(spellId, spellId)
-    end
+    --for spellId in pairs(MaxDps.Flags) do
+    --    self.Flags[spellId] = false
+    --    self:ClearGlowIndependent(spellId, spellId)
+    --end
     classtable.RendDeBuff = 388539
     classtable.ViolentOutburstBuff = 386478
     classtable.AvatarBuff = 401150
@@ -243,14 +218,10 @@ function Warrior:Protection()
     classtable.SeeingRedBuff = 0
     classtable.ShieldBlockBuff = 132404
     classtable.ColossalMightBuff = 0
+    setSpell = nil
 
-    local precombatCheck = Protection:precombat()
-    if precombatCheck then
-        return Protection:precombat()
-    end
+    Protection:precombat()
 
-    local callactionCheck = Protection:callaction()
-    if callactionCheck then
-        return Protection:callaction()
-    end
+    Protection:callaction()
+    if setSpell then return setSpell end
 end

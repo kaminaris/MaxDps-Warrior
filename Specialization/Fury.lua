@@ -403,7 +403,8 @@ function Warrior:Fury()
     RagePerc = (Rage / RageMax) * 100
     classtable.Bloodbath = 335096
     classtable.CrushingBlow = 335097
-    classtable.Bladestorm = MaxDps.Spells[227847] and 227847 or MaxDps.Spells[446035] and 446035
+    classtable.Bladestorm = MaxDps.Spells[227847] and 227847 or MaxDps.Spells[446035] and 446035 or 227847
+    classtable.Execute = MaxDps.Spells[5308] and 5308 or MaxDps.Spells[280735] and 280735 or 5308
     --for spellId in pairs(MaxDps.Flags) do
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)

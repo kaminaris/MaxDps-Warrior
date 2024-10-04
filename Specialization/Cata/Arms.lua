@@ -95,16 +95,16 @@ function Arms:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and (( buff[classtable.TasteForBloodBuff].up or buff[classtable.OverpowerBuff].up ) and Rage <= 75 and cooldown[classtable.MortalStrike].remains >= 1.5) and cooldown[classtable.Stance].ready then
         if not setSpell then setSpell = classtable.Stance end
     end
-    if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and (target.adds >0) and cooldown[classtable.SweepingStrikes].ready then
+    if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and (targets >0) and cooldown[classtable.SweepingStrikes].ready then
         MaxDps:GlowCooldown(classtable.SweepingStrikes, cooldown[classtable.SweepingStrikes].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (target.adds >0) and cooldown[classtable.Cleave].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >0) and cooldown[classtable.Cleave].ready then
         if not setSpell then setSpell = classtable.Cleave end
     end
     if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (not debuff[classtable.RendDeBuff].up) and cooldown[classtable.Rend].ready then
         if not setSpell then setSpell = classtable.Rend end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (target.adds >0 and not buff[classtable.DeadlyCalmBuff].up and not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Bladestorm].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (targets >0 and not buff[classtable.DeadlyCalmBuff].up and not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (targetHP >20) and cooldown[classtable.MortalStrike].ready then

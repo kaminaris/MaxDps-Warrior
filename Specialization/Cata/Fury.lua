@@ -78,13 +78,13 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.DeathWish, 'DeathWish')) and cooldown[classtable.DeathWish].ready then
         if not setSpell then setSpell = classtable.DeathWish end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (target.adds >0) and cooldown[classtable.Cleave].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >0) and cooldown[classtable.Cleave].ready then
         if not setSpell then setSpell = classtable.Cleave end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (target.adds >0) and cooldown[classtable.Whirlwind].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >0) and cooldown[classtable.Whirlwind].ready then
         if not setSpell then setSpell = classtable.Whirlwind end
     end
-    if (MaxDps:CheckSpellUsable(classtable.InnerRage, 'InnerRage')) and (target.adds == 0 and ( ( Rage >= 75 and targetHP >= 20 ) or ( ( buff[classtable.InciteBuff].up or buff[classtable.ColossusSmashBuff].up ) and ( ( Rage >= 40 and targetHP >= 20 ) or ( Rage >= 65 and targetHP <20 ) ) ) )) and cooldown[classtable.InnerRage].ready then
+    if (MaxDps:CheckSpellUsable(classtable.InnerRage, 'InnerRage')) and (targets == 0 and ( ( Rage >= 75 and targetHP >= 20 ) or ( ( buff[classtable.InciteBuff].up or buff[classtable.ColossusSmashBuff].up ) and ( ( Rage >= 40 and targetHP >= 20 ) or ( Rage >= 65 and targetHP <20 ) ) ) )) and cooldown[classtable.InnerRage].ready then
         if not setSpell then setSpell = classtable.InnerRage end
     end
     if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( Rage >= 85 or ( (MaxDps.tier and MaxDps.tier[13].count >= 2) and buff[classtable.InnerRageBuff].up and Rage >= 75 ) ) and targetHP >= 20) and cooldown[classtable.HeroicStrike].ready then

@@ -78,10 +78,10 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.DeathWish, 'DeathWish')) and cooldown[classtable.DeathWish].ready then
         if not setSpell then setSpell = classtable.DeathWish end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >0) and cooldown[classtable.Cleave].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >2) and cooldown[classtable.Cleave].ready then
         if not setSpell then setSpell = classtable.Cleave end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >0) and cooldown[classtable.Whirlwind].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >3) and cooldown[classtable.Whirlwind].ready then
         if not setSpell then setSpell = classtable.Whirlwind end
     end
     if (MaxDps:CheckSpellUsable(classtable.InnerRage, 'InnerRage')) and (targets == 0 and ( ( Rage >= 75 and targetHP >= 20 ) or ( ( buff[classtable.InciteBuff].up or buff[classtable.ColossusSmashBuff].up ) and ( ( Rage >= 40 and targetHP >= 20 ) or ( Rage >= 65 and targetHP <20 ) ) ) )) and cooldown[classtable.InnerRage].ready then
@@ -157,16 +157,17 @@ function Warrior:Fury()
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
-    classtable.bloodlust = 0
-    classtable.ColossusSmashBuff = 0
-    classtable.InciteBuff = 0
-    classtable.InnerRageBuff = 0
-    classtable.BattleTranceBuff = 0
-    classtable.ExecutionerTalentBuff = 0
-    classtable.DeathWishBuff = 0
+    classtable.bloodlust = 2825
+    classtable.ColossusSmashBuff = 86346
+    classtable.InciteBuff = 93435
+    classtable.InnerRageBuff = 115869
+    classtable.BattleTranceBuff = 85739
+    classtable.ExecutionerTalentBuff = 93812
+    classtable.DeathWishBuff = 12292
     classtable.EnrageBuff = 184362
-    classtable.UnholyFrenzyBuff = 0
-    classtable.BloodsurgeBuff = 0
+    classtable.UnholyFrenzyBuff = 160052
+    classtable.BloodsurgeBuff = 46916
+    classtable.Bloodthirst = 23881
     setSpell = nil
     ClearCDs()
 

@@ -96,13 +96,13 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( buff[classtable.InciteBuff].up or buff[classtable.ColossusSmashBuff].up ) and ( ( ( Rage >= 50 or ( Rage >= 40 and (MaxDps.tier and MaxDps.tier[13].count >= 2) and buff[classtable.InnerRageBuff].up ) ) and targetHP >= 20 ) or ( ( Rage >= 75 or ( Rage >= 65 and (MaxDps.tier and MaxDps.tier[13].count >= 2) and buff[classtable.InnerRageBuff].up ) ) and targetHP <20 ) )) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.ExecutionerTalentBuff].remains <1.5) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and buff[classtable.ExecutionerTalentBuff].remains <1.5) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
     if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.ExecutionerTalentBuff].count <5) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and buff[classtable.ExecutionerTalentBuff].count <5) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
     if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
@@ -117,7 +117,7 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (buff[classtable.BloodsurgeBuff].up) and cooldown[classtable.Slam].ready then
         if not setSpell then setSpell = classtable.Slam end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (Rage >= 50) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and Rage >= 50) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
     if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (Rage <70) and cooldown[classtable.BattleShout].ready then

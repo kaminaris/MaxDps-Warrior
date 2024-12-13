@@ -134,7 +134,7 @@ function Fury:slayer_am_st()
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (cooldown[classtable.RagingBlow].charges <= 1 and Rage >= 115) and cooldown[classtable.Rampage].ready then
         if not setSpell then setSpell = classtable.Rampage end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (buff[classtable.BloodcrazeBuff].count >3 or crit_pct_current >= 85) and cooldown[classtable.Bloodthirst].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (buff[classtable.BloodcrazeBuff].count >3 or SpellCrit >= 85) and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
     end
     if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and cooldown[classtable.RagingBlow].ready then
@@ -193,7 +193,7 @@ function Fury:slayer_ra_st()
     if (MaxDps:CheckSpellUsable(classtable.Onslaught, 'Onslaught')) and (talents[classtable.Tenderize] and buff[classtable.BrutalFinishBuff].up) and cooldown[classtable.Onslaught].ready then
         if not setSpell then setSpell = classtable.Onslaught end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (crit_pct_current >= 85 or buff[classtable.BloodcrazeBuff].count >= 3) and cooldown[classtable.Bloodbath].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and (SpellCrit >= 85 or buff[classtable.BloodcrazeBuff].count >= 3) and cooldown[classtable.Bloodbath].ready then
         if not setSpell then setSpell = classtable.Bloodbath end
     end
     if (MaxDps:CheckSpellUsable(classtable.CrushingBlow, 'CrushingBlow')) and cooldown[classtable.CrushingBlow].ready then

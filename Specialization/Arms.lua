@@ -66,15 +66,15 @@ local RagePerc
 
 local Arms = {}
 
-local trinket_one_exclude
-local trinket_two_exclude
-local trinket_one_sync
-local trinket_two_sync
-local trinket_one_buffs
-local trinket_two_buffs
+local trinket_1_exclude
+local trinket_2_exclude
+local trinket_1_sync
+local trinket_2_sync
+local trinket_1_buffs
+local trinket_2_buffs
 local trinket_priority
-local trinket_one_manual
-local trinket_two_manual
+local trinket_1_manual
+local trinket_2_manual
 local st_planning
 local adds_remain
 local execute_phase
@@ -99,19 +99,19 @@ function Arms:colossus_st()
     if (MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager')) and (cooldown[classtable.ColossusSmash].remains <= gcd) and cooldown[classtable.Ravager].ready then
         MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (math.huge >15) and cooldown[classtable.Avatar].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (targets == 1) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and cooldown[classtable.Demolish].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
     if (MaxDps:CheckSpellUsable(classtable.Skullsplitter, 'Skullsplitter')) and cooldown[classtable.Skullsplitter].ready then
@@ -152,19 +152,19 @@ function Arms:colossus_execute()
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.Skullsplitter, 'Skullsplitter')) and (Rage <85) and cooldown[classtable.Skullsplitter].ready then
         if not setSpell then setSpell = classtable.Skullsplitter end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
-    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2 and not debuff[classtable.RavagerDeBuff].duration and ( buff[classtable.LethalBlowsBuff].count == 2 or not (MaxDps.tier and MaxDps.tier[1].count >= 4) and not talents[classtable.Battlelord] ) or not talents[classtable.ExecutionersPrecision]) and cooldown[classtable.MortalStrike].ready then
+    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2 and not debuff[classtable.RavagerDeBuff].duration and ( buff[classtable.LethalBlowsBuff].count == 2 or not (MaxDps.tier and MaxDps.tier[32].count >= 4) and not talents[classtable.Battlelord] ) or not talents[classtable.ExecutionersPrecision]) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (talents[classtable.Battlelord] and debuff[classtable.ExecutionersPrecisionDeBuff].count == 2) and cooldown[classtable.MortalStrike].ready then
@@ -211,10 +211,10 @@ function Arms:colossus_sweep()
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.MortalStrike].ready then
@@ -226,7 +226,7 @@ function Arms:colossus_sweep()
     if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Overpower].ready then
         if not setSpell then setSpell = classtable.Overpower end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and (buff[classtable.SweepingStrikesBuff].up and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and (buff[classtable.SweepingStrikesBuff].up and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Execute].ready then
@@ -241,7 +241,7 @@ function Arms:colossus_sweep()
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].remains <= 8 and not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.ThunderClap].ready then
@@ -279,13 +279,13 @@ function Arms:colossus_aoe()
     if (MaxDps:CheckSpellUsable(classtable.Ravager, 'Ravager')) and cooldown[classtable.Ravager].ready then
         MaxDps:GlowCooldown(classtable.Ravager, cooldown[classtable.Ravager].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
     if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and cooldown[classtable.Cleave].ready then
@@ -294,7 +294,7 @@ function Arms:colossus_aoe()
     if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (talents[classtable.Unhinged] or talents[classtable.MercilessBonegrinder]) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish')) and (buff[classtable.ColossalMightBuff].count >= 6 and talents[classtable.Dreadnaught] or buff[classtable.ColossalMightBuff].count == 10 and talents[classtable.StrengthofArms]) and cooldown[classtable.Demolish].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and (buff[classtable.ColossalMightBuff].count >= 6 and talents[classtable.Dreadnaught] or buff[classtable.ColossalMightBuff].count == 10 and talents[classtable.StrengthofArms]) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
     if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and (talents[classtable.Dreadnaught]) and cooldown[classtable.Overpower].ready then
@@ -347,10 +347,10 @@ function Arms:slayer_st()
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (cooldown[classtable.ColossusSmash].remains <= 5 or debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (debuff[classtable.MarkedForExecutionDeBuff].count == 3 or buff[classtable.JuggernautBuff].remains <= gcd * 3 and talents[classtable.Juggernaut] or buff[classtable.SuddenDeathBuff].count == 2 or buff[classtable.SuddenDeathBuff].remains <= gcd * 3) and cooldown[classtable.Execute].ready then
@@ -400,10 +400,10 @@ function Arms:slayer_execute()
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (cooldown[classtable.ColossusSmash].remains <= 5 or debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (buff[classtable.JuggernautBuff].remains <= gcd and talents[classtable.Juggernaut]) and cooldown[classtable.Execute].ready then
@@ -450,10 +450,10 @@ function Arms:slayer_sweep()
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
     if (MaxDps:CheckSpellUsable(classtable.Skullsplitter, 'Skullsplitter')) and (buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.Skullsplitter].ready then
@@ -512,10 +512,10 @@ function Arms:slayer_aoe()
     if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and talents[classtable.Warbreaker] and cooldown[classtable.Warbreaker].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Warbreaker, 'Warbreaker')) and (talents[classtable.Warbreaker]) and cooldown[classtable.Warbreaker].ready then
         if not setSpell then setSpell = classtable.Warbreaker end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not talents[classtable.Warbreaker] and cooldown[classtable.ColossusSmash].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
     if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and cooldown[classtable.Cleave].ready then
@@ -676,6 +676,26 @@ function Warrior:Arms()
     classtable.BladestormBuff = 227847
     classtable.MartialProwessBuff = 7384
     classtable.ImminentDemiseBuff = 445606
+
+    local function debugg()
+        talents[classtable.Demolish] = 1
+        talents[classtable.Bloodletting] = 1
+        talents[classtable.Battlelord] = 1
+        talents[classtable.ExecutionersPrecision] = 1
+        talents[classtable.FervorofBattle] = 1
+        talents[classtable.Unhinged] = 1
+        talents[classtable.MercilessBonegrinder] = 1
+        talents[classtable.Dreadnaught] = 1
+        talents[classtable.StrengthofArms] = 1
+        talents[classtable.Juggernaut] = 1
+        talents[classtable.FierceFollowthrough] = 1
+    end
+
+
+    --if MaxDps.db.global.debugMode then
+    --   debugg()
+    --end
+
     setSpell = nil
     ClearCDs()
 

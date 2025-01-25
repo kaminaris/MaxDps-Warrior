@@ -239,6 +239,14 @@ function Warrior:Arms()
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
+    classtable.SweepingStrikesBuff = 12328
+    classtable.DeadlyCalmBuff = 85730
+    classtable.BattleTranceBuff = 12964
+    classtable.BattleStanceBuff = 2457
+    classtable.BerserkerStanceBuff = 2458
+    classtable.SlaughterBuff = 84586
+    classtable.EnrageBuff = 12880
+    classtable.ColossusSmashBuff = 86346
     classtable.RendDeBuff = 94009
     classtable.ColossusSmashDeBuff = 86346
     classtable.BattleStance = 2457

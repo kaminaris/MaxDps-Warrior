@@ -164,7 +164,7 @@ local function ClearCDs()
 end
 
 function Arms:callaction()
-    if (MaxDps:CheckSpellUsable(classtable.SunderArmor, 'SunderArmor')) and (( not MaxDps:HasGlyphEnabled(classtable.ColossusSmashGlyph) or cooldown[classtable.ColossusSmash].remains ) and ( false and ttd >( ( 3 - debuff[classtable.SunderArmorDeBuff].count ) * ( 1.5 + 1 ) ) + 3 and ( not debuff[classtable.MajorArmorReductionDeBuff].up or ( debuff[classtable.SunderArmorDeBuff].up and debuff[classtable.SunderArmorDeBuff].count <3 ) or debuff[classtable.SunderArmorDeBuff].remains <1.5 ) )) and cooldown[classtable.SunderArmor].ready then
+    if (MaxDps:CheckSpellUsable(classtable.SunderArmor, 'SunderArmor')) and (( not MaxDps:HasGlyphEnabled(classtable.ColossusSmashGlyph) or not cooldown[classtable.ColossusSmash].ready ) and ( false and ttd >( ( 3 - debuff[classtable.SunderArmorDeBuff].count ) * ( 1.5 + 1 ) ) + 3 and ( not debuff[classtable.MajorArmorReductionDeBuff].up or ( debuff[classtable.SunderArmorDeBuff].up and debuff[classtable.SunderArmorDeBuff].count <3 ) or debuff[classtable.SunderArmorDeBuff].remains <1.5 ) )) and cooldown[classtable.SunderArmor].ready then
         if not setSpell then setSpell = classtable.SunderArmor end
     end
     if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (MaxDps:HasGlyphEnabled(classtable.ColossusSmashGlyph) and ( false and ttd >( ( 3 - debuff[classtable.SunderArmorDeBuff].count ) * ( 1.5 + 1 ) ) + 3 and ( not debuff[classtable.MajorArmorReductionDeBuff].up or ( debuff[classtable.SunderArmorDeBuff].up and debuff[classtable.SunderArmorDeBuff].count <3 ) or debuff[classtable.SunderArmorDeBuff].remains <1.5 ) )) and cooldown[classtable.ColossusSmash].ready then
@@ -246,7 +246,6 @@ function Warrior:Arms()
     classtable.BerserkerStanceBuff = 2458
     classtable.SlaughterBuff = 84586
     classtable.EnrageBuff = 12880
-    classtable.ColossusSmashBuff = 86346
     classtable.RendDeBuff = 94009
     classtable.ColossusSmashDeBuff = 86346
     classtable.BattleStance = 2457

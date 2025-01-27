@@ -60,20 +60,21 @@ local Rage
 local RageMax
 local RageDeficit
 local RagePerc
+local stance
 
 local Arms = {}
 
 
 
 local function overpower_now()
-    if targethealthPerc>20  and buff[classtable.TasteforBlood].up and buff[classtable.TasteforBlood].remains <= 1.5 then
+    if targethealthPerc>20  and buff[60503].up then
         return true
     end
     return false
 end
 
 local function overpower_filler()
-    if ( buff[classtable.TasteforBlood].up or buff[68051].up ) and not cooldown[classtable.MortalStrike].ready and not cooldown[classtable.ColossusSmash].ready and Rage>=5 then
+    if ( buff[60503].up or buff[68051].up ) and not cooldown[classtable.MortalStrike].ready and not cooldown[classtable.ColossusSmash].ready and Rage>=5 then
         return true
     end
     return false
@@ -81,7 +82,7 @@ end
 
 
 function Arms:precombat()
-    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and cooldown[classtable.BattleStance].ready and not UnitAffectingCombat('player') then
+    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and (not stance == 17) and cooldown[classtable.BattleStance].ready and not UnitAffectingCombat('player') then
         if not setSpell then setSpell = classtable.BattleStance end
     end
     if (MaxDps:CheckSpellUsable(classtable.CommandingShout, 'CommandingShout')) and (false and not buff[classtable.MyBattleShoutBuff].up and not buff[classtable.MyCommandingShoutBuff].up) and cooldown[classtable.CommandingShout].ready and not UnitAffectingCombat('player') then
@@ -95,10 +96,10 @@ function Arms:precombat()
     end
 end
 function Arms:spread_rend()
-    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and (not false and not buff[classtable.BattleStanceBuff].up and not debuff[classtable.RendDeBuff].up) and cooldown[classtable.BattleStance].ready then
+    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and (not false and not stance == 17 and not debuff[classtable.RendDeBuff].up) and cooldown[classtable.BattleStance].ready then
         if not setSpell then setSpell = classtable.BattleStance end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (not buff[classtable.RendBuff].up) and cooldown[classtable.Rend].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (not debuff[classtable.RendDeBuff].up) and cooldown[classtable.Rend].ready then
         if not setSpell then setSpell = classtable.Rend end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.RendDeBuff].up) and cooldown[classtable.ThunderClap].ready then
@@ -106,25 +107,28 @@ function Arms:spread_rend()
     end
 end
 function Arms:battle_stance()
-    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and (not false and not buff[classtable.BattleStanceBuff].up) and cooldown[classtable.BattleStance].ready then
+    if (MaxDps:CheckSpellUsable(classtable.BattleStance, 'BattleStance')) and (not stance == 17) and cooldown[classtable.BattleStance].ready then
         if not setSpell then setSpell = classtable.BattleStance end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ShatteringThrow, 'ShatteringThrow')) and (false) and cooldown[classtable.ShatteringThrow].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ShatteringThrow, 'ShatteringThrow')) and (ttd >10) and cooldown[classtable.ShatteringThrow].ready then
         if not setSpell then setSpell = classtable.ShatteringThrow end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (not buff[classtable.RendBuff].up) and cooldown[classtable.Rend].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (not debuff[classtable.RendDeBuff].up) and cooldown[classtable.Rend].ready then
         if not setSpell then setSpell = classtable.Rend end
     end
     if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and (overpower_now() or overpower_filler()) and cooldown[classtable.Overpower].ready then
         if not setSpell then setSpell = classtable.Overpower end
     end
-    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and (not false and not buff[classtable.BerserkerStanceBuff].up) and cooldown[classtable.BerserkerStance].ready then
+    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and (not false and not stance == 19) and cooldown[classtable.BerserkerStance].ready then
         if not setSpell then setSpell = classtable.BerserkerStance end
     end
 end
 function Arms:berserker_stance()
     if (not debuff[classtable.RendDeBuff].up or overpower_now()) then
         Arms:battle_stance()
+    end
+    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and (not stance == 19) and cooldown[classtable.BerserkerStance].ready then
+        if not setSpell then setSpell = classtable.BerserkerStance end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (( targethealthPerc >20 or buff[classtable.SlaughterBuff].remains <= 1.5 or talents[classtable.LambsTotheSlaughter] and debuff[classtable.RendDeBuff].up and debuff[classtable.RendDeBuff].remains <3 or (talents[classtable.WreckingCrew] and true or false) and not buff[classtable.EnrageBuff].up )) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
@@ -188,22 +192,22 @@ function Arms:callaction()
     if (MaxDps:CheckSpellUsable(classtable.InnerRage, 'InnerRage')) and (debuff[classtable.RendDeBuff].up) and cooldown[classtable.InnerRage].ready then
         if not setSpell then setSpell = classtable.InnerRage end
     end
-    if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (debuff[classtable.RendDeBuff].up and ( timeInCombat <119 or ( timeInCombat >= 119 and ttd >130 ) or ( ttd <130 and targethealthPerc ) )) and cooldown[classtable.DeadlyCalm].ready then
+    if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (not buff[classtable.InnerRageBuff].up and debuff[classtable.RendDeBuff].up and ( timeInCombat <119 or ( timeInCombat >= 119 and ttd >130 ) or ( ttd <130 and targethealthPerc ) )) and cooldown[classtable.DeadlyCalm].ready then
         if not setSpell then setSpell = classtable.DeadlyCalm end
     end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( targets == 1 or buff[classtable.SweepingStrikesBuff].up ) and ( Rage >= 60 or buff[classtable.DeadlyCalmBuff].up or buff[classtable.BattleTranceBuff].up or ( cooldown[classtable.DeadlyCalm].remains <1 and not cooldown[classtable.Recklessness].remains <1 and Rage >30 and not ttd <130 ) )) and cooldown[classtable.HeroicStrike].ready then
+    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( targets == 1 or buff[classtable.SweepingStrikesBuff].up ) and ( Rage >= 60 or buff[classtable.DeadlyCalmBuff].up or buff[classtable.BattleTranceBuff].up or ( cooldown[classtable.DeadlyCalm].remains <1 and not ( cooldown[classtable.Recklessness].remains <1 ) and Rage >30 and not ( ttd <130 ) ) )) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >1 and not buff[classtable.SweepingStrikesBuff].up and ( Rage >= 60 or buff[classtable.DeadlyCalmBuff].up or buff[classtable.BattleTranceBuff].up or ( cooldown[classtable.DeadlyCalm].remains <1 and not cooldown[classtable.Recklessness].remains <1 and Rage >30 and not ttd <130 ) )) and cooldown[classtable.Cleave].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets >1 and not buff[classtable.SweepingStrikesBuff].up and ( Rage >= 60 or buff[classtable.DeadlyCalmBuff].up or buff[classtable.BattleTranceBuff].up or ( cooldown[classtable.DeadlyCalm].remains <1 and not ( cooldown[classtable.Recklessness].remains <1 ) and Rage >30 and not ( ttd <130 ) ) )) and cooldown[classtable.Cleave].ready then
         if not setSpell then setSpell = classtable.Cleave end
     end
-    if (( buff[classtable.BattleStanceBuff].up or false ) and ( not debuff[classtable.RendDeBuff].up or overpower_now() )) then
+    if (( stance == 17 or true ) and ( not debuff[classtable.RendDeBuff].up or overpower_now() )) then
         Arms:battle_stance()
     end
-    if (( false or buff[classtable.BerserkerStanceBuff].up )) then
+    if (( true or stance == 19 )) then
         Arms:berserker_stance()
     end
-    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and (not false and not buff[classtable.BerserkerStanceBuff].up and buff[classtable.TasteForBloodPredictionBuff].remains >1) and cooldown[classtable.BerserkerStance].ready then
+    if (MaxDps:CheckSpellUsable(classtable.BerserkerStance, 'BerserkerStance')) and (not false and not stance == 19 and buff[classtable.TasteForBloodPredictionBuff].remains >1) and cooldown[classtable.BerserkerStance].ready then
         if not setSpell then setSpell = classtable.BerserkerStance end
     end
 end
@@ -234,16 +238,16 @@ function Warrior:Arms()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
+    stance = GetShapeshiftFormID()
     classtable.Execute = MaxDps.Spells[5308] and 5308 or MaxDps.Spells[280735] and 280735 or 5308
     --for spellId in pairs(MaxDps.Flags) do
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
+    classtable.InnerRageBuff = 1134
     classtable.SweepingStrikesBuff = 12328
     classtable.DeadlyCalmBuff = 85730
     classtable.BattleTranceBuff = 12964
-    classtable.BattleStanceBuff = 2457
-    classtable.BerserkerStanceBuff = 2458
     classtable.SlaughterBuff = 84586
     classtable.EnrageBuff = 12880
     classtable.RendDeBuff = 94009

@@ -427,7 +427,7 @@ function Fury:thane_am_st()
     if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and cooldown[classtable.Rampage].ready then
         if not setSpell then setSpell = classtable.Rampage end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (talents[classtable.ViciousContempt] and targethealthPerc <35 and buff[classtable.BloodcrazeBuff].count >= 2 or not debuff[classtable.RavagerDeBuff].duration and buff[classtable.BloodcrazeBuff].count >= 3) and cooldown[classtable.Bloodthirst].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (talents[classtable.ViciousContempt] and targethealthPerc <35 and buff[classtable.BloodcrazeBuff].count >= 2 or not debuff[classtable.RavagerDeBuff].up and buff[classtable.BloodcrazeBuff].count >= 3) and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
     end
     if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and cooldown[classtable.RagingBlow].ready then
@@ -700,15 +700,15 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
         MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
-    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (( LibRangeCheck and LibRangeCheck:GetRange ( 'target', true ) or 0 ) >10) and cooldown[classtable.Charge].ready then
         if not setSpell then setSpell = classtable.Charge end
     end
     if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >25) and cooldown[classtable.HeroicLeap].ready then
         if not setSpell then setSpell = classtable.HeroicLeap end
     end
     st_planning = targets == 1
-    adds_remain = targets >= 2
-    execute_phase = ( talents[classtable.Massacre] and targethealthPerc <35 ) or targethealthPerc <20
+    adds_remain = targets >= 5
+    execute_phase = ( (talents[classtable.Massacre] and true or false) and targethealthPerc <35 ) or targethealthPerc <20
     if (talents[classtable.SlayersDominance] and talents[classtable.RecklessAbandon] and targets == 1) then
         Fury:slayer_ra_st()
     end
@@ -769,21 +769,26 @@ function Warrior:Fury()
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
-    classtable.EnrageBuff = 184362
-    classtable.ChampionsMightDeBuff = 376080
-    classtable.OdynsFuryTormentMhDeBuff = 0
-    classtable.MarkedForExecutionDeBuff = 445584
-    classtable.AshenJuggernautBuff = 392537
-    classtable.SuddenDeathBuff = 280776
-    classtable.BladestormBuff = MaxDps.Spells[227847] and 227847 or MaxDps.Spells[446035] and 446035
-    classtable.BrutalFinishBuff = 0
-    classtable.OpportunistBuff = 456120
-    classtable.BloodcrazeBuff = 393950
-    classtable.MeatCleaverBuff = 85739
-    classtable.SlaughteringStrikesBuff = 388004
-    classtable.RavagerDeBuff = 228920
-    classtable.BurstofPowerBuff = 0
+    classtable.AvatarBuff = 107574
     classtable.RecklessnessBuff = 1719
+    classtable.BloodbathBuff = 461288
+    classtable.CrushingBlowBuff = 396752
+    classtable.SuddenDeathBuff = 52437
+    classtable.EnrageBuff = 184362
+    classtable.AshenJuggernautBuff = 392537
+    classtable.BladestormBuff = 227847
+    classtable.BrutalFinishBuff = 446918
+    classtable.OpportunistBuff = 456120
+    classtable.BloodcrazeBuff = 393951
+    classtable.MeatCleaverBuff = 85739
+    classtable.SlaughteringStrikesBuff = 393931
+    classtable.BurstofPowerBuff = 437121
+    classtable.ChampionsMightDeBuff = 376080
+    classtable.OdynsFuryTormentMhDeBuff = 385060
+    classtable.MarkedForExecutionDeBuff = 445584
+    classtable.RavagerDeBuff = 228920
+    classtable.Bloodbath = 335096
+    classtable.CrushingBlow = 335097
 
     local function debugg()
         talents[classtable.TitansTorment] = 1

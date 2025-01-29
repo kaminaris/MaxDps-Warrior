@@ -164,7 +164,7 @@ function Arms:colossus_execute()
     if (MaxDps:CheckSpellUsable(classtable.Demolish, 'Demolish') and talents[classtable.Demolish]) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Demolish].ready then
         if not setSpell then setSpell = classtable.Demolish end
     end
-    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2 and not debuff[classtable.RavagerDeBuff].duration and ( buff[classtable.LethalBlowsBuff].count == 2 or not (MaxDps.tier and MaxDps.tier[32].count >= 4) and not talents[classtable.Battlelord] ) or not talents[classtable.ExecutionersPrecision]) and cooldown[classtable.MortalStrike].ready then
+    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (debuff[classtable.ExecutionersPrecisionDeBuff].count == 2 and not debuff[classtable.RavagerDeBuff].up and ( buff[classtable.LethalBlowsBuff].count == 2 or not (MaxDps.tier and MaxDps.tier[32].count >= 4) and not talents[classtable.Battlelord] ) or not talents[classtable.ExecutionersPrecision]) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and (talents[classtable.Battlelord] and debuff[classtable.ExecutionersPrecisionDeBuff].count == 2) and cooldown[classtable.MortalStrike].ready then
@@ -261,10 +261,10 @@ function Arms:colossus_sweep()
     end
 end
 function Arms:colossus_aoe()
-    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (not debuff[classtable.DeepWoundsDeBuff].duration) and cooldown[classtable.Cleave].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (not debuff[classtable.DeepWoundsDeBuff].up) and cooldown[classtable.Cleave].ready then
         if not setSpell then setSpell = classtable.Cleave end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (not debuff[classtable.RendDeBuff].duration) and cooldown[classtable.ThunderClap].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (not debuff[classtable.RendDeBuff].up) and cooldown[classtable.ThunderClap].ready then
         if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.ThunderousRoar, 'ThunderousRoar')) and cooldown[classtable.ThunderousRoar].ready then
@@ -497,7 +497,7 @@ function Arms:slayer_sweep()
     end
 end
 function Arms:slayer_aoe()
-    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (not debuff[classtable.RendDeBuff].duration) and cooldown[classtable.ThunderClap].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (not debuff[classtable.RendDeBuff].up) and cooldown[classtable.ThunderClap].ready then
         if not setSpell then setSpell = classtable.ThunderClap end
     end
     if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and cooldown[classtable.SweepingStrikes].ready then
@@ -580,8 +580,8 @@ function Arms:trinkets()
 end
 function Arms:variables()
     st_planning = targets == 1
-    adds_remain = targets >= 2
-    execute_phase = ( talents[classtable.Massacre] and targethealthPerc <35 ) or targethealthPerc <20
+    adds_remain = targets >1
+    execute_phase = ( (talents[classtable.Massacre] and true or false) and targethealthPerc <35 ) or targethealthPerc <20
 end
 
 
@@ -596,7 +596,7 @@ local function ClearCDs()
 end
 
 function Arms:callaction()
-    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (( LibRangeCheck and LibRangeCheck:GetRange ( 'target', true ) or 0 ) >10) and cooldown[classtable.Charge].ready then
         if not setSpell then setSpell = classtable.Charge end
     end
     if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
@@ -661,21 +661,22 @@ function Warrior:Arms()
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
-    classtable.RendDeBuff = 388539
-    classtable.ColossusSmashDeBuff = 208086
-    classtable.ExecutionersPrecisionDeBuff = 386633
-    classtable.RavagerDeBuff = 0
-    classtable.LethalBlowsBuff = 0
+    classtable.AvatarBuff = 107574
+    classtable.LethalBlowsBuff = 455485
     classtable.SweepingStrikesBuff = 260708
-    classtable.DeepWoundsDeBuff = 262115
-    classtable.ColossalMightBuff = 429634
-    classtable.MarkedForExecutionDeBuff = 445584
+    classtable.ColossalMightBuff = 440989
     classtable.JuggernautBuff = 383290
     classtable.SuddenDeathBuff = 52437
     classtable.OpportunistBuff = 456120
     classtable.BladestormBuff = 227847
     classtable.MartialProwessBuff = 7384
     classtable.ImminentDemiseBuff = 445606
+    classtable.ColossusSmashDeBuff = 208086
+    classtable.RendDeBuff = 388539
+    classtable.ExecutionersPrecisionDeBuff = 386633
+    classtable.RavagerDeBuff = 228920
+    classtable.DeepWoundsDeBuff = 262115
+    classtable.MarkedForExecutionDeBuff = 445584
 
     local function debugg()
         talents[classtable.Demolish] = 1

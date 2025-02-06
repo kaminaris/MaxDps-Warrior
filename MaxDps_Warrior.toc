@@ -24,3 +24,7 @@ Specialization\Protection.lua
 Specialization\Cata\Arms.lua
 Specialization\Cata\Fury.lua
 #@end-version-cata@
+
+#@version-classic@
+Specialization\Classic\DPS.lua
+#@end-version-classic@

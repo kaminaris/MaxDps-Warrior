@@ -65,32 +65,58 @@ local RagePerc
 local DPS = {}
 
 function DPS:priorityList()
-    if (MaxDps:CheckSpellUsable(classtable.DeathWish, 'DeathWish')) and (ttd <= 25) and cooldown[classtable.DeathWish].ready then
-        if not setSpell then setSpell = classtable.DeathWish end
+    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (not MaxDps:FindBuffAuraData ( 11551 ) .up) and cooldown[classtable.BattleShout].ready then
+        if not setSpell then setSpell = classtable.BattleShout end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (ttd <= 25) and cooldown[classtable.Recklessness].ready then
+    if (MaxDps:CheckSpellUsable(classtable.DeathWish, 'DeathWish')) and (targethealthPerc <= 20) and cooldown[classtable.DeathWish].ready then
+        MaxDps:GlowCooldown(classtable.DeathWish, cooldown[classtable.DeathWish].ready)
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (targethealthPerc <= 20) and cooldown[classtable.Recklessness].ready then
         MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodrage, 'Bloodrage')) and (Rage <10) and cooldown[classtable.Bloodrage].ready then
-        if not setSpell then setSpell = classtable.Bloodrage end
+    --if (MaxDps:CheckSpellUsable(classtable.MightyRagePotion, 'MightyRagePotion')) and (targethealthPerc <= 20) and cooldown[classtable.MightyRagePotion].ready then
+    --    if not setSpell then setSpell = classtable.MightyRagePotion end
+    --end
+    if (MaxDps:CheckSpellUsable(classtable.Bloodrage, 'Bloodrage')) and (healthPerc >= 50) and cooldown[classtable.Bloodrage].ready then
+        MaxDps:GlowCooldown(classtable.Bloodrage, cooldown[classtable.Bloodrage].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc == 20) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.SunderArmor, 'SunderArmor')) and (MaxDps:FindDeBuffAuraData ( 11597 ) .count <5 and MaxDps:boss()) and cooldown[classtable.SunderArmor].ready then
+        if not setSpell then setSpell = classtable.SunderArmor end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc <= 20) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >= 3) and cooldown[classtable.Whirlwind].ready then
+        if not setSpell then setSpell = classtable.Whirlwind end
     end
     if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (Rage >40 and cooldown[classtable.Bloodthirst].remains >1.5) and cooldown[classtable.Whirlwind].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (MaxDps.swingtimer.melee <= 1.6 and talents[12862]) and cooldown[classtable.Slam].ready then
+        if not setSpell then setSpell = classtable.Slam end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
         if not setSpell then setSpell = classtable.Whirlwind end
     end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (Rage >80) and cooldown[classtable.HeroicStrike].ready then
+    if (MaxDps:CheckSpellUsable(classtable.SunderArmor, 'SunderArmor')) and (MaxDps:FindDeBuffAuraData ( 11597 ) .refreshable) and cooldown[classtable.SunderArmor].ready then
+        if not setSpell then setSpell = classtable.SunderArmor end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (targets <= 2) and cooldown[classtable.Cleave].ready then
+        if not setSpell then setSpell = classtable.Cleave end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
+    end
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and cooldown[classtable.Cleave].ready then
+        if not setSpell then setSpell = classtable.Cleave end
     end
 end
 
 
 local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Recklessness, false)
+    MaxDps:GlowCooldown(classtable.DeathWish, false)
+    MaxDps:GlowCooldown(classtable.Bloodrage, false)
 end
 
 function Warrior:DPS()
@@ -125,12 +151,17 @@ function Warrior:DPS()
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
 
+    classtable.BattleShout=11551
     classtable.DeathWish=12328
     classtable.Recklessness=1719
+    classtable.MightyRagePotion=13442
     classtable.Bloodrage=2687
     classtable.Execute=20662
-    classtable.Bloodthirst=23894
     classtable.Whirlwind=1680
+    classtable.Bloodthirst=23894
+    classtable.Slam=11605
+    classtable.SunderArmor=11597
+    classtable.Cleave=20569
     classtable.HeroicStrike=11567
 
     local function debugg()

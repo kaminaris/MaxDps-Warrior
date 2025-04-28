@@ -1,3 +1,5 @@
+--Credit to Kaidd, Discord(revolve_1) for collecting data
+
 local _, addonTable = ...
 local Warrior = addonTable.Warrior
 local MaxDps = _G.MaxDps
@@ -66,6 +68,7 @@ function Prot:single()
     if (MaxDps:CheckSpellUsable(classtable.Devastate, 'Devastate')) and cooldown[classtable.Devastate].ready then
         return classtable.Devastate
     end
+    MaxDps:GlowCooldown(classtable.InnerRage, Rage >= 50 and cooldown[classtable.HeroicStrike].ready and cooldown[classtable.InnerRage].ready)
     if Rage >= 50 and cooldown[classtable.HeroicStrike].ready then
         return classtable.HeroicStrike
     end
@@ -89,6 +92,7 @@ function Prot:aoe()
     if (MaxDps:CheckSpellUsable(classtable.Devastate, 'Devastate')) and cooldown[classtable.Devastate].ready then
         return classtable.Devastate
     end
+    MaxDps:GlowCooldown(classtable.InnerRage, Rage >= 50 and cooldown[classtable.Cleave].ready and cooldown[classtable.InnerRage].ready)
     if Rage >= 50 and cooldown[classtable.Cleave].ready then
         return classtable.Cleave
     end
@@ -178,3 +182,4 @@ MaxDps.SpellTable.CommandingShoutBuff     = 469
 MaxDps.SpellTable.BattleShout             = 6673
 MaxDps.SpellTable.BattleShoutBuff         = 6673
 MaxDps.SpellTable.Taunt                   = 355
+MaxDps.SpellTable.InnerRage               = 1134

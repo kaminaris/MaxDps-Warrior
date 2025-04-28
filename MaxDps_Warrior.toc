@@ -23,6 +23,7 @@ Specialization\Protection.lua
 #@version-cata@
 Specialization\Cata\Arms.lua
 Specialization\Cata\Fury.lua
+Specialization\Cata\Protection.lua
 #@end-version-cata@
 
 #@version-classic@

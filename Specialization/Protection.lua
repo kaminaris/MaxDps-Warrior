@@ -180,9 +180,9 @@ function Protection:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and cooldown[classtable.Pummel].ready then
         MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
-    if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (( LibRangeCheck and LibRangeCheck:GetRange ( 'target', true ) or 0 ) >10) and cooldown[classtable.Charge].ready then
-        if not setSpell then setSpell = classtable.Charge end
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and (( LibRangeCheck and LibRangeCheck:GetRange ( 'target', true ) or 0 ) >10) and cooldown[classtable.Charge].ready then
+    --    if not setSpell then setSpell = classtable.Charge end
+    --end
     if (MaxDps:CheckSpellUsable(classtable.Avatar, 'Avatar')) and (not buff[classtable.ThunderBlastBuff].up or buff[classtable.ThunderBlastBuff].count <= 2) and cooldown[classtable.Avatar].ready then
         MaxDps:GlowCooldown(classtable.Avatar, cooldown[classtable.Avatar].ready)
     end

@@ -29,3 +29,8 @@ Specialization\Cata\Protection.lua
 #@version-classic@
 Specialization\Classic\DPS.lua
 #@end-version-classic@
+
+#@version-mists@
+Specialization\Mop\Arms.lua
+Specialization\Mop\Fury.lua
+#@end-version-mists@

@@ -67,9 +67,9 @@ local RagePerc
 local Fury = {}
 
 function Fury:precombat()
-    if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and cooldown[classtable.Stance].ready and not UnitAffectingCombat('player') then
-        if not setSpell then setSpell = classtable.Stance end
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and cooldown[classtable.Stance].ready and not UnitAffectingCombat('player') then
+    --    if not setSpell then setSpell = classtable.Stance end
+    --end
 end
 
 
@@ -86,12 +86,12 @@ function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not ( buff[classtable.EnrageBuff].up or ( buff[classtable.RagingBlowBuff].up == 2 and targethealthPerc >= 20 ) )) and cooldown[classtable.BerserkerRage].ready then
         if not setSpell then setSpell = classtable.BerserkerRage end
     end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
-        if not setSpell then setSpell = classtable.HeroicLeap end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
-        if not setSpell then setSpell = classtable.DeadlyCalm end
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
+    --    if not setSpell then setSpell = classtable.DeadlyCalm end
+    --end
     if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( ( debuff[classtable.ColossusSmashDeBuff].up and Rage >= 40 ) or ( buff[classtable.DeadlyCalmBuff].up and Rage >= 30 ) ) and targethealthPerc >= 20 ) or Rage >= 110) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
     end
@@ -174,6 +174,11 @@ function Warrior:Fury()
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)
     --end
+
+    classtable.BloodsurgeBuff = 46916
+    classtable.ColossusSmashDeBuff = 86346
+    classtable.EnrageBuff = 12880
+    classtable.RagingBlowBuff = 131116
 
     local function debugg()
         talents[classtable.Shockwave] = 1

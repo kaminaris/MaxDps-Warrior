@@ -67,9 +67,9 @@ local RagePerc
 local Arms = {}
 
 function Arms:precombat()
-    if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and cooldown[classtable.Stance].ready and not UnitAffectingCombat('player') then
-        if not setSpell then setSpell = classtable.Stance end
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and cooldown[classtable.Stance].ready and not UnitAffectingCombat('player') then
+    --    if not setSpell then setSpell = classtable.Stance end
+    --end
 end
 
 
@@ -86,12 +86,12 @@ function Arms:callaction()
     if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.BerserkerRage].ready then
         if not setSpell then setSpell = classtable.BerserkerRage end
     end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
-        if not setSpell then setSpell = classtable.HeroicLeap end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
-        if not setSpell then setSpell = classtable.DeadlyCalm end
-    end
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
+    --    if not setSpell then setSpell = classtable.DeadlyCalm end
+    --end
     if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( buff[classtable.TasteForBloodBuff].up and buff[classtable.TasteForBloodBuff].remains <= 2 ) or ( buff[classtable.TasteForBloodBuff].count == 5 and buff[classtable.OverpowerBuff].up ) or ( buff[classtable.TasteForBloodBuff].up and debuff[classtable.ColossusSmashDeBuff].remains <= 2 and not cooldown[classtable.ColossusSmash].remains == 0 ) or buff[classtable.DeadlyCalmBuff].up or Rage >110 ) and targethealthPerc >= 20 and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
     end
@@ -162,6 +162,10 @@ function Warrior:Arms()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
+
+    classtable.ColossusSmashDeBuff = 86346
+    classtable.OverpowerBuff = 60503
+    classtable.TasteForBloodBuff = 60503
     --for spellId in pairs(MaxDps.Flags) do
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)

@@ -56,8 +56,6 @@ local maxHP
 local healthPerc
 local timeInCombat
 local className, classFilename, classId = UnitClass('player')
-local currentSpec = GetSpecialization()
-local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or 'None'
 local classtable
 local LibRangeCheck = LibStub('LibRangeCheck-3.0', true)
 
@@ -72,9 +70,6 @@ function Arms:precombat()
     if (MaxDps:CheckSpellUsable(classtable.Stance, 'Stance')) and cooldown[classtable.Stance].ready and not UnitAffectingCombat('player') then
         if not setSpell then setSpell = classtable.Stance end
     end
-    if (MaxDps:CheckSpellUsable(classtable.GolembloodPotion, 'GolembloodPotion')) and cooldown[classtable.GolembloodPotion].ready and not UnitAffectingCombat('player') then
-        if not setSpell then setSpell = classtable.GolembloodPotion end
-    end
 end
 
 
@@ -85,9 +80,6 @@ local function ClearCDs()
 end
 
 function Arms:callaction()
-    if (MaxDps:CheckSpellUsable(classtable.GolembloodPotion, 'GolembloodPotion')) and (( targethealthPerc <20 and buff[classtable.RecklessnessBuff].up ) or MaxDps:Bloodlust(1) or ttd <= 25) and cooldown[classtable.GolembloodPotion].ready then
-        if not setSpell then setSpell = classtable.GolembloodPotion end
-    end
     if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( ( debuff[classtable.ColossusSmashDeBuff].remains >= 5 or cooldown[classtable.ColossusSmash].remains <= 4 ) and ( targethealthPerc <20 or ttd >315 ) ) or ttd <= 18) and cooldown[classtable.Recklessness].ready then
         MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
     end

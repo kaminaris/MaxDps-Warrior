@@ -77,6 +77,7 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Recklessness, false)
     MaxDps:GlowCooldown(classtable.Shockwave, false)
     MaxDps:GlowCooldown(classtable.Bladestorm, false)
+    MaxDps:GlowCooldown(classtable.BerserkerRage, false)
 end
 
 function Arms:callaction()
@@ -84,7 +85,8 @@ function Arms:callaction()
         MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
     end
     if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.BerserkerRage].ready then
-        if not setSpell then setSpell = classtable.BerserkerRage end
+        --if not setSpell then setSpell = classtable.BerserkerRage end
+        MaxDps:GlowCooldown(classtable.BerserkerRage, true)
     end
     --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
     --    if not setSpell then setSpell = classtable.HeroicLeap end

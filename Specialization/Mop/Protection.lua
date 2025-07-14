@@ -131,7 +131,7 @@ function Prot:callaction()
     Prot:single()
 end
 
-function Warrior:Prot()
+function Warrior:Protection()
     fd = MaxDps.FrameData
     ttd = (fd.timeToDie and fd.timeToDie) or 500
     timeShift = fd.timeShift

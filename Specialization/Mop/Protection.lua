@@ -145,6 +145,7 @@ function Warrior:Protection()
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
+    classtable = MaxDps.SpellTable
 
     --classtable.ShieldSlam = 23922
     --classtable.Revenge = 6572

@@ -44,6 +44,8 @@ local RageMax
 local RageDeficit
 local RagePerc
 
+local stance
+
 local Prot = {}
 
 function Prot:precombat()
@@ -125,6 +127,9 @@ function Prot:Aoe()
 end
 
 function Prot:callaction()
+    if (MaxDps:CheckSpellUsable(classtable.DefensiveStance, 'DefensiveStance')) and (stance ~= 18) and cooldown[classtable.DefensiveStance].ready then
+        if not setSpell then setSpell = classtable.DefensiveStance end
+    end
     if targets > 1 then
         Prot:Aoe()
     end
@@ -141,10 +146,17 @@ function Warrior:Protection()
     debuff = fd.debuff
     talents = fd.talents
     targets = MaxDps:SmartAoe()
+    targetHP = UnitHealth('target')
+    targetmaxHP = UnitHealthMax('target')
+    targethealthPerc = (targetHP >0 and targetmaxHP >0 and (targetHP / targetmaxHP) * 100) or 100
+    curentHP = UnitHealth('player')
+    maxHP = UnitHealthMax('player')
+    healthPerc = (curentHP / maxHP) * 100
     Rage = UnitPower('player', RagePT)
     RageMax = UnitPowerMax('player', RagePT)
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
+    stance = GetShapeshiftFormID()
     classtable = MaxDps.SpellTable
 
     --classtable.ShieldSlam = 23922

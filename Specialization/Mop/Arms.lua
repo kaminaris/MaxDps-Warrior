@@ -142,7 +142,7 @@ end
 
 function Arms:aoe()
     -- Maintain Deep Wounds with Thunder Clap
-    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and (debuff[classtable.DeepWoundsDeBuff].refreshable or MaxDps:DebuffCounter(classtable.DeepWoundsDeBuff) < targets ) and cooldown[classtable.ThunderClap].ready then
         if not setSpell then setSpell = classtable.ThunderClap end
     end
 
@@ -234,7 +234,10 @@ function Warrior:Arms()
     RageDeficit = RageMax - Rage
     RagePerc = (Rage / RageMax) * 100
 
+    classtable.SkullBanner = 114207
+
     classtable.ColossusSmashDeBuff = 86346
+    classtable.DeepWoundsDeBuff = 115767
     classtable.OverpowerBuff = 60503
     classtable.TasteForBloodBuff = 60503
     classtable.SweepingStrikesBuff = 12328

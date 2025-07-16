@@ -80,7 +80,7 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.BerserkerRage, false)
 end
 
-function Fury:callaction()
+function Fury:single()
     if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( ( debuff[classtable.ColossusSmashDeBuff].remains >= 5 or cooldown[classtable.ColossusSmash].remains <= 4 ) and ( targethealthPerc <20 or ttd >315 ) ) or ttd <= 18) and cooldown[classtable.Recklessness].ready then
         MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
     end
@@ -143,6 +143,56 @@ function Fury:callaction()
         if not setSpell then setSpell = classtable.BattleShout end
     end
 end
+
+function Fury:aoe()
+    -- Cast Berserker Rage if Enrage is missing
+    if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.BerserkerRage].ready then
+        MaxDps:GlowCooldown(classtable.BerserkerRage, true)
+    end
+
+    -- Cast Bloodthirst unless you have 2 charges of Raging Blow
+    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (buff[classtable.RagingBlowBuff].count < 2) and cooldown[classtable.Bloodthirst].ready then
+        if not setSpell then setSpell = classtable.Bloodthirst end
+    end
+
+    -- Cast Whirlwind until you have an adequate amount of Meat Cleaver stacks
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (buff[classtable.MeatCleaverBuff].count < 3) and cooldown[classtable.Whirlwind].ready then
+        if not setSpell then setSpell = classtable.Whirlwind end
+    end
+
+    -- Cast Colossus Smash
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and cooldown[classtable.ColossusSmash].ready then
+        if not setSpell then setSpell = classtable.ColossusSmash end
+    end
+
+    -- Cast Raging Blow
+    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and (buff[classtable.RagingBlowBuff].up) and cooldown[classtable.RagingBlow].ready then
+        if not setSpell then setSpell = classtable.RagingBlow end
+    end
+
+    -- Cast Wild Strike with Bloodsurge
+    if (MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike')) and (buff[classtable.BloodsurgeBuff].up) and cooldown[classtable.WildStrike].ready then
+        if not setSpell then setSpell = classtable.WildStrike end
+    end
+
+    -- Cast Whirlwind on 3+ targets for damage if you already have an adequate amount of Meat Cleaver stacks
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >= 3 and buff[classtable.MeatCleaverBuff].count >= 3) and cooldown[classtable.Whirlwind].ready then
+        if not setSpell then setSpell = classtable.Whirlwind end
+    end
+
+    -- Cast Cleave if Rage will get capped
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (Rage >= RageMax - 10) and cooldown[classtable.Cleave].ready then
+        if not setSpell then setSpell = classtable.Cleave end
+    end
+end
+
+function Fury:callaction()
+    if targets > 1 then
+        Fury:aoe()
+    end
+    Fury:single()
+end
+
 function Warrior:Fury()
     fd = MaxDps.FrameData
     ttd = (fd.timeToDie and fd.timeToDie) or 500
@@ -181,6 +231,8 @@ function Warrior:Fury()
     classtable.ColossusSmashDeBuff = 86346
     classtable.EnrageBuff = 12880
     classtable.RagingBlowBuff = 131116
+    classtable.BloodsurgeBuff = 46916
+    classtable.MeatCleaverBuff = 12950
 
     local function debugg()
         talents[classtable.Shockwave] = 1

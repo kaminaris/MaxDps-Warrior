@@ -78,11 +78,13 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Shockwave, false)
     MaxDps:GlowCooldown(classtable.Bladestorm, false)
     MaxDps:GlowCooldown(classtable.BerserkerRage, false)
+    MaxDps:GlowCooldown(classtable.SkullBanner, false)
 end
 
-function Arms:callaction()
+function Arms:single()
     if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( ( debuff[classtable.ColossusSmashDeBuff].remains >= 5 or cooldown[classtable.ColossusSmash].remains <= 4 ) and ( targethealthPerc <20 or ttd >315 ) ) or ttd <= 18) and cooldown[classtable.Recklessness].ready then
         MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
+        MaxDps:GlowCooldown(classtable.SkullBanner, cooldown[classtable.SkullBanner].ready)
     end
     if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.BerserkerRage].ready then
         --if not setSpell then setSpell = classtable.BerserkerRage end
@@ -137,6 +139,73 @@ function Arms:callaction()
         if not setSpell then setSpell = classtable.BattleShout end
     end
 end
+
+function Arms:aoe()
+    -- Maintain Deep Wounds with Thunder Clap
+    if (MaxDps:CheckSpellUsable(classtable.ThunderClap, 'ThunderClap')) and cooldown[classtable.ThunderClap].ready then
+        if not setSpell then setSpell = classtable.ThunderClap end
+    end
+
+    -- Maintain Sweeping Strikes
+    if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and (not buff[classtable.SweepingStrikesBuff].up) and cooldown[classtable.SweepingStrikes].ready then
+        if not setSpell then setSpell = classtable.SweepingStrikes end
+    end
+
+    -- Cast Bladestorm
+    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (talents[classtable.Bladestorm] and cooldown[classtable.Recklessness].ready and cooldown[classtable.SkullBanner].ready and cooldown[classtable.BattleShout].ready) and cooldown[classtable.Bladestorm].ready then
+        MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
+        MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
+        MaxDps:GlowCooldown(classtable.SkullBanner, cooldown[classtable.SkullBanner].ready)
+    end
+
+    -- Cast Mortal Strike
+    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
+        if not setSpell then setSpell = classtable.MortalStrike end
+    end
+
+    -- Cast Colossus Smash if not up on the target
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.ColossusSmash].ready then
+        if not setSpell then setSpell = classtable.ColossusSmash end
+    end
+
+    -- Cast Slam when Colossus Smash is up on the target
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Slam].ready then
+        if not setSpell then setSpell = classtable.Slam end
+    end
+
+    -- Cast Slam outside Colossus Smash if Rage > 50
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (Rage > 50 and not debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.Slam].ready then
+        if not setSpell then setSpell = classtable.Slam end
+    end
+
+    -- Cast Overpower
+    if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+        if not setSpell then setSpell = classtable.Overpower end
+    end
+
+    -- Cast Dragon Roar
+    if (MaxDps:CheckSpellUsable(classtable.DragonRoar, 'DragonRoar')) and (talents[classtable.DragonRoar]) and cooldown[classtable.DragonRoar].ready then
+        if not setSpell then setSpell = classtable.DragonRoar end
+    end
+
+    -- Cast Heroic Leap during Colossus Smash if not needed for movement
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
+
+    -- Cast Cleave if Rage will get capped
+    if (MaxDps:CheckSpellUsable(classtable.Cleave, 'Cleave')) and (Rage >= RageMax - 10) and cooldown[classtable.Cleave].ready then
+        if not setSpell then setSpell = classtable.Cleave end
+    end
+end
+
+function Arms:callaction()
+    if targets > 1 then
+        Arms:aoe()
+    end
+    Arms:single()
+end
+
 function Warrior:Arms()
     fd = MaxDps.FrameData
     ttd = (fd.timeToDie and fd.timeToDie) or 500
@@ -168,6 +237,8 @@ function Warrior:Arms()
     classtable.ColossusSmashDeBuff = 86346
     classtable.OverpowerBuff = 60503
     classtable.TasteForBloodBuff = 60503
+    classtable.SweepingStrikesBuff = 12328
+
     --for spellId in pairs(MaxDps.Flags) do
     --    self.Flags[spellId] = false
     --    self:ClearGlowIndependent(spellId, spellId)

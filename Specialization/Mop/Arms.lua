@@ -129,10 +129,10 @@ function Arms:single()
         if not setSpell then setSpell = classtable.Overpower end
     end
 
-    -- Heroic Leap during Colossus Smash (not for movement)
-    if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.HeroicLeap].ready then
-        if not setSpell then setSpell = classtable.HeroicLeap end
-    end
+    ---- Heroic Leap during Colossus Smash (not for movement)
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
 
     -- Heroic Strike if Rage would cap
     if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 110 and cooldown[classtable.HeroicStrike].ready then

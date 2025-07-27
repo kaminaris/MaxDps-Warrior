@@ -81,67 +81,65 @@ local function ClearCDs()
 end
 
 function Fury:single()
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( ( debuff[classtable.ColossusSmashDeBuff].remains >= 5 or cooldown[classtable.ColossusSmash].remains <= 4 ) and ( targethealthPerc <20 or ttd >315 ) ) or ttd <= 18) and cooldown[classtable.Recklessness].ready then
-        MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not ( buff[classtable.EnrageBuff].up or ( buff[classtable.RagingBlowBuff].up == 2 and targethealthPerc >= 20 ) )) and cooldown[classtable.BerserkerRage].ready then
-        --if not setSpell then setSpell = classtable.BerserkerRage end
-        MaxDps:GlowCooldown(classtable.BerserkerRage, true)
-    end
-    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
-    --    if not setSpell then setSpell = classtable.HeroicLeap end
-    --end
-    --if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
-    --    if not setSpell then setSpell = classtable.DeadlyCalm end
-    --end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( ( debuff[classtable.ColossusSmashDeBuff].up and Rage >= 40 ) or ( buff[classtable.DeadlyCalmBuff].up and Rage >= 30 ) ) and targethealthPerc >= 20 ) or Rage >= 110) and cooldown[classtable.HeroicStrike].ready then
-        if not setSpell then setSpell = classtable.HeroicStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and (not ( targethealthPerc <20 and debuff[classtable.ColossusSmashDeBuff].up and Rage >= 30 )) and cooldown[classtable.Bloodthirst].ready then
+    -- Bloodthirst if Raging Blow charges < 2
+    if MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst') and buff[classtable.RagingBlowBuff].count < 2 and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
     end
-    if (MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike')) and (buff[classtable.BloodsurgeBuff].up and targethealthPerc >= 20 and cooldown[classtable.Bloodthirst].remains <= 1) and cooldown[classtable.WildStrike].ready then
-        if not setSpell then setSpell = classtable.WildStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker]) and cooldown[classtable.ColossusSmash].ready then
+
+    -- Colossus Smash if not up
+    if MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash') and not debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.ColossusSmash].ready then
         if not setSpell then setSpell = classtable.ColossusSmash end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
-        if not setSpell then setSpell = classtable.Execute end
+
+    -- Berserker Rage during Colossus Smash if < 2 Raging Blow charges
+    if MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage') and debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.RagingBlowBuff].count < 2 and cooldown[classtable.BerserkerRage].ready then
+        MaxDps:GlowCooldown(classtable.BerserkerRage, true)
     end
-    if (MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow')) and (buff[classtable.RagingBlowBuff].up) and cooldown[classtable.RagingBlow].ready then
+
+    -- Raging Blow during Colossus Smash
+    if MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow') and debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.RagingBlowBuff].count > 0 and cooldown[classtable.RagingBlow].ready then
         if not setSpell then setSpell = classtable.RagingBlow end
     end
-    if (MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike')) and (buff[classtable.BloodsurgeBuff].up and targethealthPerc >= 20) and cooldown[classtable.WildStrike].ready then
+
+    -- Heroic Strike during Colossus Smash if Rage > 50
+    if MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike') and debuff[classtable.ColossusSmashDeBuff].up and Rage > 50 and cooldown[classtable.HeroicStrike].ready then
+        if not setSpell then setSpell = classtable.HeroicStrike end
+    end
+
+    -- Raging Blow outside of Colossus Smash if 2 charges
+    if MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow') and not debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.RagingBlowBuff].count == 2 and cooldown[classtable.RagingBlow].ready then
+        if not setSpell then setSpell = classtable.RagingBlow end
+    end
+
+    -- Berserker Rage outside Colossus Smash if not Enraged
+    if MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage') and not debuff[classtable.ColossusSmashDeBuff].up and not buff[classtable.EnrageBuff].up and cooldown[classtable.BerserkerRage].ready then
+        MaxDps:GlowCooldown(classtable.BerserkerRage, true)
+    end
+
+    -- Wild Strike with Bloodsurge
+    if MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike') and buff[classtable.BloodsurgeBuff].up and cooldown[classtable.WildStrike].ready then
         if not setSpell then setSpell = classtable.WildStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Shockwave, 'Shockwave') and talents[classtable.Shockwave]) and ((talents[classtable.Shockwave] and true or false)) and cooldown[classtable.Shockwave].ready then
-        MaxDps:GlowCooldown(classtable.Shockwave, cooldown[classtable.Shockwave].ready)
+
+    -- Wild Strike without Bloodsurge
+    if MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike') and not buff[classtable.BloodsurgeBuff].up and cooldown[classtable.WildStrike].ready then
+        if not setSpell then setSpell = classtable.WildStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.DragonRoar, 'DragonRoar') and talents[classtable.DragonRoar]) and ((talents[classtable.DragonRoar] and true or false)) and cooldown[classtable.DragonRoar].ready then
-        if not setSpell then setSpell = classtable.DragonRoar end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicThrow, 'HeroicThrow')) and cooldown[classtable.HeroicThrow].ready then
-        if not setSpell then setSpell = classtable.HeroicThrow end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (Rage <70 and not debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.BattleShout].ready then
+
+    -- Battle Shout (rage generator fallback)
+    if MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout') and Rage < 70 and cooldown[classtable.BattleShout].ready then
         if not setSpell then setSpell = classtable.BattleShout end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and talents[classtable.Bladestorm]) and ((talents[classtable.Bladestorm] and true or false) and cooldown[classtable.ColossusSmash].remains >= 5 and not debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Bloodthirst].remains >= 2 and targethealthPerc >= 20) and cooldown[classtable.Bladestorm].ready then
-        MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
+
+    -- Heroic Strike if Rage would cap
+    if MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike') and Rage >= 110 and cooldown[classtable.HeroicStrike].ready then
+        if not setSpell then setSpell = classtable.HeroicStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike')) and (debuff[classtable.ColossusSmashDeBuff].up and targethealthPerc >= 20) and cooldown[classtable.WildStrike].ready then
-        if not setSpell then setSpell = classtable.WildStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ImpendingVictory, 'ImpendingVictory') and talents[classtable.ImpendingVictory]) and ((talents[classtable.ImpendingVictory] and true or false) and targethealthPerc >= 20) and cooldown[classtable.ImpendingVictory].ready then
-        if not setSpell then setSpell = classtable.ImpendingVictory end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike')) and (cooldown[classtable.ColossusSmash].remains >= 1 and Rage >= 60 and targethealthPerc >= 20) and cooldown[classtable.WildStrike].ready then
-        if not setSpell then setSpell = classtable.WildStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (Rage <70) and cooldown[classtable.BattleShout].ready then
-        if not setSpell then setSpell = classtable.BattleShout end
-    end
+
+    ---- Heroic Leap during Colossus Smash (not for movement)
+    --if MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap') and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
 end
 
 function Fury:aoe()

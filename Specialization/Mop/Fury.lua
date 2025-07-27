@@ -78,9 +78,15 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Shockwave, false)
     MaxDps:GlowCooldown(classtable.Bladestorm, false)
     MaxDps:GlowCooldown(classtable.BerserkerRage, false)
+    MaxDps:GlowCooldown(classtable.DragonRoar, false)
 end
 
 function Fury:single()
+    -- Cast Dragon Roar outside Colossus Smash
+    if MaxDps:CheckSpellUsable(classtable.DragonRoar, 'DragonRoar') and talents[classtable.DragonRoar] and not debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.DragonRoar].ready then
+        MaxDps:GlowCooldown(classtable.DragonRoar, true)
+    end
+
     -- Bloodthirst if Raging Blow charges < 2
     if MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst') and buff[classtable.RagingBlowBuff].count < 2 and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
@@ -94,6 +100,11 @@ function Fury:single()
     -- Berserker Rage during Colossus Smash if < 2 Raging Blow charges
     if MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage') and debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.RagingBlowBuff].count < 2 and cooldown[classtable.BerserkerRage].ready then
         MaxDps:GlowCooldown(classtable.BerserkerRage, true)
+    end
+
+    --Cast Storm Bolt on cooldown
+    if MaxDps:CheckSpellUsable(classtable.StormBolt, 'StormBolt') and talents[classtable.StormBolt] and cooldown[classtable.StormBolt].ready then
+        MaxDps:GlowCooldown(classtable.StormBolt, true)
     end
 
     -- Raging Blow during Colossus Smash
@@ -119,6 +130,14 @@ function Fury:single()
     -- Wild Strike with Bloodsurge
     if MaxDps:CheckSpellUsable(classtable.WildStrike, 'WildStrike') and buff[classtable.BloodsurgeBuff].up and cooldown[classtable.WildStrike].ready then
         if not setSpell then setSpell = classtable.WildStrike end
+    end
+
+    --Cast Bladestorm along with Battle Shout.
+    if MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and talents[classtable.Bladestorm] and not buff[classtable.BloodsurgeBuff].up and cooldown[classtable.Bladestorm].ready then
+        if cooldown[classtable.BattleShout].ready then
+            if not setSpell then setSpell = classtable.BattleShout end
+        end
+        MaxDps:GlowCooldown(classtable.Bladestorm, true)
     end
 
     -- Wild Strike without Bloodsurge

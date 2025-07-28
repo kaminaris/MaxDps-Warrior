@@ -96,7 +96,7 @@ function Arms:single()
     --if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
     --    if not setSpell then setSpell = classtable.DeadlyCalm end
     --end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( buff[classtable.TasteForBloodBuff].up and buff[classtable.TasteForBloodBuff].remains <= 2 ) or ( buff[classtable.TasteForBloodBuff].count == 5 and buff[classtable.OverpowerBuff].up ) or ( buff[classtable.TasteForBloodBuff].up and debuff[classtable.ColossusSmashDeBuff].remains <= 2 and not cooldown[classtable.ColossusSmash].remains == 0 ) or buff[classtable.DeadlyCalmBuff].up or Rage >110 ) and targethealthPerc >= 20 and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicStrike].ready then
+    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( buff[classtable.TasteForBloodBuff].up and buff[classtable.TasteForBloodBuff].remains <= 2 ) or ( buff[classtable.TasteForBloodBuff].count == 5 and buff[classtable.OverpowerBuff].up ) or ( buff[classtable.TasteForBloodBuff].up and debuff[classtable.ColossusSmashDeBuff].remains <= 2 and not cooldown[classtable.ColossusSmash].ready ) or buff[classtable.DeadlyCalmBuff].up or Rage >110 ) and targethealthPerc >= 20 and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
     end
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then

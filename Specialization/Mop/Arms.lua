@@ -82,61 +82,61 @@ local function ClearCDs()
 end
 
 function Arms:single()
-    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and (( ( debuff[classtable.ColossusSmashDeBuff].remains >= 5 or cooldown[classtable.ColossusSmash].remains <= 4 ) and ( targethealthPerc <20 or ttd >315 ) ) or ttd <= 18) and cooldown[classtable.Recklessness].ready then
-        MaxDps:GlowCooldown(classtable.Recklessness, cooldown[classtable.Recklessness].ready)
-        MaxDps:GlowCooldown(classtable.SkullBanner, cooldown[classtable.SkullBanner].ready)
-    end
+    -- Core priority-based rotation for Arms Warrior
     if (MaxDps:CheckSpellUsable(classtable.BerserkerRage, 'BerserkerRage')) and (not buff[classtable.EnrageBuff].up) and cooldown[classtable.BerserkerRage].ready then
-        --if not setSpell then setSpell = classtable.BerserkerRage end
         MaxDps:GlowCooldown(classtable.BerserkerRage, true)
     end
-    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and (debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicLeap].ready then
-    --    if not setSpell then setSpell = classtable.HeroicLeap end
-    --end
-    --if (MaxDps:CheckSpellUsable(classtable.DeadlyCalm, 'DeadlyCalm')) and (Rage >= 40) and cooldown[classtable.DeadlyCalm].ready then
-    --    if not setSpell then setSpell = classtable.DeadlyCalm end
-    --end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and (( ( buff[classtable.TasteForBloodBuff].up and buff[classtable.TasteForBloodBuff].remains <= 2 ) or ( buff[classtable.TasteForBloodBuff].count == 5 and buff[classtable.OverpowerBuff].up ) or ( buff[classtable.TasteForBloodBuff].up and debuff[classtable.ColossusSmashDeBuff].remains <= 2 and not cooldown[classtable.ColossusSmash].remains == 0 ) or buff[classtable.DeadlyCalmBuff].up or Rage >110 ) and targethealthPerc >= 20 and debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.HeroicStrike].ready then
-        if not setSpell then setSpell = classtable.HeroicStrike end
+
+    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and cooldown[classtable.Recklessness].ready then
+        MaxDps:GlowCooldown(classtable.Recklessness, true)
+        if MaxDps:CheckSpellUsable(classtable.SkullBanner, 'SkullBanner') and cooldown[classtable.SkullBanner].ready then
+            MaxDps:GlowCooldown(classtable.SkullBanner, true)
+        end
     end
+
+    -- Mortal Strike before Colossus Smash if Enrage is missing
+    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and not buff[classtable.EnrageBuff].up and cooldown[classtable.MortalStrike].ready then
+        if not setSpell then setSpell = classtable.MortalStrike end
+    end
+
+    -- Colossus Smash if not up
+    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and not debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.ColossusSmash].ready then
+        if not setSpell then setSpell = classtable.ColossusSmash end
+    end
+
+    -- Mortal Strike during Colossus Smash under rage conditions
+    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and debuff[classtable.ColossusSmashDeBuff].up and Rage < 80 and cooldown[classtable.MortalStrike].ready then
+        if not setSpell then setSpell = classtable.MortalStrike end
+    end
+
+    -- Slam during Colossus Smash
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Slam].ready then
+        if not setSpell then setSpell = classtable.Slam end
+    end
+
+    -- Mortal Strike fallback
     if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
         if not setSpell then setSpell = classtable.MortalStrike end
     end
-    if (MaxDps:CheckSpellUsable(classtable.ColossusSmash, 'ColossusSmash')) and (not talents[classtable.Warbreaker] and debuff[classtable.ColossusSmashDeBuff].remains <= 1.5) and cooldown[classtable.ColossusSmash].ready then
-        if not setSpell then setSpell = classtable.ColossusSmash end
+
+    -- Slam outside Colossus Smash with high Rage
+    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and not debuff[classtable.ColossusSmashDeBuff].up and Rage > 100 and cooldown[classtable.Slam].ready then
+        if not setSpell then setSpell = classtable.Slam end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and cooldown[classtable.Execute].ready then
-        if not setSpell then setSpell = classtable.Execute end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and (buff[classtable.OverpowerBuff].up) and cooldown[classtable.Overpower].ready then
+
+    -- Overpower
+    if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and buff[classtable.OverpowerBuff].up and cooldown[classtable.Overpower].ready then
         if not setSpell then setSpell = classtable.Overpower end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Shockwave, 'Shockwave') and talents[classtable.Shockwave]) and ((talents[classtable.Shockwave] and true or false)) and cooldown[classtable.Shockwave].ready then
-        MaxDps:GlowCooldown(classtable.Shockwave, cooldown[classtable.Shockwave].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.DragonRoar, 'DragonRoar') and talents[classtable.DragonRoar]) and ((talents[classtable.DragonRoar] and true or false)) and cooldown[classtable.DragonRoar].ready then
-        if not setSpell then setSpell = classtable.DragonRoar end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (( Rage >= 70 or debuff[classtable.ColossusSmashDeBuff].up ) and targethealthPerc >= 20) and cooldown[classtable.Slam].ready then
-        if not setSpell then setSpell = classtable.Slam end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicThrow, 'HeroicThrow')) and cooldown[classtable.HeroicThrow].ready then
-        if not setSpell then setSpell = classtable.HeroicThrow end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (Rage <70 and not debuff[classtable.ColossusSmashDeBuff].up) and cooldown[classtable.BattleShout].ready then
-        if not setSpell then setSpell = classtable.BattleShout end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and talents[classtable.Bladestorm]) and ((talents[classtable.Bladestorm] and true or false) and cooldown[classtable.ColossusSmash].remains >= 5 and not debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Bloodthirst].remains >= 2 and targethealthPerc >= 20) and cooldown[classtable.Bladestorm].ready then
-        MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (targethealthPerc >= 20) and cooldown[classtable.Slam].ready then
-        if not setSpell then setSpell = classtable.Slam end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.ImpendingVictory, 'ImpendingVictory') and talents[classtable.ImpendingVictory]) and ((talents[classtable.ImpendingVictory] and true or false) and targethealthPerc >= 20) and cooldown[classtable.ImpendingVictory].ready then
-        if not setSpell then setSpell = classtable.ImpendingVictory end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (Rage <70) and cooldown[classtable.BattleShout].ready then
-        if not setSpell then setSpell = classtable.BattleShout end
+
+    ---- Heroic Leap during Colossus Smash (not for movement)
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.HeroicLeap].ready then
+    --    if not setSpell then setSpell = classtable.HeroicLeap end
+    --end
+
+    -- Heroic Strike if Rage would cap
+    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 110 and cooldown[classtable.HeroicStrike].ready then
+        if not setSpell then setSpell = classtable.HeroicStrike end
     end
 end
 
@@ -236,6 +236,7 @@ function Warrior:Arms()
     classtable.ColossusSmashDeBuff = 86346
     classtable.DeepWoundsDeBuff = 115767
     classtable.OverpowerBuff = 60503
+    classtable.EnrageBuff = 12880
     classtable.TasteForBloodBuff = 60503
     classtable.SweepingStrikesBuff = 12328
 

@@ -107,6 +107,11 @@ function Fury:single()
         MaxDps:GlowCooldown(classtable.StormBolt, true)
     end
 
+    -- Cast Execute during Colossus Smash.
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and targethealthPerc < 20 and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Execute].ready then
+        if not setSpell then setSpell = classtable.Execute end
+    end
+
     -- Raging Blow during Colossus Smash
     if MaxDps:CheckSpellUsable(classtable.RagingBlow, 'RagingBlow') and debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.RagingBlowBuff].count > 0 and cooldown[classtable.RagingBlow].ready then
         if not setSpell then setSpell = classtable.RagingBlow end
@@ -115,6 +120,11 @@ function Fury:single()
     -- Heroic Strike during Colossus Smash if Rage > 50
     if MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike') and debuff[classtable.ColossusSmashDeBuff].up and Rage > 50 and cooldown[classtable.HeroicStrike].ready then
         if not setSpell then setSpell = classtable.HeroicStrike end
+    end
+
+    -- Cast  Execute outside Colossus Smash above 50 Rage.
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and rage > 50) ) and cooldown[classtable.Execute].ready then
+        if not setSpell then setSpell = classtable.Execute end
     end
 
     -- Raging Blow outside of Colossus Smash if 2 charges

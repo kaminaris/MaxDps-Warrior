@@ -109,6 +109,16 @@ function Arms:single()
         if not setSpell then setSpell = classtable.MortalStrike end
     end
 
+    -- Cast Execute when  Colossus Smash is up on the target.
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and targethealthPerc < 20 and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Execute].ready then
+        if not setSpell then setSpell = classtable.Execute end
+    end
+
+    -- Cast Execute outside Colossus Smash if you need to maintain  Sudden Execute or if you are above 100 Rage.
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.SuddenExecuteBuff].remains <= 2) or rage >= 100 ) and cooldown[classtable.Execute].ready then
+        if not setSpell then setSpell = classtable.Execute end
+    end
+
     -- Slam during Colossus Smash
     if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and debuff[classtable.ColossusSmashDeBuff].up and cooldown[classtable.Slam].ready then
         if not setSpell then setSpell = classtable.Slam end
@@ -239,6 +249,7 @@ function Warrior:Arms()
     classtable.EnrageBuff = 12880
     classtable.TasteForBloodBuff = 60503
     classtable.SweepingStrikesBuff = 12328
+    classtable.SuddenExecuteBuff = 139958
 
     --for spellId in pairs(MaxDps.Flags) do
     --    self.Flags[spellId] = false

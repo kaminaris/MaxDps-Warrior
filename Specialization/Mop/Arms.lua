@@ -115,7 +115,7 @@ function Arms:single()
     end
 
     -- Cast Execute outside Colossus Smash if you need to maintain  Sudden Execute or if you are above 100 Rage.
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.SuddenExecuteBuff].remains <= 2) or rage >= 100 ) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and buff[classtable.SuddenExecuteBuff].remains <= 2) or Rage >= 100 ) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
 

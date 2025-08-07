@@ -123,7 +123,7 @@ function Fury:single()
     end
 
     -- Cast  Execute outside Colossus Smash above 50 Rage.
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and rage > 50) ) and cooldown[classtable.Execute].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and (not debuff[classtable.ColossusSmashDeBuff].up and Rage > 50) ) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
 

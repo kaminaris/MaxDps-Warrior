@@ -174,7 +174,7 @@ function Fury:slayer()
     if (MaxDps:CheckSpellUsable(classtable.ChampionsSpear, 'ChampionsSpear')) and (cooldown[classtable.Bladestorm].ready and (cooldown[classtable.Avatar].ready or cooldown[classtable.Recklessness].ready or buff[classtable.AvatarBuff].up or buff[classtable.RecklessnessBuff].up) and buff[classtable.EnrageBuff].up) and cooldown[classtable.ChampionsSpear].ready then
         MaxDps:GlowCooldown(classtable.ChampionsSpear, cooldown[classtable.ChampionsSpear].ready)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and talents[classtable.Bladestorm]) and (buff[classtable.EnrageBuff].up and (talents[classtable.RecklessAbandon] and cooldown[classtable.Avatar].remains >= 24 or talents[classtable.AngerManagement] and cooldown[classtable.Recklessness].remains >= 15 and (buff[classtable.AvatarBuff].up or cooldown[classtable.Avatar].remains >= 8))) and cooldown[classtable.Bladestorm].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (buff[classtable.EnrageBuff].up and (talents[classtable.RecklessAbandon] and cooldown[classtable.Avatar].remains >= 24 or talents[classtable.AngerManagement] and cooldown[classtable.Recklessness].remains >= 15 and (buff[classtable.AvatarBuff].up or cooldown[classtable.Avatar].remains >= 8))) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
     if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and (targets >= 2 and talents[classtable.MeatCleaver] and buff[classtable.MeatCleaverBuff].count == 0) and cooldown[classtable.Whirlwind].ready then
@@ -287,7 +287,7 @@ function Fury:thane()
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (talents[classtable.AshenJuggernaut] and buff[classtable.AshenJuggernautBuff].remains <= gcd) and cooldown[classtable.Execute].ready then
         if not setSpell then setSpell = classtable.Execute end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm') and talents[classtable.Bladestorm]) and (buff[classtable.EnrageBuff].up and talents[classtable.Unhinged]) and cooldown[classtable.Bladestorm].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bladestorm, 'Bladestorm')) and (buff[classtable.EnrageBuff].up and talents[classtable.Unhinged]) and cooldown[classtable.Bladestorm].ready then
         MaxDps:GlowCooldown(classtable.Bladestorm, cooldown[classtable.Bladestorm].ready)
     end
     if (MaxDps:CheckSpellUsable(classtable.Bloodbath, 'Bloodbath')) and cooldown[classtable.Bloodbath].ready then

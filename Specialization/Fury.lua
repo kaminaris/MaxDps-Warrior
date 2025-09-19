@@ -361,14 +361,16 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Bladestorm, false)
     MaxDps:GlowCooldown(classtable.OdynsFury, false)
     MaxDps:GlowCooldown(classtable.Ravager, false)
+    MaxDps:GlowCooldown(classtable.Charge, false)
+    MaxDps:GlowCooldown(classtable.HeroicLeap, false)
 end
 
 function Fury:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
-        if not setSpell then setSpell = classtable.Charge end
+        MaxDps:GlowCooldown(classtable.Charge, true)
     end
     if (MaxDps:CheckSpellUsable(classtable.HeroicLeap, 'HeroicLeap')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >25) and cooldown[classtable.HeroicLeap].ready then
-        if not setSpell then setSpell = classtable.HeroicLeap end
+        MaxDps:GlowCooldown(classtable.HeroicLeap, true)
     end
     if (MaxDps:CheckSpellUsable(classtable.treacherous_transmitter, 'treacherous_transmitter')) and cooldown[classtable.treacherous_transmitter].ready then
         MaxDps:GlowCooldown(classtable.treacherous_transmitter, cooldown[classtable.treacherous_transmitter].ready)

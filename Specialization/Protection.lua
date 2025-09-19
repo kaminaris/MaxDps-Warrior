@@ -216,6 +216,7 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.ChampionsSpear, false)
     MaxDps:GlowCooldown(classtable.ThunderousRoar, false)
     MaxDps:GlowCooldown(classtable.ShieldBlock, false)
+    MaxDps:GlowCooldown(classtable.Charge, false)
 end
 
 function Protection:callaction()
@@ -223,7 +224,7 @@ function Protection:callaction()
         MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )
     end
     if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
-        if not setSpell then setSpell = classtable.Charge end
+        MaxDps:GlowCooldown(classtable.Charge, true)
     end
     if (MaxDps:CheckSpellUsable(classtable.tome_of_lights_devotion, 'tome_of_lights_devotion')) and (buff[classtable.InnerResilienceBuff].up) and cooldown[classtable.tome_of_lights_devotion].ready then
         MaxDps:GlowCooldown(classtable.tome_of_lights_devotion, cooldown[classtable.tome_of_lights_devotion].ready)

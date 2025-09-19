@@ -659,11 +659,12 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.trinket1, false)
     MaxDps:GlowCooldown(classtable.trinket2, false)
     MaxDps:GlowCooldown(classtable.bestinslots, false)
+    MaxDps:GlowCooldown(classtable.Charge, false)
 end
 
 function Arms:callaction()
     if (MaxDps:CheckSpellUsable(classtable.Charge, 'Charge')) and ((LibRangeCheck and LibRangeCheck:GetRange('target', true) or 0) >10) and cooldown[classtable.Charge].ready then
-        if not setSpell then setSpell = classtable.Charge end
+        MaxDps:GlowCooldown(classtable.Charge, true)
     end
     if (MaxDps:CheckSpellUsable(classtable.Pummel, 'Pummel')) and (UnitCastingInfo('target') and select(8,UnitCastingInfo('target')) == false) and cooldown[classtable.Pummel].ready then
         MaxDps:GlowCooldown(classtable.Pummel, ( select(8,UnitCastingInfo('target')) ~= nil and not select(8,UnitCastingInfo('target')) or select(7,UnitChannelInfo('target')) ~= nil and not select(7,UnitChannelInfo('target'))) )

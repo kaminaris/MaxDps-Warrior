@@ -29,6 +29,7 @@ Specialization\Cata\Protection.lua
 
 #@version-classic@
 Specialization\Classic\DPS.lua
+Specialization\Classic\Protection.lua
 #@end-version-classic@
 
 #@version-mists@

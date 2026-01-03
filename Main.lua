@@ -29,15 +29,13 @@ function Warrior:Enable()
 	    end
 	end
 	if MaxDps:IsClassicWow() then
-	    if MaxDps.Spec == 1 then
-	    	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Arms', "info");
-	    	MaxDps.NextSpell = Warrior.Arms;
-	    elseif MaxDps.Spec == 2 then
-	    	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Fury', "info");
-	    	MaxDps.NextSpell = Warrior.Fury;
-	    end
-		MaxDps:Print(MaxDps.Colors.Info .. 'Warrior DPS', "info");
-		MaxDps.NextSpell = Warrior.DPS;
+	    if MaxDps and MaxDps.FrameData and MaxDps.FrameData.talents and MaxDps.FrameData.talents[16301] then
+	    	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Protection', "info");
+	    	MaxDps.NextSpell = Warrior.Protection;
+	    else
+		    MaxDps:Print(MaxDps.Colors.Info .. 'Warrior DPS', "info");
+		    MaxDps.NextSpell = Warrior.DPS;
+		end
 	end
 	if MaxDps:IsCataWow() then
 	    if MaxDps.Spec == 1 then

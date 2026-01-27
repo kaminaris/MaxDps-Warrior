@@ -64,6 +64,9 @@ local RagePerc
 local Fury = {}
 
 local function ClearCDs()
+    MaxDps:GlowCooldown(classtable.SweepingStrikes, false)
+    MaxDps:GlowCooldown(classtable.Recklessness, false)
+    MaxDps:GlowCooldown(classtable.BattleShout, false)
 end
 
 function Fury:AoE()
@@ -86,24 +89,74 @@ function Fury:AoE()
 end
 
 function Fury:Single()
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
-        if not setSpell then setSpell = classtable.Bloodthirst end
+    --if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
+    --    if not setSpell then setSpell = classtable.Bloodthirst end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20) and cooldown[classtable.Execute].ready then
+    --    if not setSpell then setSpell = classtable.Execute end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 30 and cooldown[classtable.Whirlwind].ready then
+    --    if not setSpell then setSpell = classtable.Whirlwind end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
+    --    if not setSpell then setSpell = classtable.HeroicStrike end
+    --end
+    --if (MaxDps:CheckSpellUsable(classtable.Hamstring, 'Hamstring')) and Rage >= 60 and cooldown[classtable.Hamstring].ready then
+    --    if not setSpell then setSpell = classtable.Hamstring end
+    --end
+
+    if UnitLevel("player") > 40 then
+        if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
+            if not setSpell then setSpell = classtable.Bloodthirst end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
+            if not setSpell then setSpell = classtable.Whirlwind end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and Rage >= 45) and cooldown[classtable.Execute].ready then
+            if not setSpell then setSpell = classtable.Execute end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Rampage, 'Rampage')) and (MaxDps:FindBuffAuraData(classtable.Rampage).refreshable) and cooldown[classtable.Rampage].ready then
+            if not setSpell then setSpell = classtable.Rampage end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
+            if not setSpell then setSpell = classtable.HeroicStrike end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Hamstring, 'Hamstring')) and Rage >= 60 and cooldown[classtable.Hamstring].ready then
+            if not setSpell then setSpell = classtable.Hamstring end
+        end
+    else
+        -- Charge
+        -- Battle Shout
+        -- Rend (if target will live long enough)
+        -- Sunder Armor (stack if tanking or long fight)
+        -- Heroic Strike as rage dump
+        -- Overpower on dodge
+        -- Execute under 20%
+        if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and ttd >= 9 and cooldown[classtable.Rend].ready then
+            if not setSpell then setSpell = classtable.Rend end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
+            if not setSpell then setSpell = classtable.HeroicStrike end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+            if not setSpell then setSpell = classtable.Overpower end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and Rage >= 45) and cooldown[classtable.Execute].ready then
+            if not setSpell then setSpell = classtable.Execute end
+        end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20) and cooldown[classtable.Execute].ready then
-        if not setSpell then setSpell = classtable.Execute end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 30 and cooldown[classtable.Whirlwind].ready then
-        if not setSpell then setSpell = classtable.Whirlwind end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
-        if not setSpell then setSpell = classtable.HeroicStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Hamstring, 'Hamstring')) and Rage >= 60 and cooldown[classtable.Hamstring].ready then
-        if not setSpell then setSpell = classtable.Hamstring end
-    end
+
 end
 
 function Fury:callaction()
+    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and cooldown[classtable.Recklessness].ready then
+        --if not setSpell then setSpell = classtable.SweepingStrikes end
+        MaxDps:GlowCooldown(classtable.Recklessness, true)
+    end
+    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (MaxDps:FindBuffAuraData(classtable.BattleShout).refreshable) and cooldown[classtable.BattleShout].ready then
+        --if not setSpell then setSpell = classtable.SweepingStrikes end
+        MaxDps:GlowCooldown(classtable.BattleShout, true)
+    end
     if (targets > 1) then
         Fury:AoE()
     else
@@ -144,6 +197,11 @@ function Warrior:Fury()
     classtable.HeroicStrike = 11564
     classtable.Hamstring = 1715
     classtable.Bloodthirst = 23881
+    classtable.Rampage = 29801
+    classtable.Recklessness = 1719
+    classtable.Rend = 772
+    classtable.Overpower = 7384
+    classtable.BattleShout = 2048
 
     setSpell = nil
     ClearCDs()

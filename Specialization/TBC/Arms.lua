@@ -91,24 +91,54 @@ function Arms:AoE()
 end
 
 function Arms:Single()
-    if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20) and cooldown[classtable.Execute].ready then
-        if not setSpell then setSpell = classtable.Execute end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (targethealthPerc < 20) and cooldown[classtable.Slam].ready then
-        if not setSpell then setSpell = classtable.Slam end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
-        if not setSpell then setSpell = classtable.MortalStrike end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 30 and cooldown[classtable.Whirlwind].ready then
-        if not setSpell then setSpell = classtable.Whirlwind end
-    end
-    if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
-        if not setSpell then setSpell = classtable.HeroicStrike end
+    if UnitLevel("player") > 70 then
+        if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20) and cooldown[classtable.Execute].ready then
+            if not setSpell then setSpell = classtable.Execute end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Slam, 'Slam')) and (targethealthPerc < 20) and cooldown[classtable.Slam].ready then
+            if not setSpell then setSpell = classtable.Slam end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.MortalStrike, 'MortalStrike')) and cooldown[classtable.MortalStrike].ready then
+            if not setSpell then setSpell = classtable.MortalStrike end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 30 and cooldown[classtable.Whirlwind].ready then
+            if not setSpell then setSpell = classtable.Whirlwind end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
+            if not setSpell then setSpell = classtable.HeroicStrike end
+        end
+    else
+        -- Charge
+        -- Battle Shout
+        -- Rend (if target will live long enough)
+        -- Sunder Armor (stack if tanking or long fight)
+        -- Heroic Strike as rage dump
+        -- Overpower on dodge
+        -- Execute under 20%
+        if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and ttd >= 9 and cooldown[classtable.Rend].ready then
+            if not setSpell then setSpell = classtable.Rend end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then
+            if not setSpell then setSpell = classtable.HeroicStrike end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Overpower, 'Overpower')) and cooldown[classtable.Overpower].ready then
+            if not setSpell then setSpell = classtable.Overpower end
+        end
+        if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and Rage >= 45) and cooldown[classtable.Execute].ready then
+            if not setSpell then setSpell = classtable.Execute end
+        end
     end
 end
 
 function Arms:callaction()
+    if (MaxDps:CheckSpellUsable(classtable.Recklessness, 'Recklessness')) and cooldown[classtable.Recklessness].ready then
+        --if not setSpell then setSpell = classtable.SweepingStrikes end
+        MaxDps:GlowCooldown(classtable.Recklessness, true)
+    end
+    if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (MaxDps:FindBuffAuraData(classtable.BattleShout).refreshable) and cooldown[classtable.BattleShout].ready then
+        --if not setSpell then setSpell = classtable.SweepingStrikes end
+        MaxDps:GlowCooldown(classtable.BattleShout, true)
+    end
     if (targets > 1) then
         Arms:AoE()
     else
@@ -148,6 +178,10 @@ function Warrior:Arms()
     classtable.Slam = 1464
     classtable.MortalStrike = 12294
     classtable.HeroicStrike = 11564
+    classtable.Rend = 772
+    classtable.Overpower = 7384
+    classtable.Recklessness = 1719
+    classtable.BattleShout = 2048
 
     setSpell = nil
     ClearCDs()

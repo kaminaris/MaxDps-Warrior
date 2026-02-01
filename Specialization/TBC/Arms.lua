@@ -115,7 +115,7 @@ function Arms:Single()
         -- Heroic Strike as rage dump
         -- Overpower on dodge
         -- Execute under 20%
-        if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and ttd >= 9 and cooldown[classtable.Rend].ready then
+        if (MaxDps:CheckSpellUsable(classtable.Rend, 'Rend')) and (MaxDps:FindDeBuffAuraData(classtable.Rend).refreshable) and ttd >= 9 and cooldown[classtable.Rend].ready then
             if not setSpell then setSpell = classtable.Rend end
         end
         if (MaxDps:CheckSpellUsable(classtable.HeroicStrike, 'HeroicStrike')) and Rage >= 60 and cooldown[classtable.HeroicStrike].ready then

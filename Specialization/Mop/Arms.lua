@@ -74,6 +74,7 @@ end
 
 
 local function ClearCDs()
+    MaxDps:GlowCooldown(classtable.DragonRoar, false)
     MaxDps:GlowCooldown(classtable.Recklessness, false)
     MaxDps:GlowCooldown(classtable.Shockwave, false)
     MaxDps:GlowCooldown(classtable.Bladestorm, false)

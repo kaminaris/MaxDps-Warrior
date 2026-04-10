@@ -79,6 +79,7 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.Bladestorm, false)
     MaxDps:GlowCooldown(classtable.BerserkerRage, false)
     MaxDps:GlowCooldown(classtable.DragonRoar, false)
+    MaxDps:GlowCooldown(classtable.StormBolt, false)
 end
 
 function Fury:single()

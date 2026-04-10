@@ -57,6 +57,8 @@ local function ClearCDs()
     MaxDps:GlowCooldown(classtable.ShieldSlam, false)
     MaxDps:GlowCooldown(classtable.DragonRoar, false)
     MaxDps:GlowCooldown(classtable.StormBolt, false)
+    MaxDps:GlowCooldown(classtable.ShieldBlock, false)
+    MaxDps:GlowCooldown(classtable.ShieldBarrier, false)
 end
 
 function Prot:single()

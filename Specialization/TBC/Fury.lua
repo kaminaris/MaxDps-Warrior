@@ -70,14 +70,14 @@ local function ClearCDs()
 end
 
 function Fury:AoE()
-    if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and cooldown[classtable.SweepingStrikes].ready then
+    if (MaxDps:CheckSpellUsable(classtable.SweepingStrikes, 'SweepingStrikes')) and Rage >= 30 and cooldown[classtable.SweepingStrikes].ready then
         --if not setSpell then setSpell = classtable.SweepingStrikes end
         MaxDps:GlowCooldown(classtable.SweepingStrikes, true)
     end
-    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 25 and cooldown[classtable.Whirlwind].ready then
         if not setSpell then setSpell = classtable.Whirlwind end
     end
-    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
+    if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and Rage >= 30 and cooldown[classtable.Bloodthirst].ready then
         if not setSpell then setSpell = classtable.Bloodthirst end
     end
     if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20) and cooldown[classtable.Execute].ready then
@@ -106,10 +106,10 @@ function Fury:Single()
     --end
 
     if UnitLevel("player") > 40 then
-        if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and cooldown[classtable.Bloodthirst].ready then
+        if (MaxDps:CheckSpellUsable(classtable.Bloodthirst, 'Bloodthirst')) and Rage >= 30 and cooldown[classtable.Bloodthirst].ready then
             if not setSpell then setSpell = classtable.Bloodthirst end
         end
-        if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and cooldown[classtable.Whirlwind].ready then
+        if (MaxDps:CheckSpellUsable(classtable.Whirlwind, 'Whirlwind')) and Rage >= 25 and cooldown[classtable.Whirlwind].ready then
             if not setSpell then setSpell = classtable.Whirlwind end
         end
         if (MaxDps:CheckSpellUsable(classtable.Execute, 'Execute')) and (targethealthPerc < 20 and Rage >= 45) and cooldown[classtable.Execute].ready then

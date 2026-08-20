@@ -153,6 +153,10 @@ function Fury:callaction()
         --if not setSpell then setSpell = classtable.SweepingStrikes end
         MaxDps:GlowCooldown(classtable.Recklessness, true)
     end
+    if (MaxDps:CheckSpellUsable(classtable.Bloodrage, 'Bloodrage')) and cooldown[classtable.Bloodrage].ready then
+        --if not setSpell then setSpell = classtable.SweepingStrikes end
+        MaxDps:GlowCooldown(classtable.Bloodrage, true)
+    end
     if (MaxDps:CheckSpellUsable(classtable.BattleShout, 'BattleShout')) and (MaxDps:FindBuffAuraData(classtable.BattleShout).refreshable) and cooldown[classtable.BattleShout].ready then
         --if not setSpell then setSpell = classtable.SweepingStrikes end
         MaxDps:GlowCooldown(classtable.BattleShout, true)
@@ -202,6 +206,7 @@ function Warrior:Fury()
     classtable.Rend = 772
     classtable.Overpower = 7384
     classtable.BattleShout = 2048
+    classtable.Bloodrage = 2687
 
     setSpell = nil
     ClearCDs()

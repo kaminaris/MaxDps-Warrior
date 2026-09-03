@@ -29,7 +29,7 @@ function Warrior:Enable()
 	    end
 	end
 	if MaxDps:IsClassicWow() then
-	    if MaxDps and MaxDps.FrameData and MaxDps.FrameData.talents and MaxDps.FrameData.talents[16301] then
+	    if MaxDps and MaxDps.FrameData and MaxDps.FrameData.talents and (MaxDps.FrameData.talents[16301] or MaxDps.FrameData.talents[12298]) then
 	    	MaxDps:Print(MaxDps.Colors.Info .. 'Warrior Protection', "info");
 	    	MaxDps.NextSpell = Warrior.Protection;
 	    else

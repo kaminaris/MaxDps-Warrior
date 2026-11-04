@@ -1,4 +1,4 @@
-## Title: MaxDps_Warrior
+﻿## Title: MaxDps_Warrior
 ## Version: @project-version@
 ## Author: Kaminaris
 ## Interface: 120105
@@ -16,31 +16,25 @@
 ## X-Wago-ID: ZQ6anYKW
 
 Main.lua
-#@retail@
-Specialization\Arms.lua
-Specialization\Fury.lua
-Specialization\Protection.lua
-#@end-retail@
+Specialization\Arms.lua [AllowLoadGameType standard]
+Specialization\Fury.lua [AllowLoadGameType standard]
+Specialization\Protection.lua [AllowLoadGameType standard]
 
-#@version-cata@
-Specialization\Cata\Arms.lua
-Specialization\Cata\Fury.lua
-Specialization\Cata\Protection.lua
-#@end-version-cata@
+Specialization\Cata\Arms.lua [AllowLoadGameType cata]
+Specialization\Cata\Fury.lua [AllowLoadGameType cata]
+Specialization\Cata\Protection.lua [AllowLoadGameType cata]
 
-#@version-bcc@
-Specialization\TBC\Arms.lua
-Specialization\TBC\Fury.lua
-Specialization\TBC\Protection.lua
-#@end-version-bcc@
+Specialization\TBC\Arms.lua [AllowLoadGameType tbc]
+Specialization\TBC\Fury.lua [AllowLoadGameType tbc]
+Specialization\TBC\Protection.lua [AllowLoadGameType tbc]
 
-#@version-classic@
-Specialization\Classic\DPS.lua
-Specialization\Classic\Protection.lua
-#@end-version-classic@
+Specialization\Classic\DPS.lua [AllowLoadGameType vanilla]
+Specialization\Classic\Protection.lua [AllowLoadGameType vanilla]
 
-#@version-mists@
-Specialization\Mop\Arms.lua
-Specialization\Mop\Fury.lua
-Specialization\MoP\Protection.lua
-#@end-version-mists@
+Specialization\Mop\Arms.lua [AllowLoadGameType mists]
+Specialization\Mop\Fury.lua [AllowLoadGameType mists]
+Specialization\MoP\Protection.lua [AllowLoadGameType mists]
+
+Specialization\Forever\Arms.lua [AllowLoadGameType forever]
+Specialization\Forever\Fury.lua [AllowLoadGameType forever]
+Specialization\Forever\Protection.lua [AllowLoadGameType forever]

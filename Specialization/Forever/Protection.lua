@@ -8,7 +8,7 @@ local Protection = {}
 function Warrior:Protection()
     if MaxDps:SmartAoe() <= 1 then
         if (not MaxDps.IsTrackedAuraActive(6673)) and not MaxDps.IsSpellOnCooldown(6673, true) then return 6673 end --  Battle Shout
-        if not MaxDps.IsSpellOnCooldown(71, true) then return 71 end --  Defensive Stance
+        if (GetShapeshiftFormID() ~= 18) and not MaxDps.IsSpellOnCooldown(71, true) then return 71 end --  Defensive Stance
         if not MaxDps.IsSpellOnCooldown(23922, true) then return 23922 end --  Shield Slam
         if not MaxDps.IsSpellOnCooldown(6572, true) then return 6572 end --  Revenge
         if not MaxDps.IsSpellOnCooldown(6343, true) then return 6343 end --  Thunder Clap
@@ -20,7 +20,7 @@ function Warrior:Protection()
     if MaxDps:SmartAoe() >= 2 then
         if (not MaxDps.IsTrackedAuraActive(6673)) and not MaxDps.IsSpellOnCooldown(6673, true) then return 6673 end --  Battle Shout
         if (not MaxDps.IsTrackedAuraActive(1160)) and not MaxDps.IsSpellOnCooldown(1160, true) then return 1160 end --  Demoralizing Shout
-        if not MaxDps.IsSpellOnCooldown(71, true) then return 71 end --  Defensive Stance
+        if (GetShapeshiftFormID() ~= 18) and not MaxDps.IsSpellOnCooldown(71, true) then return 71 end --  Defensive Stance
         if not MaxDps.IsSpellOnCooldown(23922, true) then return 23922 end --  Shield Slam
         if not MaxDps.IsSpellOnCooldown(6572, true) then return 6572 end --  Revenge
         if not MaxDps.IsSpellOnCooldown(6343, true) then return 6343 end --  Thunder Clap

@@ -14,7 +14,7 @@ function Warrior:Fury()
         if not MaxDps.IsSpellOnCooldown(12294, true) then return 12294 end --  Mortal Strike
         if not MaxDps.IsSpellOnCooldown(1310222, true) then return 1310222 end --  Spearing Strike
         if not MaxDps.IsSpellOnCooldown(23881, true) then return 23881 end --  Bloodthirst
-        if MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
+        if not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
         if not MaxDps.IsSpellOnCooldown(1240193, true) then return 1240193 end --  Slam
         if ((MaxDps.Power("rage", false) >= 40)) and not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
         if not MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring
@@ -33,7 +33,7 @@ function Warrior:Fury()
         if not MaxDps.IsSpellOnCooldown(12294, true) then return 12294 end --  Mortal Strike
         if not MaxDps.IsSpellOnCooldown(1310222, true) then return 1310222 end --  Spearing Strike
         if not MaxDps.IsSpellOnCooldown(23881, true) then return 23881 end --  Bloodthirst
-        if MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
+        if not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
         if not MaxDps.IsSpellOnCooldown(1240193, true) then return 1240193 end --  Slam
         if ((MaxDps.Power("rage", false) >= 40)) and not MaxDps.IsSpellOnCooldown(845, true) then return 845 end --  Cleave
         if not MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring

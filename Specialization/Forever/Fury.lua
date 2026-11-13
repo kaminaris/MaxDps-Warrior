@@ -17,7 +17,7 @@ function Warrior:Fury()
         if MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
         if not MaxDps.IsSpellOnCooldown(1240193, true) then return 1240193 end --  Slam
         if ((MaxDps.Power("rage", false) >= 40)) and not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
-        if MaxDps.IsSpellOnCooldown(23881, true) and MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring
+        if not MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring
         if (MaxDps.Power("rage", false) < 90) then MaxDps:GlowDefensiveHPMidnight(2687, true) end --  Bloodrage
         if (GetShapeshiftFormID() ~= 19) and not MaxDps.IsSpellOnCooldown(2458, true) then return 2458 end --  Berserker Stance
     end
@@ -36,7 +36,7 @@ function Warrior:Fury()
         if MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) then return 1680 end --  Whirlwind
         if not MaxDps.IsSpellOnCooldown(1240193, true) then return 1240193 end --  Slam
         if ((MaxDps.Power("rage", false) >= 40)) and not MaxDps.IsSpellOnCooldown(845, true) then return 845 end --  Cleave
-        if MaxDps.IsSpellOnCooldown(23881, true) and MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring
+        if not MaxDps.IsSpellOnCooldown(23881, true) and not MaxDps.IsSpellOnCooldown(1680, true) and (MaxDps.Power("rage", false) > 80) then return 1715 end --  Hamstring
         if (MaxDps.Power("rage", false) < 90) then MaxDps:GlowDefensiveHPMidnight(2687, true) end --  Bloodrage
         if (GetShapeshiftFormID() ~= 19) and not MaxDps.IsSpellOnCooldown(2458, true) then return 2458 end --  Berserker Stance
     end

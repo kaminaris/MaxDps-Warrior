@@ -13,7 +13,7 @@ function Warrior:Protection()
         if not MaxDps.IsSpellOnCooldown(6572, true) then return 6572 end --  Revenge
         if not MaxDps.IsSpellOnCooldown(6343, true) then return 6343 end --  Thunder Clap
         if ((MaxDps.Stacks("target", 7386, "HARMFUL") < 5)) and not MaxDps.IsSpellOnCooldown(7386, true) then return 7386 end --  Sunder Armor
-        if ((MaxDps.Power("rage", false) >= 45)) and not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
+        if ((MaxDps.Power("rage", false) >= 45)) or not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
         if not MaxDps.IsSpellOnCooldown(7386, true) then return 7386 end --  Sunder Armor
     end
 
@@ -25,7 +25,7 @@ function Warrior:Protection()
         if not MaxDps.IsSpellOnCooldown(6572, true) then return 6572 end --  Revenge
         if not MaxDps.IsSpellOnCooldown(6343, true) then return 6343 end --  Thunder Clap
         if ((MaxDps.Stacks("target", 7386, "HARMFUL") < 5)) and not MaxDps.IsSpellOnCooldown(7386, true) then return 7386 end --  Sunder Armor
-        if ((MaxDps.Power("rage", false) >= 45)) and not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
+        if ((MaxDps.Power("rage", false) >= 45)) or not MaxDps.IsSpellOnCooldown(78, true) then return 78 end --  Heroic Strike
         if not MaxDps.IsSpellOnCooldown(7386, true) then return 7386 end --  Sunder Armor
     end
 end
